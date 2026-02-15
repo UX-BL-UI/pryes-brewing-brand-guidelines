@@ -1,0 +1,38 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Thumbnails
+Thumbs.db
+
+# Windows
+Desktop.ini
+
+# Adobe files
+*.tmp
+*.psd~
+*.ai~
+
+# Temporary files
+*.temp
+*.bak
+*~
+
+# Node modules (if using any build tools)
+node_modules/
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build outputs
+dist/
+build/
+
+# Misc
+*.log
