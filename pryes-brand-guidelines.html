@@ -1769,9 +1769,115 @@ li strong {
   .expr-social-beer-name { font-size: 26px; }
 }
 
+/* ═══════════════════════════════════════════════
+   PASSWORD PROTECTION
+   ═══════════════════════════════════════════════ */
+#password-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--black);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#password-overlay.hidden {
+  display: none;
+}
+
+.password-box {
+  background: white;
+  padding: 48px 40px;
+  border-radius: 8px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+
+.password-title {
+  font-family: var(--serif);
+  font-size: 28px;
+  color: var(--black);
+  margin-bottom: 8px;
+}
+
+.password-subtitle {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--gray);
+  margin-bottom: 28px;
+}
+
+.password-input {
+  width: 100%;
+  padding: 14px 16px;
+  font-family: var(--sans);
+  font-size: 15px;
+  border: 2px solid var(--light-gray);
+  border-radius: 6px;
+  margin-bottom: 16px;
+  transition: border-color 0.2s;
+}
+
+.password-input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.password-button {
+  width: 100%;
+  padding: 14px;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  background: var(--gold);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.password-button:hover {
+  background: var(--gold-light);
+}
+
+.password-error {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: #d32f2f;
+  margin-top: 12px;
+  display: none;
+}
+
+.password-error.show {
+  display: block;
+}
+
 </style>
 </head>
 <body>
+
+<!-- PASSWORD PROTECTION -->
+<div id="password-overlay">
+  <div class="password-box">
+    <div class="password-title">Brand Guidelines</div>
+    <div class="password-subtitle">Enter password to access</div>
+    <input
+      type="password"
+      id="password-input"
+      class="password-input"
+      placeholder="Password"
+      autocomplete="off"
+    >
+    <button onclick="checkPassword()" class="password-button">Enter</button>
+    <div id="password-error" class="password-error">Incorrect password. Please try again.</div>
+  </div>
+</div>
 
 <!-- MOBILE NAV TOGGLE -->
 <button class="nav-toggle" onclick="document.querySelector('.nav').classList.toggle('open')" aria-label="Menu">
@@ -2846,6 +2952,39 @@ navLinks.forEach(link => {
   link.addEventListener('click', () => {
     document.querySelector('.nav').classList.remove('open');
   });
+});
+</script>
+
+<script>
+// Password Protection
+const CORRECT_PASSWORD = 'pryes2026'; // Change this to your desired password
+
+function checkPassword() {
+  const input = document.getElementById('password-input');
+  const error = document.getElementById('password-error');
+  const overlay = document.getElementById('password-overlay');
+
+  if (input.value === CORRECT_PASSWORD) {
+    sessionStorage.setItem('brandGuidelinesAuth', 'true');
+    overlay.classList.add('hidden');
+    error.classList.remove('show');
+  } else {
+    error.classList.add('show');
+    input.value = '';
+    input.focus();
+  }
+}
+
+// Check if already authenticated
+if (sessionStorage.getItem('brandGuidelinesAuth') === 'true') {
+  document.getElementById('password-overlay').classList.add('hidden');
+}
+
+// Allow Enter key to submit
+document.getElementById('password-input').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    checkPassword();
+  }
 });
 </script>
 
