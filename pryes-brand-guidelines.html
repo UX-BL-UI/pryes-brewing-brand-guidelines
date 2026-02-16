@@ -1933,10 +1933,17 @@ li strong {
     <a href="#in-practice" class="nav-link"><span class="nav-num">11</span><span class="nav-label">In Practice</span></a>
   </div>
   <div class="font-toggle">
-    <div class="font-toggle-label">Font Preview</div>
+    <div class="font-toggle-label">Sans-Serif</div>
     <div class="font-toggle-switch">
-      <button class="font-toggle-btn active" data-font="instrument">Instrument</button>
-      <button class="font-toggle-btn" data-font="nunito">Nunito</button>
+      <button class="font-toggle-btn active" data-type="sans" data-font="instrument">Instrument</button>
+      <button class="font-toggle-btn" data-type="sans" data-font="nunito">Nunito</button>
+    </div>
+  </div>
+  <div class="font-toggle" style="border-bottom: none; padding-bottom: 20px;">
+    <div class="font-toggle-label">Serif</div>
+    <div class="font-toggle-switch">
+      <button class="font-toggle-btn active" data-type="serif" data-font="instrument">Instrument</button>
+      <button class="font-toggle-btn" data-type="serif" data-font="nunito">Nunito</button>
     </div>
   </div>
   <div class="nav-footer">
@@ -3020,33 +3027,49 @@ document.getElementById('password-input').addEventListener('keypress', function(
 const fontToggleBtns = document.querySelectorAll('.font-toggle-btn');
 const root = document.documentElement;
 
-// Load saved font preference
-const savedFont = localStorage.getItem('previewFont') || 'instrument';
-setFont(savedFont);
+// Load saved font preferences
+const savedSans = localStorage.getItem('previewSansFont') || 'instrument';
+const savedSerif = localStorage.getItem('previewSerifFont') || 'instrument';
+setFont('sans', savedSans);
+setFont('serif', savedSerif);
 
 fontToggleBtns.forEach(btn => {
   btn.addEventListener('click', () => {
+    const type = btn.dataset.type;
     const font = btn.dataset.font;
-    setFont(font);
-    localStorage.setItem('previewFont', font);
+    setFont(type, font);
+
+    if (type === 'sans') {
+      localStorage.setItem('previewSansFont', font);
+    } else {
+      localStorage.setItem('previewSerifFont', font);
+    }
   });
 });
 
-function setFont(font) {
+function setFont(type, font) {
   // Update CSS variable
-  if (font === 'nunito') {
-    root.style.setProperty('--sans', "'Nunito', system-ui, sans-serif");
-    root.style.setProperty('--condensed', "'Nunito', system-ui, sans-serif");
-  } else {
-    root.style.setProperty('--sans', "'Instrument Sans', system-ui, sans-serif");
-    root.style.setProperty('--condensed', "'Instrument Sans', system-ui, sans-serif");
+  if (type === 'sans') {
+    if (font === 'nunito') {
+      root.style.setProperty('--sans', "'Nunito', system-ui, sans-serif");
+      root.style.setProperty('--condensed', "'Nunito', system-ui, sans-serif");
+    } else {
+      root.style.setProperty('--sans', "'Instrument Sans', system-ui, sans-serif");
+      root.style.setProperty('--condensed', "'Instrument Sans', system-ui, sans-serif");
+    }
+  } else if (type === 'serif') {
+    if (font === 'nunito') {
+      root.style.setProperty('--serif', "'Nunito', Georgia, serif");
+    } else {
+      root.style.setProperty('--serif', "'Instrument Serif', Georgia, serif");
+    }
   }
 
   // Update button states
   fontToggleBtns.forEach(btn => {
-    if (btn.dataset.font === font) {
+    if (btn.dataset.type === type && btn.dataset.font === font) {
       btn.classList.add('active');
-    } else {
+    } else if (btn.dataset.type === type) {
       btn.classList.remove('active');
     }
   });
