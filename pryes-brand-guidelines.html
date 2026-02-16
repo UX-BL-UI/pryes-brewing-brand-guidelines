@@ -160,6 +160,17 @@ body {
 }
 
 /* Font toggle */
+.font-toggle-container {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.font-toggle-container.visible {
+  display: block;
+  opacity: 1;
+}
+
 .font-toggle {
   padding: 16px 28px;
   border-bottom: 1px solid #333;
@@ -1932,18 +1943,20 @@ li strong {
     <a href="#applications" class="nav-link"><span class="nav-num">10</span><span class="nav-label">Applications</span></a>
     <a href="#in-practice" class="nav-link"><span class="nav-num">11</span><span class="nav-label">In Practice</span></a>
   </div>
-  <div class="font-toggle">
-    <div class="font-toggle-label">Sans-Serif</div>
-    <div class="font-toggle-switch">
-      <button class="font-toggle-btn active" data-type="sans" data-font="instrument">Instrument</button>
-      <button class="font-toggle-btn" data-type="sans" data-font="nunito">Nunito</button>
+  <div class="font-toggle-container">
+    <div class="font-toggle">
+      <div class="font-toggle-label">Sans-Serif</div>
+      <div class="font-toggle-switch">
+        <button class="font-toggle-btn active" data-type="sans" data-font="instrument">Instrument</button>
+        <button class="font-toggle-btn" data-type="sans" data-font="nunito">Nunito</button>
+      </div>
     </div>
-  </div>
-  <div class="font-toggle" style="border-bottom: none; padding-bottom: 20px;">
-    <div class="font-toggle-label">Serif</div>
-    <div class="font-toggle-switch">
-      <button class="font-toggle-btn active" data-type="serif" data-font="instrument">Instrument</button>
-      <button class="font-toggle-btn" data-type="serif" data-font="nunito">Nunito</button>
+    <div class="font-toggle" style="border-bottom: none; padding-bottom: 20px;">
+      <div class="font-toggle-label">Serif</div>
+      <div class="font-toggle-switch">
+        <button class="font-toggle-btn active" data-type="serif" data-font="instrument">Instrument</button>
+        <button class="font-toggle-btn" data-type="serif" data-font="nunito">Nunito</button>
+      </div>
     </div>
   </div>
   <div class="nav-footer">
@@ -3074,6 +3087,23 @@ function setFont(type, font) {
     }
   });
 }
+
+// Keyboard shortcut to toggle font controls visibility (Shift + F)
+const fontToggleContainer = document.querySelector('.font-toggle-container');
+const toggleVisibility = localStorage.getItem('fontToggleVisible') === 'true';
+
+if (toggleVisibility) {
+  fontToggleContainer.classList.add('visible');
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.shiftKey && e.key === 'F') {
+    e.preventDefault();
+    fontToggleContainer.classList.toggle('visible');
+    const isVisible = fontToggleContainer.classList.contains('visible');
+    localStorage.setItem('fontToggleVisible', isVisible);
+  }
+});
 </script>
 
 </body>
