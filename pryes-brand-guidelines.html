@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pryes Brewing â€” Brand Guidelines</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wdth,wght@0,75..100,400..700;1,75..100,400..700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wdth,wght@0,75..100,400..700;1,75..100,400..700&family=Instrument+Serif&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -157,6 +157,52 @@ body {
   font-size: 11px;
   color: #555;
   letter-spacing: 0.05em;
+}
+
+/* Font toggle */
+.font-toggle {
+  padding: 16px 28px;
+  border-bottom: 1px solid #333;
+}
+
+.font-toggle-label {
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+
+.font-toggle-switch {
+  display: flex;
+  gap: 8px;
+}
+
+.font-toggle-btn {
+  flex: 1;
+  padding: 8px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #888;
+  font-family: var(--sans);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.font-toggle-btn:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.font-toggle-btn.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--black);
+  font-weight: 600;
 }
 
 /* Mobile nav toggle */
@@ -1886,6 +1932,13 @@ li strong {
     <a href="#applications" class="nav-link"><span class="nav-num">10</span><span class="nav-label">Applications</span></a>
     <a href="#in-practice" class="nav-link"><span class="nav-num">11</span><span class="nav-label">In Practice</span></a>
   </div>
+  <div class="font-toggle">
+    <div class="font-toggle-label">Font Preview</div>
+    <div class="font-toggle-switch">
+      <button class="font-toggle-btn active" data-font="instrument">Instrument</button>
+      <button class="font-toggle-btn" data-font="nunito">Nunito</button>
+    </div>
+  </div>
   <div class="nav-footer">
     <div class="nav-footer-text">CONFIDENTIAL &middot; v1.0</div>
     <div class="nav-footer-text" style="margin-top:4px">February 2026</div>
@@ -2960,6 +3013,44 @@ document.getElementById('password-input').addEventListener('keypress', function(
     checkPassword();
   }
 });
+</script>
+
+<script>
+// Font Toggle
+const fontToggleBtns = document.querySelectorAll('.font-toggle-btn');
+const root = document.documentElement;
+
+// Load saved font preference
+const savedFont = localStorage.getItem('previewFont') || 'instrument';
+setFont(savedFont);
+
+fontToggleBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const font = btn.dataset.font;
+    setFont(font);
+    localStorage.setItem('previewFont', font);
+  });
+});
+
+function setFont(font) {
+  // Update CSS variable
+  if (font === 'nunito') {
+    root.style.setProperty('--sans', "'Nunito', system-ui, sans-serif");
+    root.style.setProperty('--condensed', "'Nunito', system-ui, sans-serif");
+  } else {
+    root.style.setProperty('--sans', "'Instrument Sans', system-ui, sans-serif");
+    root.style.setProperty('--condensed', "'Instrument Sans', system-ui, sans-serif");
+  }
+
+  // Update button states
+  fontToggleBtns.forEach(btn => {
+    if (btn.dataset.font === font) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+}
 </script>
 
 </body>
