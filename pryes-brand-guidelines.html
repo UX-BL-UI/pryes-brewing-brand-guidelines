@@ -217,30 +217,6 @@ body {
   overflow: hidden;
 }
 
-.hero::before {
-  content: '';
-  position: absolute;
-  top: -200px;
-  right: -200px;
-  width: 600px;
-  height: 600px;
-  border-radius: 50%;
-  border: 1px solid rgba(197,165,90,0.08);
-  pointer-events: none;
-}
-
-.hero::after {
-  content: '';
-  position: absolute;
-  bottom: -300px;
-  right: -100px;
-  width: 800px;
-  height: 800px;
-  border-radius: 50%;
-  border: 1px solid rgba(197,165,90,0.05);
-  pointer-events: none;
-}
-
 .hero-eyebrow {
   font-family: var(--sans);
   font-size: 12px;
@@ -1276,12 +1252,6 @@ li strong {
   border-radius: 8px;
   margin: 28px 0;
 }
-.expr-tagline-hero::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: radial-gradient(ellipse at center, rgba(197,165,90,0.06) 0%, transparent 70%);
-}
 .expr-tagline-hero .expr-brewery-line {
   font-family: var(--sans);
   font-size: 11px;
@@ -1334,6 +1304,7 @@ li strong {
   padding: 48px 32px;
   border-radius: 8px;
   margin: 20px 0;
+  filter: blur(10px);
 }
 .expr-cans-row {
   display: flex;
@@ -2048,8 +2019,8 @@ li strong {
       <ul>
         <li><strong>Distribution reach.</strong> The largest self-distributed brewery in Minnesota, available in 1,200+ bars, restaurants, and liquor stores.</li>
         <li><strong>Taproom scale.</strong> The second-largest taproom in Minnesota &mdash; a massive owned stage for the brand.</li>
-        <li><strong>Variety advantage.</strong> 2&ndash;4x the product range of many peers. More products on a shelf = more repetitions of the Pryes brand pattern.</li>
-        <li><strong>Proven quality.</strong> Competition wins and strong reviews. Credibility cues that support but never lead.</li>
+        <li><strong>Variety advantage.</strong> 2&ndash;4x the product range of many peers. More products on a shelf = more repetitions of the Pryes brand.</li>
+        <li><strong>Proven quality.</strong> Beer competition wins and strong reviews. Credibility cues that support but never lead.</li>
       </ul>
     </div>
   </section>
@@ -2189,8 +2160,8 @@ li strong {
           <span class="specimen-role">Foundation &middot; &ldquo;Masterfully Crafted&rdquo;</span>
         </div>
         <div class="specimen-display">
-          <div class="specimen-sample-sans">PRYES</div>
-          <div style="font-family:var(--sans); font-size:20px; color:var(--gray); margin-top:8px; letter-spacing:0.04em;">Brewing Company</div>
+          <div class="specimen-sample-sans">MASTERFULLY</div>
+          <div style="font-family:var(--sans); font-size:20px; color:var(--gray); margin-top:8px; letter-spacing:0.04em;">Crafted</div>
         </div>
         <div class="specimen-meta">
           <div class="specimen-meta-item"><strong>Weights:</strong> 400&ndash;700</div>
@@ -2202,8 +2173,7 @@ li strong {
 
       <h4>Use For</h4>
       <ul>
-        <li>The <strong>PRYES wordmark</strong></li>
-        <li>&ldquo;Brewing Company&rdquo; line</li>
+        <li>The PRYES wordmark</li>
         <li>Style descriptors (Midwest IPA, Classic Pils, Sour Ale)</li>
         <li>Tier markers (Signature Series, Seasonal, etc.)</li>
         <li>All body copy, descriptive text, and supporting information</li>
@@ -2238,10 +2208,9 @@ li strong {
 
       <h4>Use For</h4>
       <ul>
-        <li><strong>Beer names</strong> (Miraculum, Pragmatic, Royal Raspberry, Main Squeeze)</li>
-        <li><strong>&ldquo;Trust your taste.&rdquo;</strong> tagline</li>
-        <li><strong>Numbers and stats</strong> (ABV percentages, IBU, FL OZ &mdash; the numbers themselves, not labels)</li>
-        <li>These three categories only.</li>
+        <li>Beer names (Miraculum, Pragmatic, Royal Raspberry, Main Squeeze)</li>
+        <li>&ldquo;Trust your taste.&rdquo; tagline</li>
+        <li>Numbers and stats (ABV percentages, IBU, FL OZ &mdash; the numbers themselves, not labels)</li>
       </ul>
 
       <p><strong>Why serif for beer names?</strong> PRYES in sans says &ldquo;this is who we are.&rdquo; Miraculum in serif says &ldquo;this is what we made.&rdquo; The brand is the craft; the beer is the design.</p>
@@ -2384,7 +2353,6 @@ li strong {
       <ul>
         <li>Logo mark, position, and scale</li>
         <li>PRYES wordmark in Instrument Sans</li>
-        <li>&ldquo;Brewing Company&rdquo; line in Instrument Sans</li>
         <li>Layout grid and zone structure</li>
         <li>Typeface selections and hierarchy</li>
         <li>Color application method</li>
@@ -2395,6 +2363,7 @@ li strong {
         <li><strong>16oz cans</strong> &mdash; primary retail and taproom format</li>
         <li><strong>16oz can boxes</strong> &mdash; retail multi-pack format</li>
         <li><strong>12oz cans</strong> &mdash; variety pack and retail format</li>
+        <li><strong>12oz can boxes</strong> &mdash; retail multi-pack format</li>
         <li><strong>Variety pack boxes</strong> &mdash; 12oz cans in branded boxes</li>
         <li><strong>Bottles</strong> &mdash; select products</li>
         <li><strong>Crowlers</strong> &mdash; taproom-only, simplified system treatment</li>
@@ -2708,7 +2677,6 @@ li strong {
               <div class="expr-can-style">Midwest IPA</div>
             </div>
             <div class="expr-can-bottom">
-              <div class="expr-can-tier">Signature Series</div>
               <div class="expr-can-abv">6.4<span>% ABV</span></div>
             </div>
           </div>
@@ -2724,7 +2692,6 @@ li strong {
               <div class="expr-can-style">Classic Pils</div>
             </div>
             <div class="expr-can-bottom">
-              <div class="expr-can-tier">Signature Series</div>
               <div class="expr-can-abv">4.2<span>% ABV</span></div>
             </div>
           </div>
@@ -2740,7 +2707,6 @@ li strong {
               <div class="expr-can-style">Sour Ale</div>
             </div>
             <div class="expr-can-bottom">
-              <div class="expr-can-tier">Signature Series</div>
               <div class="expr-can-abv">5.1<span>% ABV</span></div>
             </div>
           </div>
@@ -2756,7 +2722,6 @@ li strong {
               <div class="expr-can-style">Citrus Wheat</div>
             </div>
             <div class="expr-can-bottom">
-              <div class="expr-can-tier">Seasonal</div>
               <div class="expr-can-abv">4.8<span>% ABV</span></div>
             </div>
           </div>
@@ -2772,7 +2737,6 @@ li strong {
               <div class="expr-can-style">Coffee Stout</div>
             </div>
             <div class="expr-can-bottom">
-              <div class="expr-can-tier">Collaboration</div>
               <div class="expr-can-abv">5.8<span>% ABV</span></div>
             </div>
           </div>
