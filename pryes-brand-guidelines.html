@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pryes Brewing â€” Brand Guidelines</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wdth,wght@0,75..100,400..700;1,75..100,400..700&family=Instrument+Serif&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Asap+Condensed:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    DESIGN TOKENS
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 :root {
-  --black: #1A1A1A;
+  --black: #162419;
   --gold: #C5A55A;
   --gold-light: #D4BA7A;
   --gold-dim: rgba(197,165,90,0.12);
@@ -29,9 +29,9 @@
   --coffee: #3A2518;
   --dark-green: #2D5A3D;
 
-  --sans: 'Instrument Sans', system-ui, sans-serif;
-  --serif: 'Instrument Serif', Georgia, serif;
-  --condensed: 'Instrument Sans', system-ui, sans-serif;
+  --sans: 'Nunito', system-ui, sans-serif;
+  --serif: 'Asap Condensed', system-ui, sans-serif;
+  --condensed: 'Nunito', system-ui, sans-serif;
 
   --max-w: 860px;
   --nav-w: 260px;
@@ -40,6 +40,19 @@
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    RESET & BASE
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* Asap Condensed (Voster) — uppercase + tracking on all serif-role elements */
+.nav-brand-sub, .nav-num, .hero-subtitle, .section-num, .principle-num,
+.specimen-sample-serif, .wave-num, .site-footer .footer-tagline,
+.persona-avatar, .persona-quote, .expr-tagline-hero .expr-tagline,
+.expr-can-logo span, .expr-can-beer-name, .expr-can-abv,
+.expr-ss-logo-circle span, .expr-ss-beer-name, .expr-ss-stat-value,
+.expr-menu-item-name, .expr-menu-item-abv, .expr-social-tagline,
+.expr-social-beer-name, .expr-annotation-num, .password-title {
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  font-weight: 700;
+}
+
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 html {
@@ -159,62 +172,6 @@ body {
   letter-spacing: 0.05em;
 }
 
-/* Font toggle */
-.font-toggle-container {
-  display: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.font-toggle-container.visible {
-  display: block;
-  opacity: 1;
-}
-
-.font-toggle {
-  padding: 16px 28px;
-  border-bottom: 1px solid #333;
-}
-
-.font-toggle-label {
-  font-size: 10px;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 8px;
-}
-
-.font-toggle-switch {
-  display: flex;
-  gap: 8px;
-}
-
-.font-toggle-btn {
-  flex: 1;
-  padding: 8px;
-  background: #2a2a2a;
-  border: 1px solid #444;
-  border-radius: 4px;
-  color: #888;
-  font-family: var(--sans);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.font-toggle-btn:hover {
-  background: #333;
-  border-color: #555;
-}
-
-.font-toggle-btn.active {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: var(--black);
-  font-weight: 600;
-}
 
 /* Mobile nav toggle */
 .nav-toggle {
@@ -1943,23 +1900,7 @@ li strong {
     <a href="#applications" class="nav-link"><span class="nav-num">10</span><span class="nav-label">Applications</span></a>
     <a href="#in-practice" class="nav-link"><span class="nav-num">11</span><span class="nav-label">In Practice</span></a>
   </div>
-  <div class="font-toggle-container">
-    <div class="font-toggle">
-      <div class="font-toggle-label">Sans-Serif</div>
-      <div class="font-toggle-switch">
-        <button class="font-toggle-btn active" data-type="sans" data-font="instrument">Instrument</button>
-        <button class="font-toggle-btn" data-type="sans" data-font="nunito">Nunito</button>
-      </div>
-    </div>
-    <div class="font-toggle" style="border-bottom: none; padding-bottom: 20px;">
-      <div class="font-toggle-label">Serif</div>
-      <div class="font-toggle-switch">
-        <button class="font-toggle-btn active" data-type="serif" data-font="instrument">Instrument</button>
-        <button class="font-toggle-btn" data-type="serif" data-font="nunito">Nunito</button>
-      </div>
-    </div>
-  </div>
-  <div class="nav-footer">
+<div class="nav-footer">
     <div class="nav-footer-text">CONFIDENTIAL &middot; v1.0</div>
     <div class="nav-footer-text" style="margin-top:4px">February 2026</div>
   </div>
@@ -2222,15 +2163,15 @@ li strong {
 
       <h3>The Philosophy</h3>
       <p>The Pryes type system is built on the idea: <strong>&ldquo;Masterfully crafted, thoughtfully designed.&rdquo;</strong></p>
-      <p><em>Masterfully Crafted</em> = Instrument Sans. The structure, the system, the consistency. The backbone that makes everything work.</p>
-      <p><em>Thoughtfully Designed</em> = Instrument Serif. The moments of elegance and personality. Beer names, the tagline, the numbers that describe what's in the glass.</p>
-      <p>These two fonts were designed as a family. They share proportions, x-height, and rhythm, which means they work together without forcing a pairing. The cohesion is built in.</p>
+      <p><em>Masterfully Crafted</em> = Nunito. The structure, the system, the consistency. The backbone that makes everything work.</p>
+      <p><em>Thoughtfully Designed</em> = Asap Condensed (Voster). Bold, uppercase, condensed — the moments of confidence and presence. Beer names, the tagline, the numbers that describe what's in the glass.</p>
+      <p>These two fonts are complementary without being matched. Nunito provides warmth and readability at any size; Asap Condensed (Voster) commands attention at display scale. The contrast between them creates the hierarchy.</p>
 
       <h3>The Fonts</h3>
 
       <div class="specimen">
         <div class="specimen-header">
-          <span class="specimen-name">Instrument Sans</span>
+          <span class="specimen-name">Nunito</span>
           <span class="specimen-role">Foundation &middot; &ldquo;Masterfully Crafted&rdquo;</span>
         </div>
         <div class="specimen-display">
@@ -2239,9 +2180,9 @@ li strong {
         </div>
         <div class="specimen-meta">
           <div class="specimen-meta-item"><strong>Weights:</strong> 400&ndash;700</div>
-          <div class="specimen-meta-item"><strong>Widths:</strong> 75%&ndash;100%</div>
+          <div class="specimen-meta-item"><strong>Style:</strong> Rounded, friendly, highly legible</div>
           <div class="specimen-meta-item"><strong>License:</strong> Open source (Google Fonts)</div>
-          <div class="specimen-meta-item"><strong>Variable:</strong> Yes</div>
+          <div class="specimen-meta-item"><strong>Variable:</strong> No</div>
         </div>
       </div>
 
@@ -2260,21 +2201,21 @@ li strong {
 
       <div class="callout">
         <div class="callout-title">Rule</div>
-        <p>If you're unsure which font to use, use Instrument Sans. It is always the safe, correct choice.</p>
+        <p>If you're unsure which font to use, use Nunito. It is always the safe, correct choice.</p>
       </div>
 
       <div class="specimen">
         <div class="specimen-header">
-          <span class="specimen-name">Instrument Serif</span>
+          <span class="specimen-name">Asap Condensed (Voster)</span>
           <span class="specimen-role">Accent &middot; &ldquo;Thoughtfully Designed&rdquo;</span>
         </div>
         <div class="specimen-display dark">
           <div class="specimen-sample-serif">Miraculum</div>
-          <div style="font-family:var(--serif); font-size:28px; color:var(--gold); margin-top:12px;">Trust your taste.</div>
+          <div style="font-family:var(--serif); font-size:28px; color:var(--gold); margin-top:12px; text-transform:uppercase; letter-spacing:0.06em; font-weight:700;">Trust your taste.</div>
         </div>
         <div class="specimen-meta">
-          <div class="specimen-meta-item"><strong>Weight:</strong> 400 (Regular)</div>
-          <div class="specimen-meta-item"><strong>Style:</strong> Roman only (no italic)</div>
+          <div class="specimen-meta-item"><strong>Weights:</strong> 400&ndash;800</div>
+          <div class="specimen-meta-item"><strong>Style:</strong> Condensed, all-caps, bold at display</div>
           <div class="specimen-meta-item"><strong>License:</strong> Open source (Google Fonts)</div>
           <div class="specimen-meta-item"><strong>Sizes:</strong> Display only</div>
         </div>
@@ -2291,44 +2232,44 @@ li strong {
 
       <div class="callout">
         <div class="callout-title">Rule</div>
-        <p>Instrument Serif appears at display sizes only. Never use it for body copy, small supporting text, or anything that requires extended reading. No italics &mdash; legibility was Heritage's problem; we don't repeat it.</p>
+        <p>Asap Condensed (Voster) appears at display sizes only, always uppercase and bold. Never use it for body copy, small supporting text, or anything that requires extended reading. Its job is presence and hierarchy &mdash; not readability at length.</p>
       </div>
 
       <div class="specimen">
         <div class="specimen-header">
-          <span class="specimen-name">Instrument Sans Condensed</span>
-          <span class="specimen-role">Utility Width</span>
+          <span class="specimen-name">Nunito — Utility Role</span>
+          <span class="specimen-role">Labels, Legal, Supporting Text</span>
         </div>
         <div class="specimen-display">
           <div class="specimen-sample-condensed">SIGNATURE SERIES</div>
-          <div style="font-family:var(--condensed); font-stretch:75%; font-size:16px; color:var(--gray); margin-top:8px; letter-spacing:0.04em; font-weight:500;">AVAILABLE YEAR-ROUND &middot; CRAFT BREWED IN MINNEAPOLIS</div>
+          <div style="font-family:var(--condensed); font-size:16px; color:var(--gray); margin-top:8px; letter-spacing:0.04em; font-weight:500;">AVAILABLE YEAR-ROUND &middot; CRAFT BREWED IN MINNEAPOLIS</div>
         </div>
         <div class="specimen-meta">
-          <div class="specimen-meta-item"><strong>Source:</strong> Built into Instrument Sans variable font (width axis)</div>
-          <div class="specimen-meta-item"><strong>Width:</strong> 75%</div>
-          <div class="specimen-meta-item"><strong>Not a separate font:</strong> Same family, no extra licensing</div>
+          <div class="specimen-meta-item"><strong>Source:</strong> Nunito (same family, different weight)</div>
+          <div class="specimen-meta-item"><strong>Weight:</strong> 500&ndash;600 for labels and markers</div>
+          <div class="specimen-meta-item"><strong>Usage:</strong> Tier markers, style descriptors, legal copy</div>
         </div>
       </div>
 
-      <p><strong>Purpose:</strong> Space recovery. Use the condensed width anywhere space is at a minimum but legibility or visibility still needs to be prioritized.</p>
+      <p><strong>Purpose:</strong> Supporting information. Nunito at smaller sizes carries all the structural text that Asap Condensed (Voster) is too loud for — descriptors, labels, legal, captions.</p>
 
       <div class="callout">
         <div class="callout-title">Rule</div>
-        <p>Use sparingly. Condensed is a problem-solving tool for real space constraints, not a stylistic alternative. Never use condensed for headlines, beer names, the wordmark, or the tagline. Never mix condensed and standard widths in the same text block.</p>
+        <p>When in doubt, use Nunito. It handles everything that isn't a headline, beer name, or display moment. Never force Asap Condensed (Voster) into tight or small-scale contexts where its weight becomes noise rather than signal.</p>
       </div>
 
       <h3>What Gets Retired</h3>
-      <p>Phase 3 consolidates from six typefaces to two:</p>
+      <p>This phase consolidates from prior typefaces to two:</p>
 
       <table class="usage-table">
         <thead><tr><th>Font</th><th>Previous Usage</th><th>Status</th></tr></thead>
         <tbody>
-          <tr><td class="font-name">Gotham Rounded</td><td>Business cards, occasional use</td><td class="status-retired">Retired &rarr; Instrument Sans</td></tr>
-          <tr><td class="font-name">Heritage</td><td>Brewing Company line, taglines</td><td class="status-retired">Retired &rarr; Instrument Serif (display) / Sans (small)</td></tr>
-          <tr><td class="font-name">Voster</td><td>Primary usage across most materials</td><td class="status-retired">Retired &rarr; Instrument Sans</td></tr>
-          <tr><td class="font-name">SS Nickson</td><td>Event materials</td><td class="status-retired">Retired &middot; No replacement needed</td></tr>
-          <tr><td class="font-name">Blastik</td><td>Event materials</td><td class="status-retired">Retired &middot; No replacement needed</td></tr>
-          <tr><td class="font-name">Baskerville</td><td>Business cards</td><td class="status-retired">Retired &rarr; Instrument Sans</td></tr>
+          <tr><td class="font-name">Instrument Sans</td><td>Body, wordmark, labels, all-purpose</td><td class="status-retired">Retired &rarr; Nunito</td></tr>
+          <tr><td class="font-name">Instrument Serif</td><td>Beer names, tagline, display numerals</td><td class="status-retired">Retired &rarr; Asap Condensed (Voster)</td></tr>
+          <tr><td class="font-name">Gotham Rounded</td><td>Business cards, occasional use</td><td class="status-retired">Retired (prior phase)</td></tr>
+          <tr><td class="font-name">Heritage</td><td>Brewing Company line, taglines</td><td class="status-retired">Retired (prior phase)</td></tr>
+          <tr><td class="font-name">Voster</td><td>Primary usage across most materials</td><td class="status-retired">Retired (prior phase) &mdash; Asap Condensed (Voster) is its spiritual successor</td></tr>
+          <tr><td class="font-name">SS Nickson / Blastik</td><td>Event materials</td><td class="status-retired">Retired &middot; No replacement needed</td></tr>
         </tbody>
       </table>
 
@@ -2336,10 +2277,10 @@ li strong {
 
       <div class="decision-box">
         <div class="callout-title">Is this about the brand or about the beer?</div>
-        <div class="decision-line"><span class="decision-key">Brand =</span><span class="decision-val">Instrument Sans. The wordmark, the company name, the structure, the system.</span></div>
-        <div class="decision-line"><span class="decision-key">Beer =</span><span class="decision-val">Instrument Serif. The beer name, the tagline, the numbers that describe what's in the glass.</span></div>
-        <div class="decision-line"><span class="decision-key">Tight on space =</span><span class="decision-val">Instrument Sans Condensed. Same font, narrow width. Use only when standard width won't fit.</span></div>
-        <div class="decision-line"><span class="decision-key">Unsure =</span><span class="decision-val">Instrument Sans. Always.</span></div>
+        <div class="decision-line"><span class="decision-key">Brand =</span><span class="decision-val">Nunito. The wordmark, the company name, the structure, the system.</span></div>
+        <div class="decision-line"><span class="decision-key">Beer =</span><span class="decision-val">Asap Condensed (Voster). The beer name, the tagline, the numbers that describe what's in the glass.</span></div>
+        <div class="decision-line"><span class="decision-key">Tight on space =</span><span class="decision-val">Nunito at a lighter weight. Readable at small sizes without introducing a third font.</span></div>
+        <div class="decision-line"><span class="decision-key">Unsure =</span><span class="decision-val">Nunito. Always.</span></div>
       </div>
     </div>
   </section>
@@ -2352,13 +2293,13 @@ li strong {
       <p class="section-intro">The master palette, SKU color logic, and rules for cohesion across the lineup.</p>
 
       <h3>The Approach</h3>
-      <p>Color is the single most powerful tool for shelf recognition. Phase 3 introduces <strong>palette cohesion:</strong> every SKU color must feel like it belongs to the same family. When five Pryes cans sit side by side, the colors should be obviously different from each other but obviously related.</p>
+      <p>Color is the single most powerful tool for shelf recognition. Green is the foundation — it anchors every surface, background, and header. Gold punctuates: dividers, labels, accents, moments that deserve emphasis. Black appears sparingly, reserved for typographic contrast and small details where depth is needed without adding another color.</p>
 
       <h3>Brand Colors</h3>
       <div class="swatch-grid">
-        <div class="swatch"><div class="swatch-color" style="background:#1A1A1A"></div><div class="swatch-info"><div class="swatch-name">Pryes Black</div><div class="swatch-hex">#1A1A1A</div><div class="swatch-usage">Primary brand color. Backgrounds, wordmark, headers.</div></div></div>
-        <div class="swatch"><div class="swatch-color" style="background:#C5A55A"></div><div class="swatch-info"><div class="swatch-name">Pryes Gold</div><div class="swatch-hex">#C5A55A</div><div class="swatch-usage">Accent and highlight. Dividers, labels, tier markers.</div></div></div>
-        <div class="swatch"><div class="swatch-color" style="background:#F5F3EE"></div><div class="swatch-info"><div class="swatch-name">Pryes Cream</div><div class="swatch-hex">#F5F3EE</div><div class="swatch-usage">Light backgrounds, secondary surfaces, text on dark.</div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#162419"></div><div class="swatch-info"><div class="swatch-name">Pryes Green</div><div class="swatch-hex">#162419</div><div class="swatch-usage">Primary brand color. Backgrounds, navigation, headers, dominant surfaces.</div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#C5A55A"></div><div class="swatch-info"><div class="swatch-name">Pryes Gold</div><div class="swatch-hex">#C5A55A</div><div class="swatch-usage">Accent. Dividers, labels, tier markers, highlights. Never as a background.</div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#1A1A1A; border: 1px solid #333"></div><div class="swatch-info"><div class="swatch-name">Pryes Black</div><div class="swatch-hex">#1A1A1A</div><div class="swatch-usage">Used sparingly. Typographic contrast, fine details, never dominant.</div></div></div>
       </div>
 
       <h3>SKU Color Rules</h3>
@@ -2366,7 +2307,7 @@ li strong {
         <li><strong>Depth and richness.</strong> Muted and grounded, not neon or pastel. Colors you'd find in nature, a well-aged library, or a quality textile.</li>
         <li><strong>Consistent saturation.</strong> All SKU colors sit at a similar saturation level so they feel related side by side.</li>
         <li><strong>Sufficient contrast.</strong> Each SKU color must be clearly distinguishable from every other at a glance.</li>
-        <li><strong>White and cream elements must work on every color.</strong> Logo, wordmark, and beer name appear in light tones on every can.</li>
+        <li><strong>White elements must work on every color.</strong> Logo, wordmark, and beer name appear in white or light tones on every can.</li>
       </ul>
 
       <div class="dde">
@@ -2398,7 +2339,7 @@ li strong {
       <ul>
         <li>Present on every piece of packaging in the same position</li>
         <li>Readable but not dominant &mdash; it's information, not the headline</li>
-        <li>Consistent in typography (Instrument Sans, small caps, tracked out)</li>
+        <li>Consistent in typography (Nunito, small caps, tracked out)</li>
         <li>Distinct enough for bartenders and liquor store staff to quickly sort and identify</li>
       </ul>
     </div>
@@ -2417,16 +2358,16 @@ li strong {
       <h3>What Flexes</h3>
       <ul>
         <li><strong>SKU color.</strong> Each beer gets its own color from the master palette.</li>
-        <li><strong>Beer name.</strong> Same zone, same scale, Instrument Serif.</li>
-        <li><strong>Style descriptor.</strong> Same position, Instrument Sans.</li>
-        <li><strong>Tier marker.</strong> Consistent signal in Instrument Sans.</li>
-        <li><strong>Numbers.</strong> ABV, IBU, stats. Instrument Serif, same position.</li>
+        <li><strong>Beer name.</strong> Same zone, same scale, Asap Condensed (Voster).</li>
+        <li><strong>Style descriptor.</strong> Same position, Nunito.</li>
+        <li><strong>Tier marker.</strong> Consistent signal in Nunito.</li>
+        <li><strong>Numbers.</strong> ABV, IBU, stats. Asap Condensed (Voster), same position.</li>
       </ul>
 
       <h3>What Does Not Flex</h3>
       <ul>
         <li>Logo mark, position, and scale</li>
-        <li>PRYES wordmark in Instrument Sans</li>
+        <li>PRYES wordmark in Nunito</li>
         <li>Layout grid and zone structure</li>
         <li>Typeface selections and hierarchy</li>
         <li>Color application method</li>
@@ -2480,8 +2421,8 @@ li strong {
       <p class="section-intro">How Pryes sounds in every context &mdash; from a can label to an Instagram caption to a sales conversation.</p>
 
       <h3>The Platform</h3>
-      <p><strong>External platform: &ldquo;Trust Your Taste.&rdquo;</strong> The long-term message that gives consumers permission to choose Pryes regardless of style preference. Appears in Instrument Serif &mdash; it's the voice of thoughtful design speaking directly to the customer.</p>
-      <p><strong>Internal mantra: &ldquo;Find your favorite.&rdquo;</strong> Guides how we talk about the lineup internally. Reinforces variety, discovery, and the idea that there's a Pryes beer for every preference. Appears in Instrument Sans &mdash; the structural craft of the brand at work.</p>
+      <p><strong>External platform: &ldquo;Trust Your Taste.&rdquo;</strong> The long-term message that gives consumers permission to choose Pryes regardless of style preference. Appears in Asap Condensed (Voster) &mdash; bold, uppercase, direct. The voice of confidence speaking to the customer.</p>
+      <p><strong>Internal mantra: &ldquo;Find your favorite.&rdquo;</strong> Guides how we talk about the lineup internally. Reinforces variety, discovery, and the idea that there's a Pryes beer for every preference. Appears in Nunito &mdash; the warm, readable backbone of the brand at work.</p>
 
       <h3>Voice</h3>
       <p>Our brand voice is warm, confident, and refreshingly down-to-earth. We take brewing seriously, but we don't take ourselves too seriously. We know our craft deeply, but we talk like humans, not beer textbooks &mdash; clear, familiar language that makes everyone feel welcome.</p>
@@ -2708,7 +2649,7 @@ li strong {
       <p class="section-intro">Living examples of the brand system in action. Use these as reference points when creating new assets &mdash; they show how the type pairing, color, and layout rules translate into real deliverables.</p>
 
       <div class="expr-intro-note">
-        These examples were developed during Phase 3 type exploration and represent the Instrument Sans + Instrument Serif pairing applied across key touchpoints. They are starting points, not final production art &mdash; but they demonstrate the system working correctly.
+        These examples demonstrate the Nunito + Asap Condensed (Voster) system applied across key touchpoints. They are starting points, not final production art &mdash; but they show the type hierarchy, color system, and layout rules working together correctly.
       </div>
 
       <!-- TAGLINE HERO -->
@@ -2723,19 +2664,19 @@ li strong {
       <div class="expr-annotation">
         <div class="expr-annotation-num">1</div>
         <div class="expr-annotation-text">
-          <strong>Brand name in Sans, tagline in Serif.</strong> The "PRYES BREWING COMPANY" eyebrow uses Instrument Sans at 11px with wide letter-spacing. "Trust your taste." is Instrument Serif at display size. This contrast is the core of the type system.
+          <strong>Brand name in Nunito, tagline in Asap Condensed (Voster).</strong> The "PRYES BREWING COMPANY" eyebrow uses Nunito at small size with wide letter-spacing. "TRUST YOUR TASTE." is Asap Condensed (Voster) bold at display size. This contrast is the core of the type system.
         </div>
       </div>
       <div class="expr-annotation">
         <div class="expr-annotation-num">2</div>
         <div class="expr-annotation-text">
-          <strong>&ldquo;Trust your taste.&rdquo; is the external platform.</strong> It always appears in Instrument Serif. &ldquo;Find your favorite.&rdquo; is the internal mantra and does not appear in consumer-facing materials. When the tagline hero needs nothing else, let it breathe &mdash; the contrast between the Sans eyebrow and the Serif tagline does the work.
+          <strong>&ldquo;Trust your taste.&rdquo; is the external platform.</strong> It always appears in Asap Condensed (Voster), bold and uppercase. &ldquo;Find your favorite.&rdquo; is the internal mantra and does not appear in consumer-facing materials. When the tagline hero needs nothing else, let it breathe &mdash; the contrast between the Nunito eyebrow and the Asap Condensed (Voster) tagline does the work.
         </div>
       </div>
 
       <!-- PACKAGING -->
       <div class="expr-label">Packaging &mdash; 16oz Cans</div>
-      <p class="expr-caption">The can design demonstrates the full type hierarchy: Sans for brand name, tier labels, and stats; Serif for beer names and ABV numerals. Each SKU gets its own color, but the structure never changes.</p>
+      <p class="expr-caption">The can design demonstrates the full type hierarchy: Nunito for brand name, tier labels, and style descriptors; Asap Condensed (Voster) for beer names and ABV numerals. Each SKU gets its own color, but the structure never changes.</p>
 
       <div class="expr-cans-wrap">
         <div class="expr-cans-row">
@@ -2881,13 +2822,13 @@ li strong {
       <div class="expr-annotation">
         <div class="expr-annotation-num">4</div>
         <div class="expr-annotation-text">
-          <strong>Serif for names and numbers, Sans for everything else.</strong> "Miraculum" and the stat numerals (6.4, 75, 16) use Instrument Serif. The style line, description copy, stat labels, and flavor descriptors all use Instrument Sans. This creates a clear visual hierarchy without adding weight.
+          <strong>Asap Condensed (Voster) for names and numbers, Nunito for everything else.</strong> "MIRACULUM" and the stat numerals use Asap Condensed (Voster) bold. The style line, description copy, stat labels, and flavor descriptors all use Nunito. This creates a clear visual hierarchy without adding a third font.
         </div>
       </div>
 
       <!-- TAPROOM MENU -->
       <div class="expr-label">Taproom Menu</div>
-      <p class="expr-caption">Beer names in Serif, styles in Sans, ABV in Serif. The gold border and restrained color palette keep it on-brand in any taproom environment.</p>
+      <p class="expr-caption">Beer names in Asap Condensed (Voster), styles in Nunito, ABV in Asap Condensed (Voster). The gold border and restrained color palette keep it on-brand in any taproom environment.</p>
 
       <div class="expr-menu-wrap">
         <div class="expr-menu-card">
@@ -3035,76 +2976,6 @@ document.getElementById('password-input').addEventListener('keypress', function(
 });
 </script>
 
-<script>
-// Font Toggle
-const fontToggleBtns = document.querySelectorAll('.font-toggle-btn');
-const root = document.documentElement;
-
-// Load saved font preferences
-const savedSans = localStorage.getItem('previewSansFont') || 'instrument';
-const savedSerif = localStorage.getItem('previewSerifFont') || 'instrument';
-setFont('sans', savedSans);
-setFont('serif', savedSerif);
-
-fontToggleBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    const type = btn.dataset.type;
-    const font = btn.dataset.font;
-    setFont(type, font);
-
-    if (type === 'sans') {
-      localStorage.setItem('previewSansFont', font);
-    } else {
-      localStorage.setItem('previewSerifFont', font);
-    }
-  });
-});
-
-function setFont(type, font) {
-  // Update CSS variable
-  if (type === 'sans') {
-    if (font === 'nunito') {
-      root.style.setProperty('--sans', "'Nunito', system-ui, sans-serif");
-      root.style.setProperty('--condensed', "'Nunito', system-ui, sans-serif");
-    } else {
-      root.style.setProperty('--sans', "'Instrument Sans', system-ui, sans-serif");
-      root.style.setProperty('--condensed', "'Instrument Sans', system-ui, sans-serif");
-    }
-  } else if (type === 'serif') {
-    if (font === 'nunito') {
-      root.style.setProperty('--serif', "'Nunito', Georgia, serif");
-    } else {
-      root.style.setProperty('--serif', "'Instrument Serif', Georgia, serif");
-    }
-  }
-
-  // Update button states
-  fontToggleBtns.forEach(btn => {
-    if (btn.dataset.type === type && btn.dataset.font === font) {
-      btn.classList.add('active');
-    } else if (btn.dataset.type === type) {
-      btn.classList.remove('active');
-    }
-  });
-}
-
-// Keyboard shortcut to toggle font controls visibility (Shift + F)
-const fontToggleContainer = document.querySelector('.font-toggle-container');
-const toggleVisibility = localStorage.getItem('fontToggleVisible') === 'true';
-
-if (toggleVisibility) {
-  fontToggleContainer.classList.add('visible');
-}
-
-document.addEventListener('keydown', (e) => {
-  if (e.shiftKey && e.key === 'F') {
-    e.preventDefault();
-    fontToggleContainer.classList.toggle('visible');
-    const isVisible = fontToggleContainer.classList.contains('visible');
-    localStorage.setItem('fontToggleVisible', isVisible);
-  }
-});
-</script>
 
 </body>
 </html>
