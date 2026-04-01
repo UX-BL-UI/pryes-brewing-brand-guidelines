@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pryes Brewing â€” Brand Guidelines</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Asap+Condensed:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Asap+Condensed:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400&family=Instrument+Sans:ital,wdth,wght@0,75..100,400..700;1,75..100,400..700&family=Instrument+Serif&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -172,6 +172,65 @@ body {
   letter-spacing: 0.05em;
 }
 
+
+/* Type style toggle */
+.type-style-container {
+  padding: 16px 28px;
+  border-top: 1px solid #333;
+}
+
+.type-style-label {
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+}
+
+.type-style-options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.type-style-btn {
+  padding: 8px 12px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #888;
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.type-style-btn:hover {
+  background: #333;
+  border-color: #555;
+  color: #aaa;
+}
+
+.type-style-btn.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--black);
+  font-weight: 600;
+}
+
+.type-style-btn .style-name {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.type-style-btn .style-desc {
+  display: block;
+  font-size: 9px;
+  opacity: 0.7;
+}
 
 /* Mobile nav toggle */
 .nav-toggle {
@@ -1900,6 +1959,23 @@ li strong {
     <a href="#applications" class="nav-link"><span class="nav-num">10</span><span class="nav-label">Applications</span></a>
     <a href="#in-practice" class="nav-link"><span class="nav-num">11</span><span class="nav-label">In Practice</span></a>
   </div>
+  <div class="type-style-container">
+    <div class="type-style-label">Type Style</div>
+    <div class="type-style-options">
+      <button class="type-style-btn active" data-style="voster">
+        <span class="style-name">Voster</span>
+        <span class="style-desc">Nunito + Asap Condensed</span>
+      </button>
+      <button class="type-style-btn" data-style="instrument">
+        <span class="style-name">Instrument</span>
+        <span class="style-desc">Instrument Sans + Serif</span>
+      </button>
+      <button class="type-style-btn" data-style="hybrid">
+        <span class="style-name">Hybrid</span>
+        <span class="style-desc">Nunito + Instrument Serif</span>
+      </button>
+    </div>
+  </div>
 <div class="nav-footer">
     <div class="nav-footer-text">CONFIDENTIAL &middot; v1.0</div>
     <div class="nav-footer-text" style="margin-top:4px">February 2026</div>
@@ -2941,6 +3017,70 @@ navLinks.forEach(link => {
     document.querySelector('.nav').classList.remove('open');
   });
 });
+</script>
+
+<script>
+// Type Style Switcher
+const TYPE_STYLES = {
+  voster: {
+    sans: "'Nunito', system-ui, sans-serif",
+    serif: "'Asap Condensed', system-ui, sans-serif",
+    condensed: "'Nunito', system-ui, sans-serif",
+    uppercase: true
+  },
+  instrument: {
+    sans: "'Instrument Sans', system-ui, sans-serif",
+    serif: "'Instrument Serif', Georgia, serif",
+    condensed: "'Instrument Sans', system-ui, sans-serif",
+    uppercase: false
+  },
+  hybrid: {
+    sans: "'Nunito', system-ui, sans-serif",
+    serif: "'Instrument Serif', Georgia, serif",
+    condensed: "'Nunito', system-ui, sans-serif",
+    uppercase: false
+  }
+};
+
+const SERIF_SELECTORS = '.nav-brand-sub, .nav-num, .hero-subtitle, .section-num, .principle-num, .specimen-sample-serif, .wave-num, .site-footer .footer-tagline, .persona-avatar, .persona-quote, .expr-tagline-hero .expr-tagline, .expr-can-logo span, .expr-can-beer-name, .expr-can-abv, .expr-ss-logo-circle span, .expr-ss-beer-name, .expr-ss-stat-value, .expr-menu-item-name, .expr-menu-item-abv, .expr-social-tagline, .expr-social-beer-name, .expr-annotation-num, .password-title';
+
+function applyTypeStyle(styleName) {
+  const style = TYPE_STYLES[styleName];
+  if (!style) return;
+
+  const root = document.documentElement;
+  root.style.setProperty('--sans', style.sans);
+  root.style.setProperty('--serif', style.serif);
+  root.style.setProperty('--condensed', style.condensed);
+
+  // Toggle uppercase treatment for serif elements
+  document.querySelectorAll(SERIF_SELECTORS).forEach(el => {
+    if (style.uppercase) {
+      el.style.textTransform = 'uppercase';
+      el.style.letterSpacing = '-0.01em';
+      el.style.fontWeight = '700';
+    } else {
+      el.style.textTransform = '';
+      el.style.letterSpacing = '';
+      el.style.fontWeight = '';
+    }
+  });
+
+  // Update active button
+  document.querySelectorAll('.type-style-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.style === styleName);
+  });
+
+  sessionStorage.setItem('typeStyle', styleName);
+}
+
+document.querySelectorAll('.type-style-btn').forEach(btn => {
+  btn.addEventListener('click', () => applyTypeStyle(btn.dataset.style));
+});
+
+// Restore saved style
+const saved = sessionStorage.getItem('typeStyle');
+if (saved && TYPE_STYLES[saved]) applyTypeStyle(saved);
 </script>
 
 <script>
