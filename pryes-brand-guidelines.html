@@ -412,7 +412,7 @@ p + p { margin-top: 1em; }
 }
 .lockup .swatch.on-foam { background: var(--beer-foam-2); }
 .lockup .swatch.on-green { background: var(--miraculum); }
-.lockup .swatch img { max-height: 100%; width: auto; max-width: 82%; }
+.lockup .swatch img { width: 100%; height: 100%; object-fit: contain; }
 .lockup .meta { padding: 16px 18px 18px; background: var(--beer-foam); }
 .lockup .meta .name { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; font-size: 1rem; }
 .lockup .meta .use { font-size: 0.83rem; color: var(--ink-soft); margin-top: 5px; line-height: 1.45; min-height: 2.3em; }
@@ -538,7 +538,7 @@ p + p { margin-top: 1em; }
 
 .shape-strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 14px; }
 .shape-cell { aspect-ratio: 1; border-radius: 5px; background: rgba(255,241,228,0.06); border: 1px solid rgba(255,241,228,0.16); display: flex; align-items: center; justify-content: center; padding: 16px; }
-.shape-cell img { max-height: 100%; width: auto; }
+.shape-cell img { width: 100%; height: 100%; object-fit: contain; }
 
 /* ============================================================
    DOWNLOADS
