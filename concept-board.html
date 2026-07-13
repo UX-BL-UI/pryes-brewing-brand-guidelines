@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pryes Concept Board — Prototype</title>
+<meta name="description" content="Internal sandbox for generating on-brand Pryes poster concepts. Experimental.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,300;1,8..60,400;1,8..60,500&family=Barlow+Condensed:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@500;600&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   PRYES CONCEPT BOARD — prototype tool
+   Standalone lab. Shares the 2026 brand tokens with the guide,
+   but framed as a workspace, not a finished chapter.
+   ============================================================ */
+:root {
+  --burgundy:        #3e0f23;
+  --burgundy-deep:   #320c1c;
+  --burgundy-black:  #101019;
+  --beer-foam:       #fff1e4;
+  --beer-foam-2:     #fbe7d6;
+  --beige:           #ebcfb8;
+  --miraculum:       #213b1e;
+  --miraculum-black: #121a12;
+  --orange:          #e3884d;
+  --orange-shade:    #be442a;
+
+  --ink:        #3e0f23;
+  --ink-soft:   #6b4351;
+  --line:       rgba(62,15,35,0.14);
+  --cream-soft: rgba(255,241,228,0.62);
+
+  --serif:     'Source Serif 4', 'Georgia', serif;
+  --sans:      'Poppins', system-ui, -apple-system, sans-serif;
+  --condensed: 'Barlow Condensed', 'Barlow Semi Condensed', system-ui, sans-serif;
+
+  --topbar-h: 58px;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--sans); font-weight: 400; color: var(--ink);
+  background: var(--beer-foam); line-height: 1.65;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  /* faint grid to read as a working canvas, not a finished page */
+  background-image:
+    linear-gradient(rgba(62,15,35,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(62,15,35,0.035) 1px, transparent 1px);
+  background-size: 26px 26px;
+  background-position: 0 var(--topbar-h);
+}
+::selection { background: var(--burgundy); color: var(--beer-foam); }
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+
+/* ---------- tool shell ---------- */
+.tool-bar {
+  position: sticky; top: 0; z-index: 50; height: var(--topbar-h);
+  background: var(--burgundy); color: var(--beer-foam);
+  display: flex; align-items: center; gap: 14px;
+  padding: 0 clamp(18px, 4vw, 40px);
+  border-bottom: 1px solid rgba(255,241,228,0.12);
+}
+.tool-bar .tb-mark { height: 26px; width: auto; }
+.tool-bar .tb-title { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.14em; font-weight: 600; font-size: 1rem; }
+.tool-bar .tb-badge {
+  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.14em; font-weight: 600;
+  font-size: 0.64rem; padding: 3px 9px; border: 1px solid var(--beige); color: var(--beige); border-radius: 999px;
+}
+.tool-bar .tb-spacer { flex: 1; }
+.tool-bar .tb-back {
+  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.8rem;
+  color: var(--cream-soft); text-decoration: none; display: inline-flex; gap: 8px; align-items: center;
+}
+.tool-bar .tb-back:hover { color: var(--beer-foam); }
+.tool-bar .tb-back svg { width: 15px; height: 15px; }
+
+.tool-wrap { max-width: 1120px; margin: 0 auto; padding: clamp(28px, 4vw, 48px) clamp(18px, 4vw, 40px) 30px; }
+.tool-lede { max-width: 72ch; margin-bottom: 32px; }
+.tool-lede .kick { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.22em; font-weight: 600; font-size: 0.72rem; color: var(--ink-soft); margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+.tool-lede .kick .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--orange-shade); }
+.tool-lede h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(2rem, 4.4vw, 3.1rem); line-height: 1.02; letter-spacing: -0.015em; }
+.tool-lede p { color: var(--ink-soft); font-size: 1.02rem; margin-top: 16px; }
+.tool-foot { max-width: 1120px; margin: 0 auto; padding: 26px clamp(18px, 4vw, 40px) 80px; }
+.tool-foot .tf-in { border-top: 1px solid var(--line); padding-top: 20px; color: var(--ink-soft); font-size: 0.82rem; line-height: 1.7; }
+.tool-foot b { color: var(--ink); font-weight: 600; }
+
+.cb-note { font-size: 0.9rem; color: var(--ink-soft); max-width: 78ch; margin-top: 14px; line-height: 1.65; }
+.cb-note b { color: var(--ink); font-weight: 600; }
+
+/* ============================================================
+   CONCEPT BOARD  (generative poster tool)
+   ============================================================ */
+.cb-occasions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
+.cb-occasion {
+  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;
+  font-size: 0.9rem; padding: 9px 18px; border: 1.5px solid var(--line); border-radius: 999px;
+  background: transparent; color: var(--ink-soft); cursor: pointer;
+  transition: background .16s, color .16s, border-color .16s;
+}
+.cb-occasion[aria-pressed="true"] { background: var(--burgundy); color: var(--beer-foam); border-color: var(--burgundy); }
+.cb-occasion[disabled] { opacity: 0.4; cursor: not-allowed; }
+.cb-occasion[disabled]::after { content: " · soon"; font-weight: 400; letter-spacing: 0; text-transform: none; opacity: 0.8; }
+
+.cb-panel { border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,0.5); padding: 26px 26px 28px; }
+.cb-panel-head {
+  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.14em; font-weight: 600;
+  font-size: 0.92rem; color: var(--ink); padding-bottom: 12px; margin-bottom: 20px;
+  border-bottom: 1px solid var(--line); display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+}
+.cb-panel-head .cb-sub { font-family: var(--sans); text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 0.8rem; color: var(--ink-soft); }
+
+.cb-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px 20px; }
+.cb-field { display: flex; flex-direction: column; gap: 6px; }
+.cb-field.cb-wide { grid-column: 1 / -1; }
+.cb-field label { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; font-size: 0.74rem; color: var(--ink-soft); }
+.cb-field input {
+  font-family: var(--sans); font-size: 0.95rem; padding: 10px 13px; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 3px; background: var(--beer-foam);
+}
+.cb-field input:focus { outline: none; border-color: var(--burgundy); box-shadow: 0 0 0 2px rgba(62,15,35,0.12); }
+
+.cb-toolbar {
+  position: sticky; top: var(--topbar-h); z-index: 20;
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+  padding: 16px 0; margin: 30px 0 4px; background: var(--beer-foam); border-bottom: 1px solid var(--line);
+}
+.cb-toolbar .cb-count { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.82rem; color: var(--ink-soft); }
+.cb-toolbar .cb-spacer { flex: 1; }
+.cb-btn {
+  display: inline-flex; align-items: center; gap: 9px; cursor: pointer;
+  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.88rem;
+  padding: 11px 20px; border-radius: 2px; border: 1.5px solid var(--burgundy); color: var(--burgundy); background: transparent;
+  transition: background .18s, color .18s, transform .12s;
+}
+.cb-btn:hover { background: var(--burgundy); color: var(--beer-foam); }
+.cb-btn--solid { background: var(--burgundy); color: var(--beer-foam); }
+.cb-btn--solid:hover { background: var(--burgundy-deep); }
+.cb-btn:active { transform: translateY(1px); }
+.cb-btn svg { width: 15px; height: 15px; }
+.cb-btn[disabled] { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+.cb-board { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin-top: 26px; }
+.cb-card {
+  border: 1px solid var(--line); border-radius: 7px; overflow: hidden; background: #fff;
+  display: flex; flex-direction: column; transition: box-shadow .18s, border-color .18s;
+}
+.cb-card.is-held { border-color: var(--burgundy); box-shadow: 0 0 0 2px var(--burgundy); }
+.cb-poster { position: relative; width: 100%; aspect-ratio: 3 / 4; background: var(--beer-foam-2); overflow: hidden; }
+.cb-poster svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.cb-poster.is-rolling svg { animation: cbRoll .42s ease; }
+@keyframes cbRoll { 0% { opacity: 0.15; transform: translateY(-8px); } 100% { opacity: 1; transform: none; } }
+.cb-held-badge {
+  position: absolute; top: 12px; left: 12px; z-index: 3;
+  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.14em; font-weight: 600; font-size: 0.7rem;
+  background: var(--burgundy); color: var(--beer-foam); padding: 5px 11px; border-radius: 999px;
+  display: none; align-items: center; gap: 6px;
+}
+.cb-card.is-held .cb-held-badge { display: inline-flex; }
+
+.cb-card-foot { padding: 12px 14px 14px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
+.cb-card-top { display: flex; align-items: center; gap: 10px; }
+.cb-card-idx { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.82rem; color: var(--ink-soft); }
+.cb-card-actions { margin-left: auto; display: flex; gap: 8px; }
+.cb-mini {
+  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; font-size: 0.74rem;
+  padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px; transition: background .16s, color .16s, border-color .16s;
+}
+.cb-mini:hover { border-color: var(--burgundy); }
+.cb-mini[aria-pressed="true"] { background: var(--burgundy); color: var(--beer-foam); border-color: var(--burgundy); }
+.cb-mini svg { width: 12px; height: 12px; }
+.cb-mini--keep { border-color: var(--burgundy); color: var(--burgundy); }
+.cb-mini--keep:hover { background: var(--burgundy); color: var(--beer-foam); }
+
+.cb-reels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.cb-reel {
+  border: 1px solid var(--line); border-radius: 5px; padding: 8px 9px 9px; background: var(--beer-foam);
+  display: flex; flex-direction: column; gap: 3px; text-align: left; cursor: pointer;
+  transition: border-color .16s, background .16s;
+}
+.cb-reel:hover { border-color: var(--burgundy); }
+.cb-reel.is-locked { background: rgba(62,15,35,0.06); border-color: rgba(62,15,35,0.3); border-style: dashed; }
+.cb-reel .cb-reel-k { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.64rem; color: var(--ink-soft); display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+.cb-reel .cb-reel-v { font-family: var(--sans); font-size: 0.8rem; font-weight: 500; color: var(--ink); line-height: 1.15; }
+.cb-reel .cb-lock { display: inline-flex; width: 13px; height: 13px; color: var(--ink-soft); }
+.cb-reel.is-locked .cb-lock { color: var(--burgundy); }
+.cb-reel .cb-lock svg { width: 100%; height: 100%; }
+
+/* Spotlight — narrowed-to-one */
+.cb-spotlight { margin-top: 34px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--burgundy); color: var(--beer-foam); display: none; }
+.cb-spotlight.is-open { display: grid; grid-template-columns: minmax(0, 420px) 1fr; }
+.cb-spot-poster { background: var(--beer-foam-2); padding: 30px; display: flex; align-items: center; justify-content: center; }
+.cb-spot-poster .cb-poster { width: 100%; max-width: 360px; box-shadow: 0 20px 50px rgba(16,16,25,0.4); border-radius: 3px; }
+.cb-spot-side { padding: 34px 36px 38px; display: flex; flex-direction: column; }
+.cb-spot-side .cb-eye { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.24em; font-weight: 600; font-size: 0.72rem; color: var(--beige); }
+.cb-spot-side h3 { font-family: var(--serif); font-weight: 400; font-size: 2rem; line-height: 1.05; margin: 12px 0 6px; }
+.cb-spot-side .cb-recipe { font-size: 0.9rem; color: rgba(255,241,228,0.78); line-height: 1.7; margin-top: 14px; }
+.cb-spot-side .cb-recipe b { color: var(--beige); font-weight: 600; }
+.cb-spot-side .cb-spot-cta { margin-top: auto; padding-top: 24px; display: flex; flex-wrap: wrap; gap: 12px; }
+.cb-spot-side .cb-btn { border-color: var(--beer-foam); color: var(--beer-foam); }
+.cb-spot-side .cb-btn:hover { background: var(--beer-foam); color: var(--burgundy); }
+.cb-spot-side .cb-btn--solid { background: var(--beer-foam); color: var(--burgundy); }
+.cb-spot-side .cb-btn--solid:hover { background: var(--beige); }
+.cb-spot-note { font-size: 0.78rem; color: rgba(255,241,228,0.6); margin-top: 16px; line-height: 1.6; }
+
+.cb-loading { padding: 40px 0; text-align: center; color: var(--ink-soft); font-size: 0.9rem; }
+
+/* ---------- toast ---------- */
+.toast {
+  position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--burgundy); color: var(--beer-foam);
+  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;
+  font-size: 0.85rem; padding: 12px 22px; border-radius: 999px; z-index: 200;
+  opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ---------- password ---------- */
+#password-overlay { position: fixed; inset: 0; z-index: 1000; background: var(--burgundy); display: flex; align-items: center; justify-content: center; padding: 24px; }
+#password-overlay.hidden { display: none; }
+.password-box { width: 100%; max-width: 380px; text-align: center; }
+.password-box img { width: 150px; margin: 0 auto 30px; }
+.password-eyebrow { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.28em; font-weight: 600; font-size: 0.74rem; color: var(--beige); margin-bottom: 10px; }
+.password-title { font-family: var(--serif); font-size: 2rem; color: var(--beer-foam); margin-bottom: 26px; }
+.password-input { width: 100%; padding: 14px 18px; border-radius: 3px; border: 1.5px solid rgba(255,241,228,0.35); background: rgba(255,241,228,0.06); color: var(--beer-foam); font-family: var(--sans); font-size: 1rem; text-align: center; letter-spacing: 0.05em; }
+.password-input::placeholder { color: rgba(255,241,228,0.45); }
+.password-input:focus { outline: none; border-color: var(--beige); }
+.password-button { width: 100%; margin-top: 14px; padding: 14px; border: none; border-radius: 3px; background: var(--beer-foam); color: var(--burgundy); cursor: pointer; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; font-size: 0.95rem; transition: background .2s; }
+.password-button:hover { background: var(--beige); }
+.password-error { color: var(--orange); font-size: 0.85rem; margin-top: 16px; min-height: 1.2em; opacity: 0; transition: opacity .2s; }
+.password-error.show { opacity: 1; }
+
+@media (max-width: 940px) {
+  .cb-board { grid-template-columns: 1fr 1fr; }
+  .cb-spotlight.is-open { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .cb-board { grid-template-columns: 1fr; }
+  .tool-bar .tb-title { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== PASSWORD ===================== -->
+<div id="password-overlay">
+  <div class="password-box">
+    <img src="assets/logos/svg/BEERFOAM/PRYES-CREST+WORDMARK+TAGLINE-BEERFOAM.svg" alt="Pryes Brewing">
+    <div class="password-eyebrow">Internal Prototype</div>
+    <div class="password-title">Concept Board</div>
+    <input type="password" id="password-input" class="password-input" placeholder="Enter password" autocomplete="off">
+    <button class="password-button" onclick="checkPassword()">Enter</button>
+    <div id="password-error" class="password-error">Incorrect password. Please try again.</div>
+  </div>
+</div>
+
+<!-- ===================== TOOL BAR ===================== -->
+<div class="tool-bar">
+  <img class="tb-mark" src="assets/logos/svg/BEERFOAM/PRYES-P-WATERMARK-BEERFOAM.svg" alt="Pryes">
+  <span class="tb-title">Concept Board</span>
+  <span class="tb-badge">Prototype</span>
+  <span class="tb-spacer"></span>
+  <a class="tb-back" href="pryes-brand-guidelines.html#top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+    Brand guide
+  </a>
+</div>
+
+<main class="tool-wrap">
+  <div class="tool-lede">
+    <div class="kick"><span class="dot"></span> Sandbox · not final · changing</div>
+    <h1>Deal, hold, narrow to one.</h1>
+    <p>A place to play with generative poster concepts, built live from the 2026 kit. Fill the content once, let the board deal, hold what you like, re-roll the rest, and converge on a winner to export. This is an experiment we are feeling out, not a finished feature.</p>
+  </div>
+
+  <div class="cb-occasions" role="group" aria-label="Occasion">
+    <button class="cb-occasion" type="button" data-occasion="release" aria-pressed="true">Beer Release</button>
+    <button class="cb-occasion" type="button" disabled>Taproom Event</button>
+    <button class="cb-occasion" type="button" disabled>Account / Promo</button>
+    <button class="cb-occasion" type="button" disabled>Announcement</button>
+  </div>
+
+  <div class="cb-panel">
+    <div class="cb-panel-head">Content <span class="cb-sub">Fill once — every concept updates live. Nothing is locked.</span></div>
+    <div class="cb-form" id="cb-form">
+      <div class="cb-field"><label for="cb-beer">Beer name</label><input id="cb-beer" data-k="beer" type="text" value="Miraculum" autocomplete="off"></div>
+      <div class="cb-field"><label for="cb-style">Style</label><input id="cb-style" data-k="style" type="text" value="Double IPA" autocomplete="off"></div>
+      <div class="cb-field"><label for="cb-abv">ABV</label><input id="cb-abv" data-k="abv" type="text" value="8.5% ABV" autocomplete="off"></div>
+      <div class="cb-field"><label for="cb-ibu">IBU / stat</label><input id="cb-ibu" data-k="ibu" type="text" value="60 IBU" autocomplete="off"></div>
+      <div class="cb-field"><label for="cb-date">Release</label><input id="cb-date" data-k="date" type="text" value="On tap now" autocomplete="off"></div>
+      <div class="cb-field cb-wide"><label for="cb-tagline">Tagline</label><input id="cb-tagline" data-k="tagline" type="text" value="Bold enough for IPA fans, smooth enough for everyone else." autocomplete="off"></div>
+      <div class="cb-field"><label for="cb-avail">Availability</label><input id="cb-avail" data-k="avail" type="text" value="Draft · 4-packs to-go" autocomplete="off"></div>
+      <div class="cb-field"><label for="cb-cta">Taproom / CTA</label><input id="cb-cta" data-k="cta" type="text" value="Pryes Taproom · North Loop, Mpls" autocomplete="off"></div>
+    </div>
+  </div>
+
+  <div class="cb-toolbar">
+    <span class="cb-count" id="cb-count">4 concepts</span>
+    <span class="cb-spacer"></span>
+    <button class="cb-btn" type="button" id="cb-release-holds">Release all holds</button>
+    <button class="cb-btn cb-btn--solid" type="button" id="cb-deal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.3L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.3L3 16"/><path d="M3 21v-5h5"/></svg>
+      Reroll unheld
+    </button>
+  </div>
+  <p class="cb-note">Tap a <b>reel</b> (Image · Layout · Color) to re-roll just that dimension. Tap its lock to hold that reel while the rest change. Hold a whole card to protect it. Reroll shuffles in priority order: image, then layout, then color.</p>
+
+  <div class="cb-board" id="cb-board">
+    <div class="cb-loading">Loading the brand kit…</div>
+  </div>
+
+  <div class="cb-spotlight" id="cb-spotlight" aria-live="polite">
+    <div class="cb-spot-poster"><div class="cb-poster" id="cb-spot-poster"></div></div>
+    <div class="cb-spot-side">
+      <div class="cb-eye">Selected concept</div>
+      <h3 id="cb-spot-title">Concept</h3>
+      <div class="cb-recipe" id="cb-spot-recipe"></div>
+      <div class="cb-spot-cta">
+        <button class="cb-btn cb-btn--solid" type="button" id="cb-export">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
+          Export SVG
+        </button>
+        <button class="cb-btn" type="button" id="cb-spot-close">Back to board</button>
+      </div>
+      <p class="cb-spot-note">The SVG exports at 18×24 in with live, editable text and intact vectors. Font-family names the print faces (Superclarendon · Gotham · Alternate Gothic) so Adobe picks them up; the web preview uses the sanctioned substitutes.</p>
+    </div>
+  </div>
+</main>
+
+<footer class="tool-foot">
+  <div class="tf-in">
+    <b>Prototype notes.</b> Hero images are placeholders — the "Photo well" treatment is where a real tagged image library drops in. Fonts render as web substitutes here; embedding the licensed print faces makes the preview print-exact. Built entirely from the 2026 brand kit. Feedback welcome; nothing here is locked in.
+  </div>
+</footer>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+/* ---------- Password (shares the guide's session key) ---------- */
+const CORRECT_PASSWORD = 'pryes2026';
+function checkPassword() {
+  const input = document.getElementById('password-input');
+  const error = document.getElementById('password-error');
+  const overlay = document.getElementById('password-overlay');
+  if (input.value.trim().toLowerCase() === CORRECT_PASSWORD) {
+    overlay.classList.add('hidden');
+    document.body.style.overflow = '';
+    try { sessionStorage.setItem('pryes_auth', '1'); } catch (e) {}
+  } else {
+    error.classList.add('show');
+    input.value = '';
+    input.focus();
+  }
+}
+(function () {
+  let authed = false;
+  try { authed = sessionStorage.getItem('pryes_auth') === '1'; } catch (e) {}
+  if (authed) {
+    document.getElementById('password-overlay').classList.add('hidden');
+  } else {
+    document.body.style.overflow = 'hidden';
+    const pi = document.getElementById('password-input');
+    if (pi) { pi.focus(); pi.addEventListener('keypress', e => { if (e.key === 'Enter') checkPassword(); }); }
+  }
+})();
+
+/* ---------- Toast ---------- */
+const toast = document.getElementById('toast');
+let toastTimer;
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 1400);
+}
+
+/* ============================================================
+   CONCEPT BOARD — generative poster tool
+   Renders 18x24 posters as live SVG built from the real brand
+   kit. Reels: image -> layout -> color. Export = serialize SVG.
+   ============================================================ */
+(function () {
+  const board = document.getElementById('cb-board');
+  if (!board) return;
+
+  const W = 1800, H = 2400, M = 150;
+  /* Print faces named first so Adobe picks them up; web preview uses the sanctioned substitutes. */
+  const SERIF = "'Superclarendon','Source Serif 4',Georgia,serif";
+  const COND  = "'Alternate Gothic No.2 D','Barlow Condensed','Barlow Semi Condensed',sans-serif";
+  const SANS  = "'Gotham','Poppins',system-ui,sans-serif";
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const FAMILIES = [
+    { id:'burgundy',  name:'Regal Burgundy',   bg:'#3E0F23', ink:'#FFF1E4', accent:'#EBCFB8', weight:3 },
+    { id:'foam',      name:'Beer Foam',        bg:'#FFF1E4', ink:'#3E0F23', accent:'#3E0F23', weight:1 },
+    { id:'miraculum', name:'Miraculum Green',  bg:'#213B1E', ink:'#FFF1E4', accent:'#EBCFB8', weight:1 },
+    { id:'beige',     name:'Beige',            bg:'#EBCFB8', ink:'#3E0F23', accent:'#213B1E', weight:1 },
+    { id:'offblack',  name:'Off-Black',        bg:'#101019', ink:'#FFF1E4', accent:'#EBCFB8', weight:1 }
+  ];
+  const IMAGES  = [ {id:'laurel',label:'Laurel field'}, {id:'emblem',label:'Crest emblem'}, {id:'shapes',label:'Shape block'}, {id:'well',label:'Photo well'} ];
+  const LAYOUTS = [ {id:'stacked',label:'Stacked'}, {id:'anchored',label:'Anchored'}, {id:'framed',label:'Framed'} ];
+
+  const ASSET_URLS = {
+    wordmark: 'assets/logos/svg/BEERFOAM/PRYES-WORDMARK-BEERFOAM.svg',
+    lockup:   'assets/logos/svg/BEERFOAM/PRYES-CREST+WORDMARK+TAGLINE-BEERFOAM.svg',
+    crest:    'assets/logos/svg/BEERFOAM/PRYES-CREST-NOBORDER-BEERFOAM.svg',
+    pmark:    'assets/logos/svg/BEERFOAM/PRYES-P-WATERMARK-BEERFOAM.svg',
+    laurel:   'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg'
+  };
+  const SHAPE_URLS = [3,5,8,11,14].map(n => 'assets/shapes/svg/BEERFOAM/BEER FOAM SHAPE ' + String(n).padStart(2,'0') + '.svg');
+  const A = { shapes: [] };
+  let UID = 0;
+
+  /* ---------- asset parsing + placement ---------- */
+  function parse(txt) {
+    const vb = (txt.match(/viewBox="([^"]+)"/) || [])[1] || '0 0 100 100';
+    let body = txt.replace(/<\?xml[^>]*\?>/g, '')
+                  .replace(/<!--[\s\S]*?-->/g, '')
+                  .replace(/<defs>[\s\S]*?<\/defs>/g, '')
+                  .replace(/<style[\s\S]*?<\/style>/g, '');
+    body = body.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+    return { vb: vb, body: body };
+  }
+  function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function up(s) { return esc((s || '').toUpperCase()); }
+
+  function placeAsset(o) {
+    const a = A[o.key];
+    if (!a) return fallbackAsset(o);
+    const p = a.vb.split(/\s+/).map(Number);
+    const vw = p[2] || 100, vh = p[3] || 100;
+    const w = o.w, h = o.h || w * (vh / vw);
+    const x = (o.cx != null) ? o.cx - w / 2 : o.x;
+    const op = o.opacity != null ? ' opacity="' + o.opacity + '"' : '';
+    const par = o.slice ? 'xMidYMid slice' : 'xMidYMid meet';
+    return '<svg x="' + x + '" y="' + o.y + '" width="' + w + '" height="' + h + '" viewBox="' + a.vb + '" preserveAspectRatio="' + par + '"><g fill="' + o.color + '"' + op + '>' + a.body + '</g></svg>';
+  }
+  function fallbackAsset(o) {
+    const w = o.w, x = (o.cx != null) ? o.cx : o.x + w / 2;
+    const op = o.opacity != null ? ' opacity="' + o.opacity + '"' : '';
+    if (o.key === 'pmark' || o.key === 'crest')
+      return '<text x="' + x + '" y="' + (o.y + w * 0.72) + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + (w * 0.9) + '" fill="' + o.color + '"' + op + '>P</text>';
+    return '<text x="' + x + '" y="' + (o.y + (o.h || w * 0.2) * 0.82) + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + (w * 0.2) + '" letter-spacing="' + (w * 0.03) + '" fill="' + o.color + '"' + op + '>PRYES</text>';
+  }
+
+  /* ---------- text helpers ---------- */
+  function nameSize(s) { const n = (s || '').length; return n <= 6 ? 300 : n <= 9 ? 250 : n <= 12 ? 200 : n <= 16 ? 155 : n <= 22 ? 120 : 96; }
+  function tagline(t, x, y, size, fill, anchor) {
+    if (!t) return '';
+    const words = t.split(/\s+/), max = anchor === 'middle' ? 32 : 36, lines = []; let cur = '';
+    words.forEach(w => { if ((cur + ' ' + w).trim().length > max) { lines.push(cur.trim()); cur = w; } else cur = (cur + ' ' + w).trim(); });
+    if (cur) lines.push(cur);
+    const lh = size * 1.2;
+    const ts = lines.slice(0, 3).map((ln, i) => '<tspan x="' + x + '" dy="' + (i === 0 ? 0 : lh) + '">' + esc(ln) + '</tspan>').join('');
+    return '<text x="' + x + '" y="' + y + '" text-anchor="' + anchor + '" font-family="' + SERIF + '" font-size="' + size + '" font-style="italic" fill="' + fill + '" fill-opacity="0.92">' + ts + '</text>';
+  }
+  function statTrio(c, fam, y) {
+    const vals = [c.abv, c.ibu, c.date];
+    const xs = [W * 0.28, W * 0.5, W * 0.72];
+    let s = '';
+    xs.forEach((x, i) => { if (vals[i]) s += '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-family="' + COND + '" font-size="64" letter-spacing="3" fill="' + fam.ink + '">' + up(vals[i]) + '</text>'; });
+    s += '<line x1="' + (W * 0.39) + '" y1="' + (y - 50) + '" x2="' + (W * 0.39) + '" y2="' + (y + 8) + '" stroke="' + fam.ink + '" stroke-opacity="0.32"/>';
+    s += '<line x1="' + (W * 0.61) + '" y1="' + (y - 50) + '" x2="' + (W * 0.61) + '" y2="' + (y + 8) + '" stroke="' + fam.ink + '" stroke-opacity="0.32"/>';
+    return s;
+  }
+
+  /* ---------- hero treatments ---------- */
+  function patternCover(r, fam, op) {
+    if (!A.laurel) return '';
+    return '<svg x="' + r.x + '" y="' + r.y + '" width="' + r.w + '" height="' + r.h + '" viewBox="' + A.laurel.vb + '" preserveAspectRatio="xMidYMid slice"><g fill="' + fam.accent + '" opacity="' + op + '">' + A.laurel.body + '</g></svg>';
+  }
+  function shapeDecor(fam, op, seed, r) {
+    r = r || { x: 0, y: 0, w: W, h: H };
+    if (!A.shapes.length || !A.shapes[0]) return patternCover(r, fam, op);
+    const sh = A.shapes[seed % A.shapes.length];
+    const pp = sh.vb.split(/\s+/).map(Number), vw = pp[2], vh = pp[3];
+    const w = r.w * 1.25, h = w * (vh / vw);
+    return '<svg x="' + (r.x - r.w * 0.12) + '" y="' + (r.y + r.h - h * 0.86) + '" width="' + w + '" height="' + h + '" viewBox="' + sh.vb + '" preserveAspectRatio="xMidYMid meet"><g fill="' + fam.accent + '" opacity="' + op + '">' + sh.body + '</g></svg>';
+  }
+  function photoWell(r, fam) {
+    const id = 'cbg' + (UID++);
+    return '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + fam.ink + '" stop-opacity="0.92"/><stop offset="1" stop-color="' + fam.accent + '" stop-opacity="0.82"/></linearGradient></defs>' +
+      '<rect x="' + r.x + '" y="' + r.y + '" width="' + r.w + '" height="' + r.h + '" fill="url(#' + id + ')"/>' +
+      '<text x="' + (r.x + r.w / 2) + '" y="' + (r.y + r.h / 2) + '" text-anchor="middle" font-family="' + COND + '" font-size="62" letter-spacing="12" fill="' + fam.bg + '" fill-opacity="0.92">HERO IMAGE</text>' +
+      '<text x="' + (r.x + r.w / 2) + '" y="' + (r.y + r.h / 2 + 66) + '" text-anchor="middle" font-family="' + SANS + '" font-size="30" letter-spacing="5" fill="' + fam.bg + '" fill-opacity="0.72">CAN RENDER OR LIFESTYLE PHOTO</text>';
+  }
+  function heroBehind(img, fam, seed, mode) {
+    const op = 0.10;
+    if (img === 'laurel') return patternCover({ x: 0, y: 0, w: W, h: H }, fam, op);
+    if (img === 'emblem') return placeAsset({ key: 'crest', cx: W / 2, y: H * 0.30, w: 1450, color: fam.accent, opacity: op + 0.02 });
+    if (img === 'shapes') return shapeDecor(fam, op + 0.05, seed);
+    return placeAsset({ key: 'pmark', cx: W / 2, y: H * 0.30, w: 1150, color: fam.accent, opacity: op });
+  }
+  function heroBlock(img, fam, seed, r) {
+    const id = 'cbc' + (UID++);
+    let dec;
+    if (img === 'laurel') dec = patternCover(r, fam, 0.18);
+    else if (img === 'emblem') dec = placeAsset({ key: 'crest', cx: r.x + r.w / 2, y: r.y + r.h * 0.12, w: r.h * 0.92, color: fam.accent, opacity: 0.95 });
+    else if (img === 'shapes') dec = shapeDecor(fam, 0.9, seed, r);
+    else dec = photoWell(r, fam);
+    return '<clipPath id="' + id + '"><rect x="' + r.x + '" y="' + r.y + '" width="' + r.w + '" height="' + r.h + '"/></clipPath>' +
+      '<rect x="' + r.x + '" y="' + r.y + '" width="' + r.w + '" height="' + r.h + '" fill="' + fam.bg + '"/>' +
+      '<g clip-path="url(#' + id + ')">' + dec + '</g>';
+  }
+
+  /* ---------- layouts ---------- */
+  const LAY = {
+    stacked: function (c, fam, img, seed) {
+      let s = heroBehind(img, fam, seed, 'stacked');
+      s += placeAsset({ key: 'lockup', cx: W / 2, y: 180, w: 500, color: fam.ink });
+      const fs = nameSize(c.beer);
+      s += '<text x="' + (W / 2) + '" y="1150" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
+      if (c.style) s += '<text x="' + (W / 2) + '" y="1285" text-anchor="middle" font-family="' + COND + '" font-size="86" letter-spacing="9" fill="' + fam.accent + '">' + up(c.style) + '</text>';
+      s += tagline(c.tagline, W / 2, 1480, 62, fam.ink, 'middle');
+      s += '<line x1="' + M + '" y1="2000" x2="' + (W - M) + '" y2="2000" stroke="' + fam.ink + '" stroke-opacity="0.24" stroke-width="2"/>';
+      s += statTrio(c, fam, 2120);
+      if (c.cta) s += '<text x="' + (W / 2) + '" y="2295" text-anchor="middle" font-family="' + SANS + '" font-size="38" letter-spacing="5" fill="' + fam.ink + '" fill-opacity="0.8">' + up(c.cta) + '</text>';
+      return s;
+    },
+    anchored: function (c, fam, img, seed) {
+      const HH = 250, split = 1500;
+      /* solid header band keeps brand marks legible over any hero */
+      let s = heroBlock(img, fam, seed, { x: 0, y: HH, w: W, h: split - HH });
+      s += placeAsset({ key: 'wordmark', x: M, y: 96, w: 470, color: fam.ink });
+      if (c.date) s += '<text x="' + (W - M) + '" y="' + 172 + '" text-anchor="end" font-family="' + COND + '" font-size="52" letter-spacing="7" fill="' + fam.ink + '">' + up(c.date) + '</text>';
+      s += '<line x1="' + M + '" y1="' + (HH - 42) + '" x2="' + (W - M) + '" y2="' + (HH - 42) + '" stroke="' + fam.ink + '" stroke-opacity="0.22" stroke-width="2"/>';
+      s += '<line x1="0" y1="' + split + '" x2="' + W + '" y2="' + split + '" stroke="' + fam.ink + '" stroke-opacity="0.2" stroke-width="2"/>';
+      if (c.style) s += '<text x="' + M + '" y="' + (split + 120) + '" font-family="' + COND + '" font-size="78" letter-spacing="9" fill="' + fam.accent + '">' + up(c.style) + '</text>';
+      const fs = nameSize(c.beer);
+      s += '<text x="' + M + '" y="' + (split + 120 + fs * 0.86) + '" font-family="' + SERIF + '" font-size="' + fs + '" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
+      s += tagline(c.tagline, M, split + 120 + fs * 0.86 + 110, 54, fam.ink, 'start');
+      if (c.abv || c.ibu) s += '<text x="' + M + '" y="' + (H - 130) + '" font-family="' + COND + '" font-size="58" letter-spacing="3" fill="' + fam.ink + '">' + up([c.abv, c.ibu].filter(Boolean).join('   ·   ')) + '</text>';
+      if (c.avail) s += '<text x="' + (W - M) + '" y="' + (H - 130) + '" text-anchor="end" font-family="' + SANS + '" font-size="38" letter-spacing="4" fill="' + fam.ink + '" fill-opacity="0.85">' + up(c.avail) + '</text>';
+      if (c.cta) s += '<text x="' + M + '" y="' + (H - 72) + '" font-family="' + SANS + '" font-size="34" letter-spacing="5" fill="' + fam.ink + '" fill-opacity="0.68">' + up(c.cta) + '</text>';
+      return s;
+    },
+    framed: function (c, fam, img, seed) {
+      const fm = 96;
+      let s = heroBehind(img, fam, seed, 'framed');
+      s += '<rect x="' + fm + '" y="' + fm + '" width="' + (W - 2 * fm) + '" height="' + (H - 2 * fm) + '" fill="none" stroke="' + fam.ink + '" stroke-width="4"/>';
+      s += placeAsset({ key: 'wordmark', cx: W / 2, y: fm + 80, w: 430, color: fam.ink });
+      s += '<text x="' + (W / 2) + '" y="' + (fm + 300) + '" text-anchor="middle" font-family="' + COND + '" font-size="52" letter-spacing="13" fill="' + fam.accent + '">NEW RELEASE</text>';
+      const fs = nameSize(c.beer);
+      s += '<text x="' + (W / 2) + '" y="1090" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
+      if (c.style) s += '<text x="' + (W / 2) + '" y="1215" text-anchor="middle" font-family="' + COND + '" font-size="74" letter-spacing="9" fill="' + fam.ink + '">' + up(c.style) + '</text>';
+      s += tagline(c.tagline, W / 2, 1420, 58, fam.ink, 'middle');
+      s += placeAsset({ key: 'crest', cx: W / 2, y: 1640, w: 290, color: fam.ink });
+      const line = [c.abv, c.ibu, c.date].filter(Boolean).join('    ·    ');
+      if (line) s += '<text x="' + (W / 2) + '" y="' + (H - fm - 70) + '" text-anchor="middle" font-family="' + COND + '" font-size="54" letter-spacing="7" fill="' + fam.ink + '">' + up(line) + '</text>';
+      return s;
+    }
+  };
+
+  function famById(id) { return FAMILIES.find(f => f.id === id) || FAMILIES[0]; }
+  function content() { const o = {}; document.querySelectorAll('#cb-form input').forEach(i => o[i.dataset.k] = i.value.trim()); return o; }
+
+  function buildPosterSVG(card) {
+    const c = content(), fam = famById(card.fam);
+    const inner = '<rect width="' + W + '" height="' + H + '" fill="' + fam.bg + '"/>' + LAY[card.lay](c, fam, card.img, card.seed);
+    /* width/height in inches => opens as a true 18x24 artboard in Illustrator; CSS keeps the on-screen preview at 100%. */
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="18in" height="24in">' + inner + '</svg>';
+  }
+
+  /* ---------- state ---------- */
+  const weightedFams = FAMILIES.reduce((a, f) => a.concat(Array(f.weight).fill(f.id)), []);
+  function rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  function rndDiff(arr, cur) { if (arr.length < 2) return arr[0]; let v; do { v = rnd(arr); } while (v === cur); return v; }
+  const imgIds = IMAGES.map(i => i.id), layIds = LAYOUTS.map(l => l.id);
+
+  /* Curated opening hand so the first paint looks intentional. */
+  let cards = [
+    { img:'emblem', lay:'stacked',  fam:'burgundy',  held:false, seed:2, lock:{img:false,lay:false,fam:false} },
+    { img:'well',   lay:'anchored', fam:'foam',      held:false, seed:4, lock:{img:false,lay:false,fam:false} },
+    { img:'laurel', lay:'framed',   fam:'miraculum', held:false, seed:1, lock:{img:false,lay:false,fam:false} },
+    { img:'shapes', lay:'anchored', fam:'beige',     held:false, seed:3, lock:{img:false,lay:false,fam:false} }
+  ];
+  let selected = -1;
+
+  function rerollReel(card, key) {
+    if (key === 'img') { card.img = rndDiff(imgIds, card.img); card.seed = (card.seed + 1 + Math.floor(Math.random() * 5)) % 997; }
+    else if (key === 'lay') card.lay = rndDiff(layIds, card.lay);
+    else card.fam = rndDiff(weightedFams, card.fam);
+  }
+  function dealUnheld() {
+    cards.forEach(card => {
+      if (card.held) return;
+      ['img', 'lay', 'fam'].forEach(key => { if (!card.lock[key]) rerollReel(card, key); });
+    });
+  }
+
+  /* ---------- icons ---------- */
+  const ICON_LOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+  const ICON_UNLOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-1.8"/></svg>';
+  const ICON_PIN = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 3l7 7-3 1-4 4-1 6-3-3-4 4-1-1 4-4-3-3 6-1 4-4z"/></svg>';
+
+  /* ---------- render ---------- */
+  const REELS = { img: { label: 'Image', opts: IMAGES }, lay: { label: 'Layout', opts: LAYOUTS } };
+  function reelValueLabel(card, key) {
+    if (key === 'fam') return famById(card.fam).name;
+    return REELS[key].opts.find(o => o.id === card[key]).label;
+  }
+  function reelHTML(i, key, card) {
+    const locked = card.lock[key];
+    const label = key === 'fam' ? 'Color' : REELS[key].label;
+    return '<button class="cb-reel' + (locked ? ' is-locked' : '') + '" type="button" data-i="' + i + '" data-reel="' + key + '" title="Tap to re-roll ' + label + '">' +
+      '<span class="cb-reel-k">' + label + '<span class="cb-lock" data-lock="' + key + '" role="button" aria-label="' + (locked ? 'Unlock' : 'Lock') + ' ' + label + '" aria-pressed="' + locked + '">' + (locked ? ICON_LOCK : ICON_UNLOCK) + '</span></span>' +
+      '<span class="cb-reel-v">' + reelValueLabel(card, key) + '</span></button>';
+  }
+  function cardHTML(card, i) {
+    return '<div class="cb-card' + (card.held ? ' is-held' : '') + '" data-i="' + i + '">' +
+      '<div class="cb-poster" data-role="poster"><span class="cb-held-badge">' + ICON_PIN + ' Held</span>' + buildPosterSVG(card) + '</div>' +
+      '<div class="cb-card-foot">' +
+        '<div class="cb-card-top"><span class="cb-card-idx">Concept ' + (i + 1) + '</span>' +
+          '<div class="cb-card-actions">' +
+            '<button class="cb-mini" type="button" data-act="hold" data-i="' + i + '" aria-pressed="' + card.held + '">' + ICON_PIN + (card.held ? ' Held' : ' Hold') + '</button>' +
+            '<button class="cb-mini cb-mini--keep" type="button" data-act="keep" data-i="' + i + '">Keep this →</button>' +
+          '</div></div>' +
+        '<div class="cb-reels">' + reelHTML(i, 'img', card) + reelHTML(i, 'lay', card) + reelHTML(i, 'fam', card) + '</div>' +
+      '</div></div>';
+  }
+  function renderBoard(bumpSet) {
+    board.innerHTML = cards.map(cardHTML).join('');
+    document.getElementById('cb-count').textContent = cards.filter(c => c.held).length + ' held · ' + cards.length + ' concepts';
+    if (!reduce && bumpSet) bumpSet.forEach(i => { const p = board.querySelector('.cb-card[data-i="' + i + '"] .cb-poster'); if (p) { void p.offsetWidth; p.classList.add('is-rolling'); } });
+    if (selected >= 0) renderSpotlight();
+  }
+  function posterOnlyRefresh() {
+    cards.forEach((card, i) => { const p = board.querySelector('.cb-card[data-i="' + i + '"] .cb-poster'); if (p) { const b = p.querySelector('.cb-held-badge'); p.innerHTML = (b ? b.outerHTML : '') + buildPosterSVG(card); } });
+    if (selected >= 0) renderSpotlight();
+  }
+
+  /* ---------- spotlight ---------- */
+  const spot = document.getElementById('cb-spotlight');
+  function renderSpotlight() {
+    const card = cards[selected]; if (!card) return;
+    const c = content();
+    document.getElementById('cb-spot-poster').innerHTML = buildPosterSVG(card);
+    document.getElementById('cb-spot-title').textContent = (c.beer || 'Concept') + ' · Concept ' + (selected + 1);
+    document.getElementById('cb-spot-recipe').innerHTML =
+      '<b>Image</b> ' + IMAGES.find(o => o.id === card.img).label + '<br>' +
+      '<b>Layout</b> ' + LAYOUTS.find(o => o.id === card.lay).label + '<br>' +
+      '<b>Color</b> ' + famById(card.fam).name + '<br><b>Size</b> 18 × 24 in';
+  }
+  function openSpotlight(i) { selected = i; spot.classList.add('is-open'); renderSpotlight(); spot.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); }
+  function closeSpotlight() { selected = -1; spot.classList.remove('is-open'); }
+
+  function exportSVG() {
+    const card = cards[selected] || cards[0];
+    const svg = '<?xml version="1.0" encoding="UTF-8"?>\n' + buildPosterSVG(card);
+    const c = content();
+    const slug = (c.beer || 'concept').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const blob = new Blob([svg], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'pryes-' + slug + '-' + card.lay + '-' + card.fam + '.svg';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+    if (window.showToast) showToast('SVG exported');
+  }
+
+  /* ---------- events ---------- */
+  board.addEventListener('click', e => {
+    const lock = e.target.closest('.cb-lock');
+    if (lock) { e.stopPropagation(); const reel = lock.closest('.cb-reel'); const i = +reel.dataset.i; cards[i].lock[lock.dataset.lock] = !cards[i].lock[lock.dataset.lock]; renderBoard(); return; }
+    const reel = e.target.closest('.cb-reel');
+    if (reel) { const i = +reel.dataset.i; rerollReel(cards[i], reel.dataset.reel); renderBoard(new Set([i])); return; }
+    const mini = e.target.closest('.cb-mini');
+    if (mini) { const i = +mini.dataset.i; if (mini.dataset.act === 'hold') { cards[i].held = !cards[i].held; renderBoard(); } else openSpotlight(i); }
+  });
+  document.getElementById('cb-deal').addEventListener('click', () => { dealUnheld(); renderBoard(new Set(cards.map((c, i) => c.held ? -1 : i).filter(i => i >= 0))); });
+  document.getElementById('cb-release-holds').addEventListener('click', () => { cards.forEach(c => { c.held = false; c.lock = { img: false, lay: false, fam: false }; }); renderBoard(); });
+  document.getElementById('cb-export').addEventListener('click', exportSVG);
+  document.getElementById('cb-spot-close').addEventListener('click', closeSpotlight);
+
+  let t;
+  document.querySelectorAll('#cb-form input').forEach(inp => inp.addEventListener('input', () => { clearTimeout(t); t = setTimeout(posterOnlyRefresh, 130); }));
+
+  /* ---------- boot ---------- */
+  async function load(url) { try { const r = await fetch(url); if (r.ok) return parse(await r.text()); } catch (e) {} return null; }
+  (async function () {
+    await Promise.all(Object.keys(ASSET_URLS).map(async k => { A[k] = await load(ASSET_URLS[k]); }));
+    A.shapes = (await Promise.all(SHAPE_URLS.map(load))).filter(Boolean);
+    renderBoard();
+  })();
+})();
+</script>
+</body>
+</html>
