@@ -1,0 +1,25 @@
+# Pryes Brewing — Brand Guide 2026
+
+> Brand knowledge base and asset library for Pryes Brewing Company, a Minnesota
+> craft brewery. Everything an agent needs to use the brand correctly — palette,
+> typography, voice, logo rules, and verified asset paths — is in one small file.
+
+Start here. `brand.md` is the complete, token-lean reference; `brand.json` is its
+machine-readable twin with the exhaustive, filesystem-verified asset manifest.
+
+## Brand
+- [brand.md](brand.md): Complete brand reference — identity, colors (hex/rgb/cmyk), typography, voice & tone, logo usage, patterns, and key asset paths. Read this first.
+- [brand.json](brand.json): Structured data + exhaustive asset manifest (`assets.*.by_colorway`) with every real file path. Use for programmatic lookup.
+
+## Assets
+- [assets/logos/](assets/logos/): Logo suite — SVG + PNG, colorways BEERFOAM/BURGUNDY/BURGUNDY-OFFBLACK/WHITE/BLACK.
+- [assets/patterns/](assets/patterns/): Laurel and logo patterns — SVG + PNG, all colorways.
+- [assets/shapes/](assets/shapes/): Container/border shapes — SVG, 15 per colorway.
+- [assets/documents/PRYES-Brand-Guide-2026.pdf](assets/documents/PRYES-Brand-Guide-2026.pdf): Full 55-page brand guide (source of truth).
+
+## Human view
+- [pryes-brand-guidelines.html](pryes-brand-guidelines.html): The rendered guidelines site for people (password: pryes2026).
+
+## Notes
+- Web type uses sanctioned Google-Font substitutes (Source Serif 4 / Poppins / Barlow Condensed) for the licensed print faces (Superclarendon / Gotham / Alternate Gothic).
+- A prior green + Asap Condensed direction is superseded; burgundy + Source Serif is final.

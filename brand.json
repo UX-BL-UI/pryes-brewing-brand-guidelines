@@ -1,0 +1,670 @@
+{
+  "$schema": "https://axi.md (Agent eXperience Interface) — token-lean brand knowledge base",
+  "brand": "Pryes Brewing Company",
+  "guide_version": "2026",
+  "source_of_truth": "assets/documents/PRYES-Brand-Guide-2026.pdf (55 pp)",
+  "human_site": "pryes-brand-guidelines.html (password: pryes2026)",
+  "updated": "2026-07-13",
+  "identity": {
+    "tagline": "Trust Your Taste",
+    "mission": "To help every Minnesotan find their favorite beer.",
+    "vision": "To be a Top 5 Minnesota brewery.",
+    "associate_mantra": "Let's find your favorite.",
+    "brand_statement": "Pryes is a Minnesota craft brewery with a beer for everyone.",
+    "positioning": [
+      "The brewery with a beer for everyone.",
+      "For Minnesotans, by Minnesotans (the New Glarus of Minnesota).",
+      "The enjoy-it-anywhere beer that's never a gamble."
+    ],
+    "location": "1401 West River Road N, Minneapolis, MN"
+  },
+  "colors": {
+    "core": [
+      {
+        "name": "Beer Foam",
+        "hex": "#FFF1E4",
+        "rgb": [
+          255,
+          241,
+          228
+        ],
+        "cmyk": [
+          0,
+          5,
+          9,
+          0
+        ],
+        "pms": "4102 C/U",
+        "role": "primary light bg / reversed text"
+      },
+      {
+        "name": "Beige",
+        "hex": "#EBCFB8",
+        "rgb": [
+          235,
+          207,
+          184
+        ],
+        "cmyk": [
+          7,
+          18,
+          26,
+          0
+        ],
+        "pms": "9224 C / 9184 U",
+        "role": "tonal layering"
+      },
+      {
+        "name": "Regal Burgundy",
+        "hex": "#3E0F23",
+        "rgb": [
+          62,
+          15,
+          35
+        ],
+        "cmyk": [
+          53,
+          89,
+          58,
+          67
+        ],
+        "pms": null,
+        "role": "primary dark bg / text"
+      },
+      {
+        "name": "Miraculum Green",
+        "hex": "#213B1E",
+        "rgb": [
+          33,
+          59,
+          30
+        ],
+        "cmyk": [
+          77,
+          49,
+          89,
+          60
+        ],
+        "pms": null,
+        "role": "secondary"
+      },
+      {
+        "name": "Miraculum Off-Black",
+        "hex": "#121A12",
+        "rgb": [
+          18,
+          26,
+          18
+        ],
+        "cmyk": [
+          74,
+          62,
+          71,
+          80
+        ],
+        "pms": null,
+        "role": "tonal / packaging shade"
+      },
+      {
+        "name": "Burgundy Off-Black",
+        "hex": "#101019",
+        "rgb": [
+          16,
+          16,
+          25
+        ],
+        "cmyk": [
+          79,
+          73,
+          59,
+          80
+        ],
+        "pms": null,
+        "role": "tonal / text on dark"
+      }
+    ],
+    "packaging_accents": [
+      {
+        "name": "Haze-steria Orange",
+        "hex": "#E3884D",
+        "rgb": [
+          227,
+          136,
+          77
+        ],
+        "cmyk": [
+          9,
+          55,
+          78,
+          0
+        ],
+        "shade_hex": "#BE442A"
+      },
+      {
+        "name": "Pragmatic Blue",
+        "hex": "#328ACA",
+        "rgb": [
+          50,
+          138,
+          202
+        ],
+        "cmyk": [
+          76,
+          36,
+          0,
+          0
+        ],
+        "shade_hex": "#024060"
+      },
+      {
+        "name": "Citrus Yellow",
+        "hex": "#E8BC20",
+        "rgb": [
+          232,
+          188,
+          32
+        ],
+        "cmyk": [
+          10,
+          24,
+          100,
+          0
+        ],
+        "shade_hex": "#82632B"
+      }
+    ],
+    "rules": [
+      "Backgrounds for core expression: Regal Burgundy, Beer Foam, or Beige.",
+      "Text on light: Regal Burgundy or Burgundy Off-Black. Text on dark: Beer Foam or Beige.",
+      "Miraculum Green is next-most-used; pair with Beer Foam, Beige, or Miraculum Off-Black.",
+      "Packaging shades are ~30% darker than the full-saturation color."
+    ]
+  },
+  "typography": {
+    "print_faces": {
+      "serif_display_body": "Superclarendon (Text Light / Regular)",
+      "sans": "Gotham (Regular / Medium / Light)",
+      "condensed_caps": "Alternate Gothic No. 2 D"
+    },
+    "web_stack_sanctioned": {
+      "Superclarendon": "Source Serif 4",
+      "Gotham": "Poppins",
+      "Alternate Gothic": "Barlow Condensed"
+    },
+    "microsoft_fallbacks": {
+      "Superclarendon": "Georgia",
+      "Gotham": "Arial"
+    },
+    "hierarchy": [
+      {
+        "class": "Header",
+        "face": "Superclarendon Regular",
+        "leading": "100%",
+        "tracking": "0",
+        "case": "Title"
+      },
+      {
+        "class": "Subhead",
+        "face": "Alternate Gothic No.2 D",
+        "leading": "75%",
+        "tracking": "175-200",
+        "case": "All caps"
+      },
+      {
+        "class": "Body",
+        "face": "Superclarendon Light",
+        "leading": "66.67%",
+        "tracking": "0",
+        "case": "Sentence"
+      },
+      {
+        "class": "Callout",
+        "face": "Gotham Light",
+        "leading": "66.67%",
+        "tracking": "150",
+        "case": "All caps"
+      },
+      {
+        "class": "Links",
+        "face": "Gotham Medium",
+        "leading": "75%",
+        "tracking": "150",
+        "case": "All caps"
+      }
+    ],
+    "leading_rules": "Header 1:1; Subhead & Paragraph 2:3."
+  },
+  "voice": {
+    "is": [
+      "Warm",
+      "Down-to-earth",
+      "Clear",
+      "Relaxed",
+      "Knowledgeable",
+      "Confident",
+      "Welcoming",
+      "Self-aware & lightly witty"
+    ],
+    "is_not": [
+      "Exclusive",
+      "Trendy",
+      "Corporate",
+      "Loud",
+      "Pretentious",
+      "Goofy/gimmicky",
+      "Edgy",
+      "Abstract/mysterious"
+    ],
+    "tone_by_channel": {
+      "website": "Confident, clear",
+      "social": "Playful, conversational",
+      "sales": "Polished, trustworthy",
+      "customer_service": "Calm, empathetic",
+      "campaigns": "Bold, expressive, catchy"
+    },
+    "writing_rules": [
+      "Active voice, familiar words, get to the point.",
+      "Inclusive & accessible; minimal pop-culture/slang.",
+      "Oxford comma; commas in numbers >3 digits; spaces around em dashes ( — ).",
+      "ALL CAPS & exclamation points sparingly.",
+      "Ampersands only in headings, never in sentences.",
+      "Emojis in social only; one is enough."
+    ],
+    "approved_examples": [
+      "Bold enough for IPA fans, smooth enough for everyone else.",
+      "If you like sours, you'll like this. (If you don't like sours? You might still like this.)",
+      "Back for a good time, not a long time.",
+      "Minnesota born. Minnesota raised.",
+      "Miraculum is our toast to Midwest culture and the beer that built our brewery."
+    ]
+  },
+  "logo": {
+    "primary": "Wordmark (PRYES)",
+    "marks": [
+      "WORDMARK",
+      "WORDMARK+TAGLINE",
+      "CREST+WORDMARK+TAGLINE",
+      "CREST-NOBORDER",
+      "CREST-NOBORDER+WORDMARK+TAGLINE",
+      "CREST-CIRCLE01",
+      "CREST-CIRCLE02",
+      "CREST-FULL",
+      "MN-ICON",
+      "P-WATERMARK"
+    ],
+    "colorways": [
+      "BEERFOAM",
+      "BURGUNDY",
+      "BURGUNDY-OFFBLACK",
+      "WHITE",
+      "BLACK"
+    ],
+    "clear_space": "Perimeter ~half the wordmark height; for the crest, 1/4 the coin height.",
+    "min_size": {
+      "Wordmark": "24px / 0.5in",
+      "Wordmark+Tagline": "42px / 0.5in",
+      "Crest": "48px / 0.675in",
+      "Crest-Circle (coin)": "72px / 1in",
+      "P-Monogram": "48px / 0.675in",
+      "Primary Lockup": "64px / 0.667in"
+    },
+    "misuse": [
+      "No drop shadow/effects",
+      "Don't rearrange elements",
+      "Don't alter/retype the typeface",
+      "Don't stretch or condense",
+      "No gradients/overlays/non-brand colors",
+      "Don't rotate",
+      "No busy/low-contrast backgrounds"
+    ]
+  },
+  "patterns": {
+    "primary": "Laurels (from the crest)",
+    "types": [
+      "LAURELS",
+      "CREST",
+      "CREST-TAGLINE",
+      "WORDMARK"
+    ],
+    "rules": [
+      "Keep tonal (e.g. Beige on Beer Foam, Off-Black Burgundy on Regal Burgundy).",
+      "Laurels are primary; logo patterns used sparingly at 45deg or horizontal.",
+      "Reduce to ~60% opacity if needed."
+    ]
+  },
+  "assets": {
+    "root": "assets/",
+    "logos": {
+      "path": "assets/logos/{fmt}/{COLORWAY}/",
+      "formats": [
+        "svg",
+        "png"
+      ],
+      "by_colorway": {
+        "BEERFOAM": {
+          "svg": [
+            "PRYES-CREST+WORDMARK+TAGLINE-BEERFOAM.svg",
+            "PRYES-CREST-CIRCLE01-BEERFOAM.svg",
+            "PRYES-CREST-CIRCLE02-BEERFOAM.svg",
+            "PRYES-CREST-NOBORDER+WORDMARK+TAGLINE-BEERFOAM.svg",
+            "PRYES-CREST-NOBORDER-BEERFOAM.svg",
+            "PRYES-MN-ICON-BEERFOAM.svg",
+            "PRYES-P-WATERMARK-BEERFOAM.svg",
+            "PRYES-WORDMARK+TAGLINE-BEERFOAM.svg",
+            "PRYES-WORDMARK-BEERFOAM.svg"
+          ],
+          "png": [
+            "PRYES-CREST+WORDMARK+TAGLINE-BEERFOAM.png",
+            "PRYES-CREST-CIRCLE01-BEERFOAM.png",
+            "PRYES-CREST-CIRCLE02-BEERFOAM.png",
+            "PRYES-CREST-NOBORDER+WORDMARK+TAGLINE-BEERFOAM.png",
+            "PRYES-CREST-NOBORDER-BEERFOAM.png",
+            "PRYES-MN-ICON-BEERFOAM.png",
+            "PRYES-P-WATERMARK-BEERFOAM.png",
+            "PRYES-WORDMARK+TAGLINE-BEERFOAM.png",
+            "PRYES-WORDMARK-BEERFOAM.png"
+          ]
+        },
+        "BLACK": {
+          "svg": [
+            "PRYES-CREST+WORDMARK+TAGLINE-BLACK.svg",
+            "PRYES-CREST-CIRCLE02-BLACK.svg",
+            "PRYES-CREST-FULL-BLACK.svg",
+            "PRYES-CREST-NOBORDER+WORDMARK+TAGLINE-BLACK.svg",
+            "PRYES-CREST-NOBORDER-BLACK.svg",
+            "PRYES-MN-ICON-BLACK.svg",
+            "PRYES-P-WATERMARK-BLACK.svg",
+            "PRYES-WORDMARK+TAGLINE-BLACK.svg",
+            "PRYES-WORDMARK-BLACK.svg"
+          ],
+          "png": [
+            "PRYES-CREST+WORDMARK+TAGLINE-BLACK.png",
+            "PRYES-CREST-CIRCLE02-BLACK.png",
+            "PRYES-CREST-FULL-BLACK.png",
+            "PRYES-CREST-NOBORDER+WORDMARK+TAGLINE-BLACK.png",
+            "PRYES-CREST-NOBORDER-BLACK.png",
+            "PRYES-MN-ICON-BLACK.png",
+            "PRYES-P-WATERMARK-BLACK.png",
+            "PRYES-WORDMARK+TAGLINE-BLACK.png",
+            "PRYES-WORDMARK-BLACK.png"
+          ]
+        },
+        "BURGUNDY": {
+          "svg": [
+            "PRYES-CREST+WORDMARK+TAGLINE-BURGUNDY.svg",
+            "PRYES-CREST-CIRCLE01-BURGUNDY.svg",
+            "PRYES-CREST-CIRCLE02-BURGUNDY.svg",
+            "PRYES-CREST-NOBORDER+WORDMARK+TAGLINE-BURGUNDY.svg",
+            "PRYES-CREST-NOBORDER-BURGUNDY.svg",
+            "PRYES-MN-ICON-BURGUNDY.svg",
+            "PRYES-P-WATERMARK-BURGUNDY.svg",
+            "PRYES-WORDMARK+TAGLINE-BURGUNDY.svg",
+            "PRYES-WORDMARK-BURGUNDY.svg"
+          ],
+          "png": [
+            "PRYES-CREST+WORDMARK+TAGLINE-BURGUNDY.png",
+            "PRYES-CREST-CIRCLE01-BURGUNDY.png",
+            "PRYES-CREST-CIRCLE02-BURGUNDY.png",
+            "PRYES-CREST-NOBORDER+WORDMARK+TAGLINE-BURGUNDY.png",
+            "PRYES-CREST-NOBORDER-BURGUNDY.png",
+            "PRYES-MN-ICON-BURGUNDY.png",
+            "PRYES-P-WATERMARK-BURGUNDY.png",
+            "PRYES-WORDMARK+TAGLINE-BURGUNDY.png",
+            "PRYES-WORDMARK-BURGUNDY.png"
+          ]
+        },
+        "BURGUNDY-OFFBLACK": {
+          "svg": [
+            "PRYES-CREST+WORDMARK+TAGLINE-BURG-OFFBLACK.svg",
+            "PRYES-CREST-CIRCLE02-BURG-OFFBLACK.svg",
+            "PRYES-CREST-FULL-BURG-OFFBLACK.svg",
+            "PRYES-CREST-NOBORDER+WORDMARK+TAGLINE-BURG-OFFBLACK.svg",
+            "PRYES-CREST-NOBORDER-BURG-OFFBLACK.svg",
+            "PRYES-MN-ICON-BURG-OFFBLACK.svg",
+            "PRYES-P-WATERMARK-BURG-OFFBLACK.svg",
+            "PRYES-WORDMARK+TAGLINE-BURG-OFFBLACK.svg",
+            "PRYES-WORDMARK-BURG-OFFBLACK.svg"
+          ],
+          "png": [
+            "PRYES-CREST+WORDMARK+TAGLINE-BURG-OFFBLACK.png",
+            "PRYES-CREST-CIRCLE02-BURG-OFFBLACK.png",
+            "PRYES-CREST-FULL-BURG-OFFBLACK.png",
+            "PRYES-CREST-NOBORDER+WORDMARK+TAGLINE-BURG-OFFBLACK.png",
+            "PRYES-CREST-NOBORDER-BURG-OFFBLACK.png",
+            "PRYES-MN-ICON-BURG-OFFBLACK.png",
+            "PRYES-P-WATERMARK-BURG-OFFBLACK.png",
+            "PRYES-WORDMARK+TAGLINE-BURG-OFFBLACK.png",
+            "PRYES-WORDMARK-BURG-OFFBLACK.png"
+          ]
+        },
+        "WHITE": {
+          "svg": [
+            "PRYES-CREST+WORDMARK+TAGLINE-WHITE.svg",
+            "PRYES-CREST-CIRCLE02-WHITE.svg",
+            "PRYES-CREST-FULL-WHITE.svg",
+            "PRYES-CREST-NOBORDER+WORDMARK+TAGLINE-WHITE.svg",
+            "PRYES-CREST-NOBORDER-WHITE.svg",
+            "PRYES-MN-ICON-WHITE.svg",
+            "PRYES-P-WATERMARK-WHITE.svg",
+            "PRYES-WORDMARK+TAGLINE-WHITE.svg",
+            "PRYES-WORDMARK-WHITE.svg"
+          ],
+          "png": [
+            "PRYES-CREST+WORDMARK+TAGLINE-WHITE.png",
+            "PRYES-CREST-CIRCLE02-WHITE.png",
+            "PRYES-CREST-FULL-WHITE.png",
+            "PRYES-CREST-NOBORDER+WORDMARK+TAGLINE-WHITE.png",
+            "PRYES-CREST-NOBORDER-WHITE.png",
+            "PRYES-MN-ICON-WHITE.png",
+            "PRYES-P-WATERMARK-WHITE.png",
+            "PRYES-WORDMARK+TAGLINE-WHITE.png",
+            "PRYES-WORDMARK-WHITE.png"
+          ]
+        }
+      }
+    },
+    "patterns": {
+      "path": "assets/patterns/{fmt}/{COLORWAY}/",
+      "formats": [
+        "svg",
+        "png"
+      ],
+      "by_colorway": {
+        "BEERFOAM": {
+          "svg": [
+            "PRYES-PATTERN-CREST-BEERFOAM.svg",
+            "PRYES-PATTERN-CREST-TAGLINE-BEERFOAM.svg",
+            "PRYES-PATTERN-LAURELS-BEERFOAM.svg",
+            "PRYES-PATTERN-WORDMARK-BEERFOAM.svg"
+          ],
+          "png": [
+            "PRYES-PATTERN-CREST-BEERFOAM.png",
+            "PRYES-PATTERN-CREST-TAGLINE-BEERFOAM.png",
+            "PRYES-PATTERN-LAURELS-BEERFOAM.png",
+            "PRYES-PATTERN-WORDMARK-BEERFOAM.png"
+          ]
+        },
+        "BEIGE": {
+          "svg": [
+            "PRYES-PATTERN-CREST-BEIGE.svg",
+            "PRYES-PATTERN-CREST-TAGLINE-BEIGE.svg",
+            "PRYES-PATTERN-LAURELS-BEIGE.svg",
+            "PRYES-PATTERN-WORDMARK-BEIGE.svg"
+          ],
+          "png": [
+            "PRYES-PATTERN-CREST-BEIGE.png",
+            "PRYES-PATTERN-CREST-TAGLINE-BEIGE.png",
+            "PRYES-PATTERN-LAURELS-BEIGE.png",
+            "PRYES-PATTERN-WORDMARK-BEIGE.png"
+          ]
+        },
+        "BURGUNDY": {
+          "svg": [
+            "PRYES-PATTERN-CREST-BURGUNDY.svg",
+            "PRYES-PATTERN-CREST-TAGLINE-BURGUNDY.svg",
+            "PRYES-PATTERN-LAURELS-BURGUNDY.svg",
+            "PRYES-PATTERN-WORDMARK-BURGUNDY.svg"
+          ],
+          "png": [
+            "PRYES-PATTERN-CREST-BURGUNDY.png",
+            "PRYES-PATTERN-CREST-TAGLINE-BURGUNDY.png",
+            "PRYES-PATTERN-LAURELS-BURGUNDY.png",
+            "PRYES-PATTERN-WORDMARK-BURGUNDY.png"
+          ]
+        },
+        "MIRACULUM": {
+          "svg": [
+            "PRYES-PATTERN-CREST-MIRACULUM.svg",
+            "PRYES-PATTERN-CREST-TAGLINE-MIRACULUM.svg",
+            "PRYES-PATTERN-LAURELS-MIRACULUM.svg",
+            "PRYES-PATTERN-WORDMARK-MIRACULUM.svg"
+          ]
+        },
+        "OFFBLACK": {
+          "svg": [
+            "PRYES-PATTERN-CREST-BURG-OFFBLACK.svg",
+            "PRYES-PATTERN-CREST-TAGLINE-BURGUNDY-OFFBLACK.svg",
+            "PRYES-PATTERN-LAURELS-BURG-OFFBLACK.svg",
+            "PRYES-PATTERN-WORDMARK-BURG-OFFBLACK.svg",
+            "PRYES-PATTERN-WORDMARK-MIRACULUM-OFFBLACK.svg"
+          ],
+          "png": [
+            "PRYES-PATTERN-CREST-BURG-OFFBLACK.png",
+            "PRYES-PATTERN-CREST-TAGLINE-BURGUNDY-OFFBLACK.png",
+            "PRYES-PATTERN-LAURELS-BURG-OFFBLACK.png",
+            "PRYES-PATTERN-WORDMARK-BURG-OFFBLACK.png",
+            "PRYES-PATTERN-WORDMARK-MIRACULUM-OFFBLACK.png"
+          ]
+        },
+        "MIRACULUM GREEN": {
+          "png": [
+            "PRYES-PATTERN-CREST-MIRACULUM.png",
+            "PRYES-PATTERN-CREST-TAGLINE-MIRACULUM.png",
+            "PRYES-PATTERN-LAURELS-MIRACULUM.png",
+            "PRYES-PATTERN-WORDMARK-MIRACULUM.png"
+          ]
+        }
+      }
+    },
+    "shapes": {
+      "path": "assets/shapes/svg/{COLORWAY}/",
+      "formats": [
+        "svg"
+      ],
+      "by_colorway": {
+        "BEERFOAM": [
+          "BEER FOAM SHAPE 01.svg",
+          "BEER FOAM SHAPE 02.svg",
+          "BEER FOAM SHAPE 03.svg",
+          "BEER FOAM SHAPE 04.svg",
+          "BEER FOAM SHAPE 05.svg",
+          "BEER FOAM SHAPE 06.svg",
+          "BEER FOAM SHAPE 07.svg",
+          "BEER FOAM SHAPE 08.svg",
+          "BEER FOAM SHAPE 09.svg",
+          "BEER FOAM SHAPE 10.svg",
+          "BEER FOAM SHAPE 11.svg",
+          "BEER FOAM SHAPE 12.svg",
+          "BEER FOAM SHAPE 13.svg",
+          "BEER FOAM SHAPE 14.svg",
+          "BEER FOAM SHAPE 15.svg"
+        ],
+        "BEIGE": [
+          "BEIGE SHAPE 01.svg",
+          "BEIGE SHAPE 02.svg",
+          "BEIGE SHAPE 03.svg",
+          "BEIGE SHAPE 04.svg",
+          "BEIGE SHAPE 05.svg",
+          "BEIGE SHAPE 06.svg",
+          "BEIGE SHAPE 07.svg",
+          "BEIGE SHAPE 08.svg",
+          "BEIGE SHAPE 09.svg",
+          "BEIGE SHAPE 10.svg",
+          "BEIGE SHAPE 11.svg",
+          "BEIGE SHAPE 12.svg",
+          "BEIGE SHAPE 13.svg",
+          "BEIGE SHAPE 14.svg",
+          "BEIGE SHAPE 15.svg"
+        ],
+        "BURGUNDY OFFBLACK": [
+          "BURGUNDY OFFBLACK SHAPE 01.svg",
+          "BURGUNDY OFFBLACK SHAPE 02.svg",
+          "BURGUNDY OFFBLACK SHAPE 03.svg",
+          "BURGUNDY OFFBLACK SHAPE 04.svg",
+          "BURGUNDY OFFBLACK SHAPE 05.svg",
+          "BURGUNDY OFFBLACK SHAPE 06.svg",
+          "BURGUNDY OFFBLACK SHAPE 07.svg",
+          "BURGUNDY OFFBLACK SHAPE 08.svg",
+          "BURGUNDY OFFBLACK SHAPE 09.svg",
+          "BURGUNDY OFFBLACK SHAPE 10.svg",
+          "BURGUNDY OFFBLACK SHAPE 11.svg",
+          "BURGUNDY OFFBLACK SHAPE 12.svg",
+          "BURGUNDY OFFBLACK SHAPE 13.svg",
+          "BURGUNDY OFFBLACK SHAPE 14.svg",
+          "BURGUNDY OFFBLACK SHAPE 15.svg"
+        ],
+        "MIRACULUM OFFBLACK": [
+          "MIRACULUM OFFBLACK SHAPE 01.svg",
+          "MIRACULUM OFFBLACK SHAPE 02.svg",
+          "MIRACULUM OFFBLACK SHAPE 03.svg",
+          "MIRACULUM OFFBLACK SHAPE 04.svg",
+          "MIRACULUM OFFBLACK SHAPE 05.svg",
+          "MIRACULUM OFFBLACK SHAPE 06.svg",
+          "MIRACULUM OFFBLACK SHAPE 07.svg",
+          "MIRACULUM OFFBLACK SHAPE 08.svg",
+          "MIRACULUM OFFBLACK SHAPE 09.svg",
+          "MIRACULUM OFFBLACK SHAPE 10.svg",
+          "MIRACULUM OFFBLACK SHAPE 11.svg",
+          "MIRACULUM OFFBLACK SHAPE 12.svg",
+          "MIRACULUM OFFBLACK SHAPE 13.svg",
+          "MIRACULUM OFFBLACK SHAPE 14.svg",
+          "MIRACULUM OFFBLACK SHAPE 15.svg"
+        ],
+        "REGAL BURGUNDY": [
+          "REGAL BURGUNDY SHAPE 01.svg",
+          "REGAL BURGUNDY SHAPE 02.svg",
+          "REGAL BURGUNDY SHAPE 03.svg",
+          "REGAL BURGUNDY SHAPE 04.svg",
+          "REGAL BURGUNDY SHAPE 05.svg",
+          "REGAL BURGUNDY SHAPE 06.svg",
+          "REGAL BURGUNDY SHAPE 07.svg",
+          "REGAL BURGUNDY SHAPE 08.svg",
+          "REGAL BURGUNDY SHAPE 09.svg",
+          "REGAL BURGUNDY SHAPE 10.svg",
+          "REGAL BURGUNDY SHAPE 11.svg",
+          "REGAL BURGUNDY SHAPE 12.svg",
+          "REGAL BURGUNDY SHAPE 13.svg",
+          "REGAL BURGUNDY SHAPE 14.svg",
+          "REGAL BURGUNDY SHAPE 15.svg"
+        ]
+      }
+    },
+    "documents": {
+      "path": "assets/documents/",
+      "files": [
+        "PRYES-Brand-Guide-2026.pdf",
+        "PRYES-Shapes.pdf",
+        "PRYES-Shelf-Talkers.pdf"
+      ]
+    },
+    "previews": {
+      "path": "assets/previews/",
+      "files": [
+        "app-47.png",
+        "app-48.png",
+        "app-49.png",
+        "app-50.png",
+        "app-51.png",
+        "app-52.png",
+        "app-53.png",
+        "app-54.png"
+      ]
+    }
+  },
+  "notes": [
+    "Every path above is relative to repo root and verified to exist.",
+    "Pattern SVGs use folder 'MIRACULUM'; pattern PNGs use folder 'MIRACULUM GREEN'.",
+    "Logo mark availability varies by colorway — consult assets.logos.by_colorway for the exact file list.",
+    "Large print-production files (cooler clings, posters) are NOT bundled; see PRYES/2026/PRYES-BRAND-ASSETS."
+  ]
+}

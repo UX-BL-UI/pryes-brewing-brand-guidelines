@@ -36,3 +36,6 @@ build/
 
 # Misc
 *.log
+
+# Local working notes (not for public repo)
+CLAUDE.md
