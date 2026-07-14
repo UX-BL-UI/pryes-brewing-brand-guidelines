@@ -589,6 +589,17 @@ p + p { margin-top: 1em; }
 .site-footer .ft-tag { font-family: var(--serif); font-size: 1.4rem; color: var(--beer-foam); margin-top: 14px; }
 .site-footer .ft-meta { font-size: 0.8rem; line-height: 1.7; text-align: right; }
 
+/* Internal hidden concept menu: a faint dot at the far bottom of the footer
+   reveals the homepage + design-system prototypes. Low-key on purpose. */
+.concept-dock { margin-top: 64px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.concept-dot { appearance: none; background: none; border: 0; cursor: pointer; color: rgba(255,241,228,0.13); font-size: 22px; line-height: 0; padding: 10px 16px; transition: color .3s ease; }
+.concept-dot:hover, .concept-dot:focus-visible { color: rgba(255,241,228,0.5); outline: none; }
+.concept-menu { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.concept-menu[hidden] { display: none; }
+.concept-menu .cm-label { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.7rem; color: rgba(255,241,228,0.42); }
+.concept-menu a { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.85rem; color: var(--beige); text-decoration: none; border: 1px solid rgba(255,241,228,0.22); border-radius: 10px; padding: 11px 20px; transition: color .2s, border-color .2s, background .2s; }
+.concept-menu a:hover { color: var(--beer-foam); border-color: rgba(255,241,228,0.55); background: rgba(255,241,228,0.06); }
+
 /* ============================================================
    TOAST (copy feedback)
    ============================================================ */
@@ -1437,6 +1448,16 @@ a:focus-visible, button:focus-visible, .chip:focus-visible {
       Questions? Contact the marketing team.
     </div>
   </div>
+
+  <!-- Internal: hidden concept menu (click the dot) -->
+  <div class="concept-dock">
+    <button class="concept-dot" id="conceptDot" type="button" aria-expanded="false" aria-controls="conceptMenu" aria-label="Internal previews">&#8226;</button>
+    <nav class="concept-menu" id="conceptMenu" hidden>
+      <span class="cm-label">Internal previews</span>
+      <a href="homepage/">Homepage concept &rarr;</a>
+      <a href="homepage/design-system/">Design system &rarr;</a>
+    </nav>
+  </div>
 </footer>
 
 </main>
@@ -1525,6 +1546,18 @@ document.querySelectorAll('[data-hex]').forEach(el => {
   el.addEventListener('click', () => copyHex(el.getAttribute('data-hex')));
   el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); copyHex(el.getAttribute('data-hex')); } });
 });
+
+/* ---------- Hidden concept menu ---------- */
+(function () {
+  const dot = document.getElementById('conceptDot');
+  const menu = document.getElementById('conceptMenu');
+  if (!dot || !menu) return;
+  dot.addEventListener('click', () => {
+    const opening = menu.hasAttribute('hidden');
+    if (opening) { menu.removeAttribute('hidden'); dot.setAttribute('aria-expanded', 'true'); }
+    else { menu.setAttribute('hidden', ''); dot.setAttribute('aria-expanded', 'false'); }
+  });
+})();
 </script>
 </body>
 </html>
