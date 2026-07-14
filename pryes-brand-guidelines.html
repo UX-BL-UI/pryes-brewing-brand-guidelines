@@ -418,7 +418,7 @@ p + p { margin-top: 1em; }
 .logo-hero img { width: min(520px, 80%); }
 
 .lockups { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 22px; }
-.lockup { border: 1px solid var(--line); border-radius: 5px; overflow: hidden; background: #fff; }
+.lockup { border: 1px solid var(--line); border-radius: 5px; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
 .lockup .swatch {
   aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center;
   padding: 30px; background: var(--burgundy);
@@ -426,7 +426,7 @@ p + p { margin-top: 1em; }
 .lockup .swatch.on-foam { background: var(--beer-foam-2); }
 .lockup .swatch.on-green { background: var(--miraculum); }
 .lockup .swatch img { width: 100%; height: 100%; object-fit: contain; }
-.lockup .meta { padding: 16px 18px 18px; background: var(--beer-foam); }
+.lockup .meta { padding: 16px 18px 18px; background: var(--beer-foam); flex: 1 1 auto; }
 .lockup .meta .name { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; font-size: 1rem; }
 .lockup .meta .use { font-size: 0.83rem; color: var(--ink-soft); margin-top: 5px; line-height: 1.45; min-height: 2.3em; }
 .lockup .meta .dl { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
@@ -471,7 +471,7 @@ p + p { margin-top: 1em; }
 .d-gradient .demo { background: linear-gradient(120deg, #328aca, #e8bc20); }
 .d-busy .demo { background-image: repeating-linear-gradient(45deg, #b98, #b98 8px, #a76 8px, #a76 16px); }
 .d-type .demo span { font-family: 'Comic Sans MS', var(--sans); font-weight: 700; font-size: 2rem; color: var(--burgundy); letter-spacing: 0.05em; }
-.d-recolor img { filter: hue-rotate(180deg) saturate(2); }
+.d-rearrange img { transform: scaleY(-1); }
 
 /* ============================================================
    COLOR
@@ -1106,7 +1106,7 @@ a:focus-visible, button:focus-visible, .chip:focus-visible {
         <div class="dont d-gradient"><div class="demo"><img src="assets/logos/svg/BEERFOAM/PRYES-WORDMARK-BEERFOAM.svg" alt=""></div><div class="cap">No gradients or non-brand colors</div></div>
         <div class="dont d-type"><div class="demo"><span>Pryes</span></div><div class="cap">Don’t alter or retype the wordmark</div></div>
         <div class="dont d-busy"><div class="demo"><img src="assets/logos/svg/BEERFOAM/PRYES-WORDMARK-BEERFOAM.svg" alt=""></div><div class="cap">No busy or low-contrast backgrounds</div></div>
-        <div class="dont d-recolor"><div class="demo"><img src="assets/logos/svg/BURGUNDY/PRYES-WORDMARK-BURGUNDY.svg" alt=""></div><div class="cap">Don’t recolor outside the palette</div></div>
+        <div class="dont d-rearrange"><div class="demo"><img src="assets/logos/svg/BURGUNDY/PRYES-CREST+WORDMARK+TAGLINE-BURGUNDY.svg" alt=""></div><div class="cap">Don’t rearrange the logo elements</div></div>
       </div>
     </div>
   </div>
