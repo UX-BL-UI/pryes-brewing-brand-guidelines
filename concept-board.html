@@ -84,7 +84,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 .tool-lede .kick { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.22em; font-weight: 600; font-size: 0.72rem; color: var(--ink-soft); margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
 .tool-lede .kick .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--orange-shade); }
 .tool-lede h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(2rem, 4.4vw, 3.1rem); line-height: 1.02; letter-spacing: -0.015em; }
-.tool-lede p { color: var(--ink-soft); font-size: 1.02rem; margin-top: 16px; }
+.tool-lede p { font-family: var(--serif); color: var(--ink-soft); font-size: 1.02rem; line-height: 1.55; margin-top: 16px; }
 .tool-foot { max-width: 1120px; margin: 0 auto; padding: 26px clamp(18px, 4vw, 40px) 80px; }
 .tool-foot .tf-in { border-top: 1px solid var(--line); padding-top: 20px; color: var(--ink-soft); font-size: 0.82rem; line-height: 1.7; }
 .tool-foot b { color: var(--ink); font-weight: 600; }
@@ -274,8 +274,8 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 
 <main class="tool-wrap">
   <div class="tool-lede">
-    <div class="kick"><span class="dot"></span> Sandbox · not final · changing</div>
-    <h1>Deal, hold, narrow to one.</h1>
+    <div class="kick"><span class="dot"></span> Sandbox · WIP</div>
+    <h1>Explore concepts quickly.</h1>
     <p>A place to play with generative poster concepts, built live from the 2026 kit. Fill the content once, let the board deal, hold what you like, re-roll the rest, and converge on a winner to export. This is an experiment we are feeling out, not a finished feature.</p>
   </div>
 
@@ -288,7 +288,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
   </div>
 
   <div class="cb-panel">
-    <div class="cb-panel-head">Content <span class="cb-sub">Fill once — every concept updates live. Nothing is locked.</span></div>
+    <div class="cb-panel-head">Content <span class="cb-sub">Fill once. Every concept updates live, nothing is locked.</span></div>
     <div class="cb-form" id="cb-form">
       <div class="cb-field"><label for="cb-beer">Beer name</label><input id="cb-beer" data-k="beer" type="text" value="Miraculum" autocomplete="off"></div>
       <div class="cb-field"><label for="cb-style">Style</label><input id="cb-style" data-k="style" type="text" value="Double IPA" autocomplete="off"></div>
