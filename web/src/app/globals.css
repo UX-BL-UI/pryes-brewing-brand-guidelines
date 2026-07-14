@@ -1,0 +1,166 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ------------------------------------------------------------------ *
+ * Pryes Brewing design system
+ * Tokens are derived 1:1 from the 2026 brand guide (brand.json).
+ * Light theme = the "Beer Foam" world. Dark theme = the "Regal
+ * Burgundy" world. Web type uses the guide's sanctioned open-source
+ * substitutes: Source Serif 4 (Superclarendon), Poppins (Gotham),
+ * Barlow Condensed (Alternate Gothic).
+ * ------------------------------------------------------------------ */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* type roles */
+  --font-sans: var(--font-poppins);
+  --font-serif: var(--font-source-serif);
+  --font-condensed: var(--font-barlow);
+  --font-heading: var(--font-source-serif);
+  --font-mono: var(--font-geist-mono);
+
+  /* raw brand palette, available as text-brand-*, bg-brand-*, etc. */
+  --color-brand-burgundy: #3e0f23;
+  --color-brand-foam: #fff1e4;
+  --color-brand-beige: #ebcfb8;
+  --color-brand-green: #213b1e;
+  --color-brand-green-offblack: #121a12;
+  --color-brand-offblack: #101019;
+
+  /* beer-style accent tags (full + darker "ink" for on-light contrast) */
+  --color-tag-orange: #e3884d;
+  --color-tag-orange-ink: #be442a;
+  --color-tag-blue: #328aca;
+  --color-tag-blue-ink: #024060;
+  --color-tag-yellow: #e8bc20;
+  --color-tag-yellow-ink: #82632b;
+
+  /* semantic shadcn tokens */
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+}
+
+/* Light theme -- Beer Foam ground, Regal Burgundy ink */
+:root {
+  --radius: 0.5rem;
+
+  --background: #fff1e4; /* Beer Foam */
+  --foreground: #3e0f23; /* Regal Burgundy */
+
+  --card: #fff8ef; /* a hair lighter than foam for gentle elevation */
+  --card-foreground: #3e0f23;
+  --popover: #fff8ef;
+  --popover-foreground: #3e0f23;
+
+  --primary: #3e0f23; /* Regal Burgundy */
+  --primary-foreground: #fff1e4;
+
+  --secondary: #ebcfb8; /* Beige */
+  --secondary-foreground: #3e0f23;
+
+  --muted: #f4e3d3; /* foam/beige blend */
+  --muted-foreground: #7a4a5e; /* softened burgundy, ~6:1 on foam */
+
+  --accent: #efdecc; /* light beige, subtle hover ground */
+  --accent-foreground: #3e0f23;
+
+  --destructive: #be442a; /* uses the Haze-steria shade */
+
+  --border: #e3cdb6;
+  --input: #e3cdb6;
+  --ring: #3e0f23;
+}
+
+/* Dark theme -- Regal Burgundy ground, Beer Foam reversed text */
+.dark {
+  --background: #3e0f23; /* Regal Burgundy */
+  --foreground: #fff1e4; /* Beer Foam */
+
+  --card: #4c1730;
+  --card-foreground: #fff1e4;
+  --popover: #4c1730;
+  --popover-foreground: #fff1e4;
+
+  --primary: #fff1e4; /* reversed: cream button, burgundy label */
+  --primary-foreground: #3e0f23;
+
+  --secondary: #5a2340;
+  --secondary-foreground: #fff1e4;
+
+  --muted: #4c1730;
+  --muted-foreground: #d8b9c4;
+
+  --accent: #5a2340;
+  --accent-foreground: #fff1e4;
+
+  --destructive: #e3884d;
+
+  --border: color-mix(in oklab, #fff1e4 16%, transparent);
+  --input: color-mix(in oklab, #fff1e4 20%, transparent);
+  --ring: #ebcfb8;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Brand utilities
+ * ------------------------------------------------------------------ */
+
+/* Condensed all-caps eyebrow -- the signature label device (Alternate
+   Gothic role). Wide tracking, used above headings and on labels. */
+@utility eyebrow {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  line-height: 1;
+}
+
+/* Laurel texture -- tonal, quiet, never competes (kept low opacity). */
+@utility laurel-foam {
+  background-image: url("/pryes-brewing-brand-guidelines/homepage/brand/patterns/PRYES-PATTERN-LAURELS-BEIGE.svg");
+  background-size: 460px;
+}
+@utility laurel-burgundy {
+  background-image: url("/pryes-brewing-brand-guidelines/homepage/brand/patterns/PRYES-PATTERN-LAURELS-BURG-OFFBLACK.svg");
+  background-size: 460px;
+}

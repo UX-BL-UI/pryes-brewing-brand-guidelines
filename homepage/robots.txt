@@ -1,0 +1,4 @@
+User-Agent: *
+Allow: /
+
+Sitemap: https://ux-bl-ui.github.io/pryes-brewing-brand-guidelines/homepage/sitemap.xml
