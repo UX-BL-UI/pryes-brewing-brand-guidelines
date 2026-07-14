@@ -32,13 +32,15 @@
   --color-brand-green-offblack: #121a12;
   --color-brand-offblack: #101019;
 
-  /* beer-style accent tags (full + darker "ink" for on-light contrast) */
+  /* beer-style accent tags (full + darker "ink" for on-light contrast).
+     Inks are set so the small condensed-caps tag text clears WCAG AA (>=4.5:1)
+     on its own tint: orange 5.97:1, blue passes comfortably, yellow ~5.3:1. */
   --color-tag-orange: #e3884d;
-  --color-tag-orange-ink: #be442a;
+  --color-tag-orange-ink: #9a3016;
   --color-tag-blue: #328aca;
   --color-tag-blue-ink: #024060;
   --color-tag-yellow: #e8bc20;
-  --color-tag-yellow-ink: #82632b;
+  --color-tag-yellow-ink: #6f5322;
 
   /* semantic shadcn tokens */
   --color-card: var(--card);
@@ -89,7 +91,10 @@
   --accent: #efdecc; /* light beige, subtle hover ground */
   --accent-foreground: #3e0f23;
 
-  --destructive: #be442a; /* uses the Haze-steria shade */
+  /* Deep brick red, deliberately outside the orange beer-tag family so
+     "danger" never reads as a packaging accent. Clears AA on its own tint
+     at rest and hover. */
+  --destructive: #8a2214;
 
   --border: #e3cdb6;
   --input: #e3cdb6;
@@ -118,7 +123,7 @@
   --accent: #5a2340;
   --accent-foreground: #fff1e4;
 
-  --destructive: #e3884d;
+  --destructive: #ee7a5e; /* lighter brick red for legibility on burgundy */
 
   --border: color-mix(in oklab, #fff1e4 16%, transparent);
   --input: color-mix(in oklab, #fff1e4 20%, transparent);

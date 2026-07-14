@@ -112,7 +112,7 @@ function Swatch({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-2">
-      <span className="eyebrow text-[0.7rem] text-muted-foreground">{label}</span>
+      <span className="eyebrow text-xs text-muted-foreground">{label}</span>
       {children}
     </div>
   );
@@ -130,13 +130,13 @@ export function DesignSystem() {
         title="Color"
         intro="Every hex is labeled with its name and role, so the system reads without relying on color perception. Backgrounds stay to Beer Foam, Beige, or Regal Burgundy; accents are reserved for beer-style tags."
       >
-        <p className="eyebrow mb-3 text-[0.7rem] text-muted-foreground">Core</p>
+        <p className="eyebrow mb-3 text-xs text-muted-foreground">Core</p>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {coreColors.map((c) => (
             <Swatch key={c.name} {...c} />
           ))}
         </div>
-        <p className="eyebrow mt-10 mb-3 text-[0.7rem] text-muted-foreground">
+        <p className="eyebrow mt-10 mb-3 text-xs text-muted-foreground">
           Packaging accents
         </p>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -191,11 +191,11 @@ export function DesignSystem() {
         id="buttons"
         eyebrow="Components"
         title="Buttons"
-        intro="Tuned for touch: a 44px minimum tap target and generous horizontal padding, so buttons read a little wider than they are tall. Every variant keeps a visible focus ring."
+        intro="Tuned for touch: a 44px tap target for primary actions and generous horizontal padding, so buttons read a little wider than they are tall. Small and extra-small sizes (36 and 32px) are for dense or secondary UI. Every variant keeps a visible, offset focus ring."
       >
         <div className="flex flex-col gap-8">
           <div>
-            <p className="eyebrow mb-4 text-[0.7rem] text-muted-foreground">Variants</p>
+            <p className="eyebrow mb-4 text-xs text-muted-foreground">Variants</p>
             <div className="flex flex-wrap items-center gap-3">
               <Button>Find your favorite</Button>
               <Button variant="secondary">On the menu</Button>
@@ -206,7 +206,7 @@ export function DesignSystem() {
             </div>
           </div>
           <div>
-            <p className="eyebrow mb-4 text-[0.7rem] text-muted-foreground">Sizes</p>
+            <p className="eyebrow mb-4 text-xs text-muted-foreground">Sizes</p>
             <div className="flex flex-wrap items-center gap-3">
               <Button size="sm">Small</Button>
               <Button size="default">Default</Button>
@@ -214,7 +214,7 @@ export function DesignSystem() {
             </div>
           </div>
           <div>
-            <p className="eyebrow mb-4 text-[0.7rem] text-muted-foreground">
+            <p className="eyebrow mb-4 text-xs text-muted-foreground">
               Full-width CTA
             </p>
             <Button size="lg" className="w-full sm:max-w-sm">
@@ -325,7 +325,7 @@ export function DesignSystem() {
             </p>
           </Card>
 
-          <Card className="gap-0 rounded-lg border-border bg-card">
+          <Card className="gap-0 rounded-lg border-border bg-card pt-7">
             <CardHeader>
               <CardTitle className="font-serif text-xl">Taproom hours</CardTitle>
               <CardDescription>A content card with header and footer.</CardDescription>
@@ -340,7 +340,7 @@ export function DesignSystem() {
             </CardFooter>
           </Card>
 
-          <Card className="flex flex-col justify-center gap-3 rounded-lg border-dashed border-border bg-transparent p-6 text-center">
+          <Card className="flex flex-col justify-center gap-3 rounded-lg border-dashed border-border bg-transparent p-6 pt-7 text-center">
             <p className="eyebrow text-[0.7rem] text-muted-foreground">Empty state</p>
             <p className="text-sm text-foreground/70">
               Nothing on tap in this style right now.
