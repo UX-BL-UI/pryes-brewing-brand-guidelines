@@ -141,7 +141,7 @@ export function DesignSystem() {
         id="type"
         eyebrow="Foundations"
         title="Typography"
-        intro="Matching the brand-guidelines site: Bitter (standing in for Superclarendon) carries both headings and body copy. Barlow Condensed (Alternate Gothic) sets subheads and eyebrow labels. Poppins (Gotham) is reserved for callouts, links, and UI controls."
+        intro="Matching the brand-guidelines site: Bitter (standing in for Superclarendon) carries both headings and body copy. Barlow Condensed (Alternate Gothic) sets subheads and small labels. Poppins (Gotham) is reserved for callouts, links, and UI controls."
       >
         <div className="flex flex-col divide-y divide-border">
           <div className="flex flex-col gap-2 py-6 md:flex-row md:items-baseline md:gap-8">
@@ -160,9 +160,11 @@ export function DesignSystem() {
           </div>
           <div className="flex flex-col gap-2 py-6 md:flex-row md:items-baseline md:gap-8">
             <span className="eyebrow w-40 shrink-0 text-[0.7rem] text-muted-foreground">
-              Eyebrow · Condensed
+              Subhead · Condensed
             </span>
-            <span className="eyebrow text-lg">On tap &amp; in the fridge</span>
+            <span className="eyebrow text-lg tracking-[0.05em]">
+              On tap &amp; in the fridge
+            </span>
           </div>
           <div className="flex flex-col gap-2 py-6 md:flex-row md:items-baseline md:gap-8">
             <span className="eyebrow w-40 shrink-0 text-[0.7rem] text-muted-foreground">
