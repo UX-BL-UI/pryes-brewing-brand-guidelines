@@ -82,27 +82,17 @@ function Section({
   );
 }
 
-function Swatch({
-  name,
-  hex,
-  role,
-  ink,
-}: {
-  name: string;
-  hex: string;
-  role: string;
-  ink: string;
-}) {
+function Swatch({ name, hex, role }: { name: string; hex: string; role: string }) {
+  // Hex sits in the caption (on card), not on the color block, so its own
+  // contrast never depends on the swatch color.
   return (
     <div className="overflow-hidden rounded-xl border border-border">
-      <div
-        className="flex h-24 items-end p-3"
-        style={{ backgroundColor: hex, color: ink }}
-      >
-        <span className="eyebrow text-[0.7rem]">{hex}</span>
-      </div>
+      <div className="h-24" style={{ backgroundColor: hex }} />
       <div className="bg-card p-4">
-        <p className="font-serif text-lg font-semibold leading-tight">{name}</p>
+        <div className="flex items-baseline justify-between gap-2">
+          <p className="font-serif text-lg font-semibold leading-tight">{name}</p>
+          <span className="eyebrow text-[0.7rem] text-muted-foreground">{hex}</span>
+        </div>
         <p className="mt-1 text-sm text-muted-foreground">{role}</p>
       </div>
     </div>
@@ -151,7 +141,7 @@ export function DesignSystem() {
         id="type"
         eyebrow="Foundations"
         title="Typography"
-        intro="Source Serif 4 for display and headings, Poppins for body and UI, Barlow Condensed for the all-caps eyebrow labels."
+        intro="Straight from the brand guide: Source Serif 4 (Superclarendon) carries both headings and body copy. Barlow Condensed (Alternate Gothic) sets subheads and eyebrow labels. Poppins (Gotham) is reserved for callouts, links, and UI controls."
       >
         <div className="flex flex-col divide-y divide-border">
           <div className="flex flex-col gap-2 py-6 md:flex-row md:items-baseline md:gap-8">
@@ -176,12 +166,20 @@ export function DesignSystem() {
           </div>
           <div className="flex flex-col gap-2 py-6 md:flex-row md:items-baseline md:gap-8">
             <span className="eyebrow w-40 shrink-0 text-[0.7rem] text-muted-foreground">
-              Body · Poppins
+              Body · Serif
             </span>
-            <p className="max-w-xl text-base leading-relaxed text-foreground/80">
+            <p className="max-w-xl font-serif text-base leading-relaxed text-foreground/80">
               No gatekeeping, no gambles. Whether you live for hops or just want
               something cold and easy, there is a Pryes pour with your name on it.
             </p>
+          </div>
+          <div className="flex flex-col gap-2 py-6 md:flex-row md:items-baseline md:gap-8">
+            <span className="eyebrow w-40 shrink-0 text-[0.7rem] text-muted-foreground">
+              Callout & Links · Poppins
+            </span>
+            <span className="font-sans text-xs font-medium tracking-[0.15em] text-foreground/80 uppercase">
+              Trust Your Taste · Find our beer
+            </span>
           </div>
         </div>
       </Section>
@@ -271,7 +269,7 @@ export function DesignSystem() {
           </Field>
           <Field label="Favorite style">
             <Select>
-              <SelectTrigger className="h-11 w-full px-4">
+              <SelectTrigger aria-label="Favorite style" className="h-11 w-full px-4">
                 <SelectValue placeholder="Pick a pour" />
               </SelectTrigger>
               <SelectContent>

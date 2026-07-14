@@ -134,15 +134,22 @@
   * {
     @apply border-border outline-ring/50;
   }
+  /* Per the brand guide, both Header and Body copy are Superclarendon
+     (web: Source Serif 4). Poppins (Gotham) is reserved for callouts, links,
+     and UI controls; Barlow Condensed (Alternate Gothic) for subheads/eyebrows. */
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-sans);
+    font-family: var(--font-serif);
     -webkit-font-smoothing: antialiased;
   }
   h1, h2, h3, h4 {
     font-family: var(--font-serif);
     font-weight: 600;
     letter-spacing: -0.01em;
+  }
+  /* UI controls carry the Gotham/Poppins role, not serif body copy. */
+  button, input, select, textarea {
+    font-family: var(--font-sans);
   }
 }
 

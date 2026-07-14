@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "a11y": "node scripts/a11y.mjs",
+    "test:a11y": "BASE_PATH='' next build && node scripts/a11y.mjs"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
@@ -25,8 +27,10 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "axe-core": "^4.12.1",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
+    "puppeteer": "^25.3.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
