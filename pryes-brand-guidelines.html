@@ -589,16 +589,18 @@ p + p { margin-top: 1em; }
 .site-footer .ft-tag { font-family: var(--serif); font-size: 1.4rem; color: var(--beer-foam); margin-top: 14px; }
 .site-footer .ft-meta { font-size: 0.8rem; line-height: 1.7; text-align: right; }
 
-/* Internal hidden concept menu: a faint dot at the far bottom of the footer
-   reveals the homepage + design-system prototypes. Low-key on purpose. */
-.concept-dock { margin-top: 64px; display: flex; flex-direction: column-reverse; align-items: center; gap: 16px; }
-.concept-dot { appearance: none; background: none; border: 0; cursor: pointer; color: rgba(255,241,228,0.13); font-size: 22px; line-height: 0; padding: 10px 16px; transition: color .3s ease; }
-.concept-dot:hover, .concept-dot:focus-visible { color: rgba(255,241,228,0.5); outline: none; }
-.concept-menu { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-.concept-menu[hidden] { display: none; }
-.concept-menu .cm-label { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.7rem; color: rgba(255,241,228,0.42); }
-.concept-menu a { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.85rem; color: var(--beige); text-decoration: none; border: 1px solid rgba(255,241,228,0.22); border-radius: 10px; padding: 11px 20px; transition: color .2s, border-color .2s, background .2s; }
-.concept-menu a:hover { color: var(--beer-foam); border-color: rgba(255,241,228,0.55); background: rgba(255,241,228,0.06); }
+/* Internal file-folder menu in the side-nav foot; opens upward. Low-key. */
+.nav-secret { margin-top: 18px; }
+.ns-panel { display: flex; flex-direction: column; gap: 2px; padding: 6px; margin-bottom: -1px; background: rgba(255,241,228,0.05); border: 1px solid rgba(255,241,228,0.16); border-bottom: 0; border-radius: 8px 8px 0 0; }
+.ns-panel[hidden] { display: none; }
+.ns-panel a { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.72rem; color: var(--beige); text-decoration: none; padding: 9px 10px; border-radius: 5px; transition: background .18s, color .18s; }
+.ns-panel a:hover { background: rgba(255,241,228,0.09); color: var(--beer-foam); text-decoration: none; }
+.ns-tab { width: 100%; display: flex; align-items: center; gap: 9px; cursor: pointer; background: rgba(255,241,228,0.05); border: 1px solid rgba(255,241,228,0.16); border-radius: 8px; padding: 9px 11px; color: var(--cream-soft); font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; font-size: 0.7rem; transition: background .18s, color .18s, border-radius .18s; }
+.ns-tab:hover { background: rgba(255,241,228,0.1); color: var(--beer-foam); }
+.ns-tab .ns-folder { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.9; }
+.ns-tab .ns-chev { margin-left: auto; width: 12px; height: 12px; opacity: 0.85; transition: transform .2s; }
+.nav-secret.open .ns-tab { border-radius: 0 0 8px 8px; background: rgba(255,241,228,0.08); color: var(--beer-foam); }
+.nav-secret.open .ns-chev { transform: rotate(180deg); }
 
 /* ============================================================
    TOAST (copy feedback)
@@ -734,6 +736,20 @@ a:focus-visible, button:focus-visible, .chip:focus-visible {
     Pryes Brewing Company<br>
     1401 West River Road N, Minneapolis<br>
     <a href="assets/documents/PRYES-Brand-Guide-2026.pdf" download>Download full guide (PDF)</a>
+
+    <!-- Internal: file-folder menu, expands upward -->
+    <div class="nav-secret" id="navSecret">
+      <div class="ns-panel" id="nsPanel" hidden>
+        <a href="homepage/">Homepage concept</a>
+        <a href="homepage/design-system/">Design system</a>
+        <a href="concept-board.html">Concept board</a>
+      </div>
+      <button class="ns-tab" id="nsTab" type="button" aria-expanded="false" aria-controls="nsPanel">
+        <svg class="ns-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>
+        <span>Internal previews</span>
+        <svg class="ns-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+      </button>
+    </div>
   </div>
 </nav>
 
@@ -1447,17 +1463,6 @@ a:focus-visible, button:focus-visible, .chip:focus-visible {
       Questions? Contact the marketing team.
     </div>
   </div>
-
-  <!-- Internal: hidden concept menu (click the dot) -->
-  <div class="concept-dock">
-    <button class="concept-dot" id="conceptDot" type="button" aria-expanded="false" aria-controls="conceptMenu" aria-label="Internal previews">&#8226;</button>
-    <nav class="concept-menu" id="conceptMenu" hidden>
-      <span class="cm-label">Internal previews</span>
-      <a href="homepage/">Homepage concept &rarr;</a>
-      <a href="homepage/design-system/">Design system &rarr;</a>
-      <a href="concept-board.html">Concept board &rarr;</a>
-    </nav>
-  </div>
 </footer>
 
 </main>
@@ -1547,15 +1552,16 @@ document.querySelectorAll('[data-hex]').forEach(el => {
   el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); copyHex(el.getAttribute('data-hex')); } });
 });
 
-/* ---------- Hidden concept menu ---------- */
+/* ---------- Hidden file-folder menu (side nav) ---------- */
 (function () {
-  const dot = document.getElementById('conceptDot');
-  const menu = document.getElementById('conceptMenu');
-  if (!dot || !menu) return;
-  dot.addEventListener('click', () => {
-    const opening = menu.hasAttribute('hidden');
-    if (opening) { menu.removeAttribute('hidden'); dot.setAttribute('aria-expanded', 'true'); }
-    else { menu.setAttribute('hidden', ''); dot.setAttribute('aria-expanded', 'false'); }
+  const dock = document.getElementById('navSecret');
+  const tab = document.getElementById('nsTab');
+  const panel = document.getElementById('nsPanel');
+  if (!dock || !tab || !panel) return;
+  tab.addEventListener('click', () => {
+    const opening = panel.hasAttribute('hidden');
+    if (opening) { panel.removeAttribute('hidden'); dock.classList.add('open'); tab.setAttribute('aria-expanded', 'true'); }
+    else { panel.setAttribute('hidden', ''); dock.classList.remove('open'); tab.setAttribute('aria-expanded', 'false'); }
   });
 })();
 </script>
