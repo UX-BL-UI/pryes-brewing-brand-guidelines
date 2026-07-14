@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Source_Serif_4, Poppins, Barlow_Condensed } from "next/font/google";
+import { Bitter, Poppins, Barlow_Condensed } from "next/font/google";
 import { site } from "@/lib/site";
 import "./globals.css";
 
-// Web substitutes sanctioned by the brand guide:
-//   Superclarendon -> Source Serif 4 (display/headings)
-//   Gotham         -> Poppins (body/UI)
+// Web faces, matching the brand-guidelines site:
+//   Superclarendon -> Bitter (slab serif; reads like Superclarendon on screen)
+//   Gotham         -> Poppins (callouts, links, UI)
 //   Alternate Gothic No.2 D -> Barlow Condensed (all-caps labels/eyebrows)
-const sourceSerif = Source_Serif_4({
-  variable: "--font-source-serif",
+const bitter = Bitter({
+  variable: "--font-bitter",
   subsets: ["latin"],
   display: "swap",
 });
@@ -63,7 +63,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${sourceSerif.variable} ${poppins.variable} ${barlowCondensed.variable} h-full antialiased`}
+      className={`${bitter.variable} ${poppins.variable} ${barlowCondensed.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

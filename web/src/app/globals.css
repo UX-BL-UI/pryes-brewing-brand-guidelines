@@ -8,8 +8,8 @@
  * Pryes Brewing design system
  * Tokens are derived 1:1 from the 2026 brand guide (brand.json).
  * Light theme = the "Beer Foam" world. Dark theme = the "Regal
- * Burgundy" world. Web type uses the guide's sanctioned open-source
- * substitutes: Source Serif 4 (Superclarendon), Poppins (Gotham),
+ * Burgundy" world. Web type matches the brand-guidelines site:
+ * Bitter (Superclarendon), Poppins (Gotham),
  * Barlow Condensed (Alternate Gothic).
  * ------------------------------------------------------------------ */
 
@@ -19,9 +19,9 @@
 
   /* type roles */
   --font-sans: var(--font-poppins);
-  --font-serif: var(--font-source-serif);
+  --font-serif: var(--font-bitter);
   --font-condensed: var(--font-barlow);
-  --font-heading: var(--font-source-serif);
+  --font-heading: var(--font-bitter);
   --font-mono: var(--font-geist-mono);
 
   /* raw brand palette, available as text-brand-*, bg-brand-*, etc. */
@@ -134,22 +134,22 @@
   * {
     @apply border-border outline-ring/50;
   }
-  /* Per the brand guide, both Header and Body copy are Superclarendon
-     (web: Source Serif 4). Poppins (Gotham) is reserved for callouts, links,
-     and UI controls; Barlow Condensed (Alternate Gothic) for subheads/eyebrows. */
+  /* Type matches the brand-guidelines site: Bitter (Superclarendon) for headers
+     and body, Poppins (Gotham) for callouts/links/UI, Barlow Condensed
+     (Alternate Gothic) for subheads/eyebrows. */
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-serif);
-    /* Medium, not regular: Source Serif 4 has lighter strokes than the
-       Superclarendon it stands in for, so body copy is bumped a step to match
-       the brand's visual weight. */
-    font-weight: 500;
+    font-weight: 400;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
   h1, h2, h3, h4 {
     font-family: var(--font-serif);
-    /* Bold, to read as heavy as Superclarendon headers on screen. */
-    font-weight: 700;
+    /* Bitter reads lighter than Superclarendon at a given weight, so headlines
+       sit at medium (500) to match the print face's regular heft. */
+    font-weight: 500;
     letter-spacing: -0.01em;
   }
   /* UI controls carry the Gotham/Poppins role, not serif body copy. */
@@ -168,7 +168,7 @@
   font-family: var(--font-condensed);
   text-transform: uppercase;
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.24em;
   line-height: 1;
 }
 

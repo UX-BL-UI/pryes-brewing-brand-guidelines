@@ -15,7 +15,7 @@ export function Visit() {
           <p className="eyebrow text-xs text-muted-foreground md:text-sm">
             Visit the taproom
           </p>
-          <h2 className="mt-4 font-serif text-4xl font-bold tracking-tight md:text-5xl">
+          <h2 className="mt-4 font-serif text-4xl font-medium tracking-tight md:text-5xl">
             Find us on the river
           </h2>
           <p className="mt-5 max-w-md text-lg text-foreground/70">

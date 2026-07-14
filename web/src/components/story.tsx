@@ -28,7 +28,7 @@ export function Story() {
           <p className="eyebrow mt-8 text-xs text-brand-foam/70 md:text-sm">
             Our story
           </p>
-          <h2 className="mt-4 font-serif text-4xl font-bold leading-[1.02] tracking-tight md:text-6xl">
+          <h2 className="mt-4 font-serif text-4xl font-medium leading-[1.02] tracking-tight md:text-6xl">
             Minnesota born.
             <br />
             Minnesota raised.

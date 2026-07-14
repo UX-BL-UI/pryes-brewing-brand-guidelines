@@ -72,7 +72,7 @@ function Section({
     <section id={id} className="scroll-mt-24 border-t border-border py-16 md:py-20">
       <div className="mx-auto max-w-5xl px-6">
         <p className="eyebrow text-xs text-muted-foreground md:text-sm">{eyebrow}</p>
-        <h2 className="mt-3 font-serif text-3xl font-bold tracking-tight md:text-4xl">
+        <h2 className="mt-3 font-serif text-3xl font-medium tracking-tight md:text-4xl">
           {title}
         </h2>
         {intro && <p className="mt-3 max-w-2xl text-foreground/70">{intro}</p>}
@@ -90,7 +90,7 @@ function Swatch({ name, hex, role }: { name: string; hex: string; role: string }
       <div className="h-24" style={{ backgroundColor: hex }} />
       <div className="bg-card p-4">
         <div className="flex items-baseline justify-between gap-2">
-          <p className="font-serif text-lg font-bold leading-tight">{name}</p>
+          <p className="font-serif text-lg font-medium leading-tight">{name}</p>
           <span className="eyebrow text-[0.7rem] text-muted-foreground">{hex}</span>
         </div>
         <p className="mt-1 text-sm text-muted-foreground">{role}</p>
@@ -141,14 +141,14 @@ export function DesignSystem() {
         id="type"
         eyebrow="Foundations"
         title="Typography"
-        intro="Straight from the brand guide: Source Serif 4 (Superclarendon) carries both headings and body copy. Barlow Condensed (Alternate Gothic) sets subheads and eyebrow labels. Poppins (Gotham) is reserved for callouts, links, and UI controls."
+        intro="Matching the brand-guidelines site: Bitter (standing in for Superclarendon) carries both headings and body copy. Barlow Condensed (Alternate Gothic) sets subheads and eyebrow labels. Poppins (Gotham) is reserved for callouts, links, and UI controls."
       >
         <div className="flex flex-col divide-y divide-border">
           <div className="flex flex-col gap-2 py-6 md:flex-row md:items-baseline md:gap-8">
             <span className="eyebrow w-40 shrink-0 text-[0.7rem] text-muted-foreground">
               Display · Serif
             </span>
-            <span className="font-serif text-5xl font-bold tracking-tight">
+            <span className="font-serif text-5xl font-medium tracking-tight">
               Trust Your Taste
             </span>
           </div>
@@ -156,7 +156,7 @@ export function DesignSystem() {
             <span className="eyebrow w-40 shrink-0 text-[0.7rem] text-muted-foreground">
               Heading · Serif
             </span>
-            <span className="font-serif text-3xl font-bold">A beer for everyone</span>
+            <span className="font-serif text-3xl font-medium">A beer for everyone</span>
           </div>
           <div className="flex flex-col gap-2 py-6 md:flex-row md:items-baseline md:gap-8">
             <span className="eyebrow w-40 shrink-0 text-[0.7rem] text-muted-foreground">
@@ -316,7 +316,7 @@ export function DesignSystem() {
             >
               Midwest IPA
             </span>
-            <h3 className="mt-5 font-serif text-2xl font-bold">Miraculum</h3>
+            <h3 className="mt-5 font-serif text-2xl font-medium">Miraculum</h3>
             <p className="eyebrow mt-1 text-[0.7rem] text-muted-foreground">6.9% ABV</p>
             <p className="mt-4 text-sm leading-relaxed text-foreground/70">
               Our toast to Midwest culture, and the beer that built the brewery.

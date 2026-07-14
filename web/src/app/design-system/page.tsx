@@ -44,7 +44,7 @@ export default function DesignSystemPage() {
             <p className="eyebrow text-xs text-muted-foreground md:text-sm">
               Pryes Brewing · 2026
             </p>
-            <h1 className="mt-4 max-w-2xl font-serif text-4xl font-bold leading-[1.05] tracking-tight md:text-6xl">
+            <h1 className="mt-4 max-w-2xl font-serif text-4xl font-medium leading-[1.05] tracking-tight md:text-6xl">
               The design system
             </h1>
             <p className="mt-5 max-w-xl text-lg text-foreground/70">

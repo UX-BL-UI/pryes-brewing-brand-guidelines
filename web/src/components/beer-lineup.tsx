@@ -28,7 +28,7 @@ export function BeerLineup() {
           <p className="eyebrow text-xs text-muted-foreground md:text-sm">
             On tap &amp; in the fridge
           </p>
-          <h2 className="mt-4 font-serif text-4xl font-bold tracking-tight md:text-5xl">
+          <h2 className="mt-4 font-serif text-4xl font-medium tracking-tight md:text-5xl">
             A beer for everyone
           </h2>
           <p className="mt-5 text-lg text-foreground/70">
@@ -54,7 +54,7 @@ export function BeerLineup() {
                   {beer.style}
                 </span>
               </div>
-              <h3 className="mt-5 font-serif text-2xl font-bold">
+              <h3 className="mt-5 font-serif text-2xl font-medium">
                 {beer.name}
               </h3>
               <p className="eyebrow mt-1 text-[0.7rem] text-muted-foreground">

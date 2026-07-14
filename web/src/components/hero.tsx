@@ -31,7 +31,7 @@ export function Hero() {
         <p className="eyebrow mt-8 text-xs text-muted-foreground md:text-sm">
           Minneapolis · Minnesota
         </p>
-        <h1 className="mt-5 font-serif text-6xl font-bold leading-[0.95] tracking-tight text-foreground md:text-8xl">
+        <h1 className="mt-5 font-serif text-6xl font-medium leading-[0.95] tracking-tight text-foreground md:text-8xl">
           Trust Your Taste
         </h1>
         <p className="mt-7 max-w-xl text-lg text-foreground/75 md:text-xl">
