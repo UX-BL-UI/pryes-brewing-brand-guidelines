@@ -7,8 +7,6 @@
 :HL["/pryes-brewing-brand-guidelines/homepage/_next/static/media/c875c6f5d3e977ac-s.p.1h18_wedhzk4h.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/pryes-brewing-brand-guidelines/homepage/_next/static/media/d9b5d46d9a89ffe6-s.p.0xxdg0o7uh536.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/pryes-brewing-brand-guidelines/homepage/_next/static/media/e2334d715941921e-s.p.3o_v2fun1jzxk.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
-:HL["/pryes-brewing-brand-guidelines/homepage/brand/logos/BURGUNDY/PRYES-CREST-CIRCLE01-BURGUNDY.svg","image"]
-:HL["/pryes-brewing-brand-guidelines/homepage/brand/logos/BEERFOAM/PRYES-MN-ICON-BEERFOAM.svg","image"]
-:HL["/pryes-brewing-brand-guidelines/homepage/brand/logos/BEERFOAM/PRYES-CREST-CIRCLE01-BEERFOAM.svg","image"]
+:HL["/pryes-brewing-brand-guidelines/homepage/brand/logos/BURGUNDY/PRYES-WORDMARK-BURGUNDY.svg","image"]
 :HL["/pryes-brewing-brand-guidelines/homepage/brand/logos/BEERFOAM/PRYES-WORDMARK-BEERFOAM.svg","image"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}},"staleTime":300,"buildId":"ckLHkEOYGUUtmpNiGjCw8"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"design-system","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"ckLHkEOYGUUtmpNiGjCw8"}

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { BrandMark } from "@/components/brand-mark";
 import { site, nav } from "@/lib/site";
 
@@ -21,14 +22,20 @@ export function SiteFooter() {
           <nav className="flex flex-col gap-3">
             <p className="eyebrow text-xs text-brand-beige">Explore</p>
             {nav.map((item) => (
-              <a
+              <Link
                 key={item.href}
-                href={item.href}
+                href={`/${item.href}`}
                 className="text-sm text-brand-foam/80 transition-colors hover:text-brand-foam"
               >
                 {item.label}
-              </a>
+              </Link>
             ))}
+            <Link
+              href="/design-system"
+              className="text-sm text-brand-foam/80 transition-colors hover:text-brand-foam"
+            >
+              Design system
+            </Link>
           </nav>
 
           <div className="flex flex-col gap-3">
@@ -56,9 +63,12 @@ export function SiteFooter() {
             >
               Brand guidelines
             </a>
-            <span className="eyebrow tracking-[0.14em] text-brand-foam/40">
+            <Link
+              href="/design-system"
+              className="eyebrow tracking-[0.14em] text-brand-foam/55 hover:text-brand-foam"
+            >
               Built on the Pryes 2026 design system
-            </span>
+            </Link>
           </div>
         </div>
       </div>
