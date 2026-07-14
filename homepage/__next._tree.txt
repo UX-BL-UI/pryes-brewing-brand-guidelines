@@ -11,4 +11,4 @@
 :HL["/pryes-brewing-brand-guidelines/homepage/brand/logos/BEERFOAM/PRYES-MN-ICON-BEERFOAM.svg","image"]
 :HL["/pryes-brewing-brand-guidelines/homepage/brand/logos/BEERFOAM/PRYES-CREST-CIRCLE01-BEERFOAM.svg","image"]
 :HL["/pryes-brewing-brand-guidelines/homepage/brand/logos/BEERFOAM/PRYES-WORDMARK-BEERFOAM.svg","image"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}},"staleTime":300,"buildId":"xCZl8K9E0VNlhd63e2Elf"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}},"staleTime":300,"buildId":"j6RZ0UBY3gkDLGJRuNmVt"}
