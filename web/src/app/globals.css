@@ -140,11 +140,16 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-serif);
+    /* Medium, not regular: Source Serif 4 has lighter strokes than the
+       Superclarendon it stands in for, so body copy is bumped a step to match
+       the brand's visual weight. */
+    font-weight: 500;
     -webkit-font-smoothing: antialiased;
   }
   h1, h2, h3, h4 {
     font-family: var(--font-serif);
-    font-weight: 600;
+    /* Bold, to read as heavy as Superclarendon headers on screen. */
+    font-weight: 700;
     letter-spacing: -0.01em;
   }
   /* UI controls carry the Gotham/Poppins role, not serif body copy. */
