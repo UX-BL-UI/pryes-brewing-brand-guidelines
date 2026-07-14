@@ -140,16 +140,16 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-serif);
-    font-weight: 400;
+    /* Medium body: Bitter regular reads too light against the print standard. */
+    font-weight: 500;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
   h1, h2, h3, h4 {
     font-family: var(--font-serif);
-    /* Bitter reads lighter than Superclarendon at a given weight, so headlines
-       sit at medium (500) to match the print face's regular heft. */
-    font-weight: 500;
+    /* Bold headlines to match the weight of the Superclarendon print face. */
+    font-weight: 700;
     letter-spacing: -0.01em;
   }
   /* UI controls carry the Gotham/Poppins role, not serif body copy. */
@@ -169,7 +169,9 @@
   text-transform: uppercase;
   font-weight: 600;
   letter-spacing: 0.24em;
-  line-height: 1;
+  /* Tight leading (Alternate Gothic subhead is ~75%); keeps multi-line
+     condensed labels/subheads close, per the brand standard. */
+  line-height: 0.85;
 }
 
 /* Laurel texture -- tonal, quiet, never competes (kept low opacity). */
