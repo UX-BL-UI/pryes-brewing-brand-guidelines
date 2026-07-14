@@ -56,6 +56,18 @@ A cleaner CI deploy (build on push, no committed output) is possible by switchin
 **Settings → Pages → Source** to **GitHub Actions**; skipped for now to avoid
 changing repo settings.
 
+## Accessibility gate
+
+```bash
+npm run test:a11y   # builds, then runs axe-core over / and /design-system/
+```
+
+Runs axe-core (WCAG 2.1 A/AA) against the static build in a headless browser and
+fails on any color-contrast issue or serious/critical violation. It also runs in
+CI on every push and pull request (`.github/workflows/a11y.yml`), so regressions
+are caught before they ship. `npm run a11y` runs the check against an existing
+build without rebuilding.
+
 ## Migrating to a real domain
 
 Set `BASE_PATH=""` at build time and point DNS. Every URL collapses from the
