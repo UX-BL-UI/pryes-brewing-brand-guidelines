@@ -19,7 +19,7 @@ The page mirrors the 55-page brand guide and is faithful to the finalized brand:
 
 - **Palette** — Regal Burgundy, Beer Foam, Beige, Miraculum Green and the
   off-blacks, plus packaging accents. Click any swatch to copy its HEX.
-- **Type** — the guide's sanctioned web stack (Source Serif 4 · Poppins · Barlow
+- **Type** — the web type stack (Bitter · Poppins · Barlow
   Condensed) standing in for the licensed print faces (Superclarendon · Gotham ·
   Alternate Gothic), so the site renders as specified without licensing conflicts.
 - **Logo, patterns, shapes and documents** — shown inline and downloadable.

@@ -21,5 +21,5 @@ machine-readable twin with the exhaustive, filesystem-verified asset manifest.
 - [pryes-brand-guidelines.html](pryes-brand-guidelines.html): The rendered guidelines site for people (password: pryes2026).
 
 ## Notes
-- Web type uses sanctioned Google-Font substitutes (Source Serif 4 / Poppins / Barlow Condensed) for the licensed print faces (Superclarendon / Gotham / Alternate Gothic).
-- A prior green + Asap Condensed direction is superseded; burgundy + Source Serif is final.
+- Web type uses sanctioned Google-Font substitutes (Bitter / Poppins / Barlow Condensed) for the licensed print faces (Superclarendon / Gotham / Alternate Gothic).
+- A prior green + Asap Condensed direction is superseded; burgundy + Bitter is final.

@@ -33,7 +33,7 @@ Rules: backgrounds = Burgundy / Beer Foam / Beige. Text on light = Burgundy or B
 
 ## Typography
 - **Print faces:** Superclarendon (serif, display+body) · Gotham (sans) · Alternate Gothic No.2 D (condensed caps).
-- **Web substitutes (sanctioned):** Superclarendon→**Source Serif 4** · Gotham→**Poppins** · Alternate Gothic→**Barlow Condensed**. MS Office fallbacks: Georgia (serif), Arial (sans).
+- **Web substitutes:** Superclarendon→**Bitter** (Clarendon-style slab) · Gotham→**Poppins** · Alternate Gothic→**Barlow Condensed**. MS Office fallbacks: Georgia (serif), Arial (sans). Body copy is set in the serif (Bitter), matching the print hierarchy; the sans is for callouts, captions and links only.
 - **Hierarchy** (class · face · leading · tracking · case):
   - Header · Superclarendon Regular · 100% · 0 · Title
   - Subhead · Alternate Gothic · 75% · 175–200 · All caps
@@ -81,4 +81,4 @@ pattern PNGs use folder `MIRACULUM GREEN`.
 ## Notes
 - Web renders use the sanctioned Google-Font substitutes above (Superclarendon/Gotham/Alternate Gothic are licensed). Do not embed the licensed print faces on the web.
 - Large print-production files (cooler clings ~97MB, posters, patterns PDF) are **not** bundled here; find them in `PRYES/2026/PRYES-BRAND-ASSETS`.
-- Superseded: an earlier green + Asap Condensed direction. Do not restore it — burgundy + Source Serif is final.
+- Superseded: an earlier green + Asap Condensed direction. Do not restore it — burgundy + Bitter (Clarendon slab) is final.
