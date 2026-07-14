@@ -31,7 +31,7 @@ export default function DesignSystemPage() {
           <Link href="/" aria-label="Pryes Brewing Company home">
             <BrandMark className="h-6 w-auto md:h-7" />
           </Link>
-          <Button asChild size="sm" variant="outline" className="eyebrow tracking-[0.14em]">
+          <Button asChild size="sm" variant="outline" className="eyebrow tracking-[0.1em]">
             <Link href="/">View the site</Link>
           </Button>
         </div>
@@ -44,7 +44,7 @@ export default function DesignSystemPage() {
             <p className="eyebrow text-xs text-muted-foreground md:text-sm">
               Pryes Brewing · 2026
             </p>
-            <h1 className="mt-4 max-w-2xl font-serif text-4xl font-bold leading-[1.05] tracking-tight md:text-6xl">
+            <h1 className="mt-4 max-w-2xl font-serif text-4xl font-semibold leading-[1.05] tracking-tight md:text-6xl">
               The design system
             </h1>
             <p className="mt-5 max-w-xl text-lg text-foreground/70">

@@ -15,7 +15,7 @@ export function Visit() {
           <p className="eyebrow text-xs text-muted-foreground md:text-sm">
             Visit the taproom
           </p>
-          <h2 className="mt-4 font-serif text-4xl font-bold tracking-tight md:text-5xl">
+          <h2 className="mt-4 font-serif text-4xl font-semibold tracking-tight md:text-5xl">
             Find us on the river
           </h2>
           <p className="mt-5 max-w-md text-lg text-foreground/70">
@@ -34,7 +34,7 @@ export function Visit() {
           </div>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button asChild size="lg" className="eyebrow tracking-[0.14em]">
+            <Button asChild size="lg" className="eyebrow tracking-[0.1em]">
               <a href={mapsHref} target="_blank" rel="noopener noreferrer">
                 Get directions
               </a>
@@ -43,7 +43,7 @@ export function Visit() {
               asChild
               size="lg"
               variant="outline"
-              className="eyebrow border-foreground/25 tracking-[0.14em]"
+              className="eyebrow border-foreground/25 tracking-[0.1em]"
             >
               <a href={`tel:${site.telephone}`}>Call the taproom</a>
             </Button>

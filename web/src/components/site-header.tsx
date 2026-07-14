@@ -35,7 +35,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden md:block">
-          <Button asChild size="sm" className="eyebrow tracking-[0.14em]">
+          <Button asChild size="sm" className="eyebrow tracking-[0.1em]">
             <a href="#beer">Find our beer</a>
           </Button>
         </div>
@@ -60,7 +60,7 @@ export function SiteHeader() {
                   {item.label}
                 </a>
               ))}
-              <Button asChild className="eyebrow mt-6 tracking-[0.14em]">
+              <Button asChild className="eyebrow mt-6 tracking-[0.1em]">
                 <a href="#beer" onClick={() => setOpen(false)}>
                   Find our beer
                 </a>

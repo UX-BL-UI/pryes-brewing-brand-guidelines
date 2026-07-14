@@ -59,13 +59,13 @@ export function SiteFooter() {
           <div className="flex items-center gap-5">
             <a
               href="../pryes-brand-guidelines.html"
-              className="eyebrow tracking-[0.14em] hover:text-brand-foam"
+              className="eyebrow tracking-[0.1em] hover:text-brand-foam"
             >
               Brand guidelines
             </a>
             <Link
               href="/design-system"
-              className="eyebrow tracking-[0.14em] text-brand-foam/55 hover:text-brand-foam"
+              className="eyebrow tracking-[0.1em] text-brand-foam/55 hover:text-brand-foam"
             >
               Built on the Pryes 2026 design system
             </Link>
