@@ -626,8 +626,8 @@ p + p { margin-top: 1em; }
 }
 #password-overlay.hidden { display: none; }
 .password-box { width: 100%; max-width: 380px; text-align: center; }
-.password-box img { width: 150px; margin: 0 auto 30px; }
-.password-eyebrow { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.28em; font-weight: 600; font-size: 0.74rem; color: var(--beige); margin-bottom: 10px; }
+.password-box img { width: 150px; margin: 0 auto 15px; }
+.password-eyebrow { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.28em; font-weight: 600; font-size: 0.74rem; color: var(--beige); margin-bottom: 30px; }
 .password-title { font-family: var(--serif); font-size: 2rem; color: var(--beer-foam); margin-bottom: 26px; }
 .password-input {
   width: 100%; padding: 14px 18px; border-radius: 8px; border: 1.5px solid rgba(255,241,228,0.35);
@@ -700,7 +700,6 @@ a:focus-visible, button:focus-visible, .chip:focus-visible {
   <div class="password-box">
     <img src="assets/logos/svg/BEERFOAM/PRYES-WORDMARK-BEERFOAM.svg" alt="Pryes">
     <div class="password-eyebrow">Brand Guide · 2026</div>
-    <div class="password-title">Trust Your Taste</div>
     <input type="password" id="password-input" class="password-input" placeholder="Enter password" autocomplete="off">
     <button onclick="checkPassword()" class="password-button">Enter</button>
     <div id="password-error" class="password-error">Incorrect password. Please try again.</div>
