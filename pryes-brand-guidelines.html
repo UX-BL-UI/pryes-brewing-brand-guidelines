@@ -72,7 +72,7 @@ body {
 
 /* Bitter reads lighter than Superclarendon; headlines sit at semibold (600) to
    match the print face's heft. Same value as the homepage/design-system. */
-.display, .chapter-head h2, .hero-tagline, .statement .txt,
+.display, .chapter-head h2, .statement .txt,
 .pillar h4, .s-header, .hero-guide-card .hg-t, .password-title {
   font-weight: 600;
 }
@@ -275,10 +275,11 @@ p + p { margin-top: 1em; }
 .hero-wordmark { width: min(620px, 82%); height: auto; margin-bottom: 44px; }
 .hero-tagline {
   font-family: var(--serif);
-  font-weight: 600;
-  font-size: clamp(2.6rem, 6vw, 4.6rem);
+  font-weight: 300;
+  font-size: clamp(2rem, 7vw, 4.6rem);
   line-height: 1.0;
   letter-spacing: -0.02em;
+  white-space: nowrap;
 }
 .hero-tagline em { font-style: italic; }
 .hero-desc {
@@ -759,7 +760,7 @@ a:focus-visible, button:focus-visible, .chip:focus-visible {
   <div class="hero-inner">
     <div class="eyebrow">Brand Guide · 2026</div>
     <img class="hero-wordmark" src="assets/logos/svg/BEERFOAM/PRYES-WORDMARK-BEERFOAM.svg" alt="Pryes Brewing">
-    <h1 class="hero-tagline">Trust<br>Your Taste</h1>
+    <h1 class="hero-tagline">Trust Your Taste</h1>
     <p class="hero-desc">Pryes is a Minnesota craft brewery with a beer for everyone. This guide is the single source for how we look, sound and show up — plus the logo, color, pattern and document library behind it.</p>
     <div class="hero-cta">
       <a class="btn btn--solid" href="assets/documents/PRYES-Brand-Guide-2026.pdf" download>
