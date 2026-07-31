@@ -19,7 +19,6 @@ window.PRYES_LAYOUT_DEFAULTS = {
       name:     { kind: 'name', x: 900, y: 1150, anchor: 'middle', scale: 1, track: 0 },
       style:    { kind: 'sub', x: 900, y: 1285, anchor: 'middle', size: 108, track: 0.05 },
       body:     { kind: 'body', x: 900, y: 1480, anchor: 'middle', size: 62, lh: 1.5 },
-      rule:     { kind: 'rule', x1: 150, x2: 1650, y: 2000 },
       stats:    { kind: 'stats', y: 2120, size: 64, track: 0.05 },
       callout2: { kind: 'cap', x: 900, y: 2295, anchor: 'middle', size: 38, track: 0.15, opacity: 0.8 }
     }

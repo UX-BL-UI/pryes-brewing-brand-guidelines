@@ -216,7 +216,7 @@ window.PryesPoster = (function () {
       s += wrap('stacked.name', nameEl(E.name, c.beer, fam.ink), tag);
       if (c.style) s += wrap('stacked.style', subEl(E.style, c.style, fam.accent), tag);
       s += wrap('stacked.body', bodyEl(E.body, c.tagline, fam.ink), tag);
-      s += wrap('stacked.rule', ruleEl(E.rule, fam, 0.24, 2), tag);
+      if (E.rule) s += wrap('stacked.rule', ruleEl(E.rule, fam, 0.24, 2), tag);
       s += wrap('stacked.stats', statsEl(E.stats, c, fam), tag);
       if (c.cta) s += wrap('stacked.callout2', capEl(E.callout2, c.cta, fam.ink), tag);
       return s;
