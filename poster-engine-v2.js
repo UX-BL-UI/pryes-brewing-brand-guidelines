@@ -169,30 +169,31 @@ window.PryesPosterV2 = (function () {
   }
 
   /* Brand shape recolored to the band color so its decorative top
-     edge becomes the band's edge. Shapes differ: some are full
-     masses anchored to their viewBox bottom, some are thin strips
-     floating mid-viewBox - the measured bbox (from load()) anchors
-     either kind to the band line without gaps. */
-  function bandWithShape(e, shape, bandColor) {
+     edge becomes the band's edge. Its own element: the editor moves
+     it (cx) and scales it (w) while it stays glued to the band line.
+     Shapes differ: some are full masses anchored to their viewBox
+     bottom, some are thin strips floating mid-viewBox - the measured
+     bbox (from load()) anchors either kind without gaps. */
+  function shapeDividerEl(eShape, bandE, shape, bandColor) {
+    if (!shape) return '';
+    const bandY = bandE.y * KY;
+    const poke = (eShape.poke != null ? eShape.poke : 150) * KY;
+    const p = shape.vb.split(/\s+/).map(Number);
+    const vw = p[2] || 100, vh = p[3] || 100;
+    const w = eShape.w * KX, k = w / vw, h = w * (vh / vw);
+    const x = eShape.cx * KX - w / 2;
+    const bb = shape.bbox || { y: 0, h: vh };
+    const massH = bb.h * k;
+    /* thin strips sit on the band edge; large masses poke above it
+       and their body disappears into the band */
+    const y = massH <= poke * 2.5
+      ? bandY - massH - bb.y * k
+      : (bandY - poke) - bb.y * k;
+    return '<svg x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" viewBox="' + shape.vb + '" preserveAspectRatio="xMidYMid meet"><g fill="' + bandColor + '">' + shape.body + '</g></svg>';
+  }
+  function bandEl(e, bandColor) {
     const bandY = e.y * KY;
-    const poke = (e.poke || 150) * KY;
-    let s = '';
-    if (shape) {
-      const p = shape.vb.split(/\s+/).map(Number);
-      const vw = p[2] || 100, vh = p[3] || 100;
-      const w = W * 1.04, k = w / vw, h = w * (vh / vw);
-      const x = (W - w) / 2;
-      const bb = shape.bbox || { y: 0, h: vh };
-      const massH = bb.h * k;
-      /* thin strips sit on the band edge; large masses poke above it
-         and their body disappears into the band */
-      const y = massH <= poke * 2.5
-        ? bandY - massH - bb.y * k
-        : (bandY - poke) - bb.y * k;
-      s += '<svg x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" viewBox="' + shape.vb + '" preserveAspectRatio="xMidYMid meet"><g fill="' + bandColor + '">' + shape.body + '</g></svg>';
-    }
-    s += '<rect x="0" y="' + bandY + '" width="' + W + '" height="' + (H - bandY) + '" fill="' + bandColor + '"/>';
-    return s;
+    return '<rect x="0" y="' + bandY + '" width="' + W + '" height="' + (H - bandY) + '" fill="' + bandColor + '"/>';
   }
 
   /* ---------- poster ----------
@@ -212,9 +213,10 @@ window.PryesPosterV2 = (function () {
     let s = '<rect width="' + W + '" height="' + H + '" fill="' + paint.bg + '"/>';
     s += wrap('beerfeature.pattern', patternField(A.patterns[beer.id], paint.pattern, density.cols), tag);
 
-    /* band + shape sit under the can so the can fronts the divider
+    /* shape + band sit under the can so the can fronts the divider
        notch, exactly as in the reference poster */
-    s += wrap('beerfeature.band', bandWithShape(E.band, shape, paint.band), tag);
+    s += wrap('beerfeature.shape', shapeDividerEl(E.shape, E.band, shape, paint.band), tag);
+    s += wrap('beerfeature.band', bandEl(E.band, paint.band), tag);
 
     const canH = E.can.h * KY, canW = canH * beer.canAspect;
     const href = opts.canHref || beer.can;

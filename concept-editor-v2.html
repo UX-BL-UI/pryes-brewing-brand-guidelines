@@ -319,7 +319,7 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
     } else {
       if (e.kind === 'photo') e.h = Math.max(300, Math.round(o.h + dy));
       else if (e.kind === 'asset') e.w = Math.max(80, Math.round(o.w + dx));
-      else if (e.kind === 'band') e.poke = Math.max(0, Math.round((o.poke != null ? o.poke : 150) - dy));
+      else if (e.kind === 'shape') e.w = Math.max(200, Math.round(o.w + dx));
       else if (e.kind === 'diamond') e.s = Math.max(6, Math.round(o.s + dx / 4));
       else if (o.size != null) e.size = Math.max(14, Math.round(o.size + dx / 5));
     }

@@ -18,7 +18,8 @@ window.PRYES_LAYOUT_DEFAULTS_V2 = {
          size, inset, and line. */
       wordmark:    { kind: 'asset', asset: 'wordmarktag', cx: 907, y: -4, w: 1577 },
       can:         { kind: 'photo', cx: 893, y: 405, h: 1544 },
-      band:        { kind: 'band', y: 1642, poke: 150 },
+      band:        { kind: 'band', y: 1642 },
+      shape:       { kind: 'shape', cx: 900, w: 1872, poke: 150 },
       headline:    { kind: 'headline', x: 906, y: 2127, anchor: 'middle', size: 191, track: 0.06 },
       subheadline: { kind: 'sub',  x: 895, y: 2238, anchor: 'middle', size: 98, track: 0.14 },
       diamondL:    { kind: 'diamond', cx: 200,  cy: 2147, s: 50 },
