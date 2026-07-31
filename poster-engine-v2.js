@@ -109,7 +109,7 @@ window.PryesPosterV2 = (function () {
      legible. Add a partner by dropping an SVG in assets/partners
      and adding a row here. */
   const PARTNERS = [
-    { id: 'twins', name: 'Twins', file: 'assets/partners/twins.svg', color: '#D31145', onDark: BRAND.foam }
+    { id: 'twins', name: 'Twins', file: 'assets/partners/twins.svg', color: '#D2232A', onDark: BRAND.foam }
   ];
   function partnerById(id) { return PARTNERS.find(p => p.id === id) || PARTNERS[0]; }
 

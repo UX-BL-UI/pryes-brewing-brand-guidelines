@@ -71,13 +71,24 @@ window.PRYES_LAYOUT_DEFAULTS_V2 = {
          brand-shape plaque framing the can, message left and
          partner logo right at the foot. Partner colors live in the
          engine's partner list, not here. */
-      wordmark:    { kind: 'asset', asset: 'wordmark', cx: 900, y: 90, w: 1600 },
-      can:         { kind: 'photo', cx: 900, y: 620, h: 1170 },
+      wordmark:    { kind: 'asset', asset: 'wordmark', cx: 900, y: 90, w: 1529 },
+      can:         { kind: 'photo', cx: 885, y: 481, h: 1368 },
       /* plaque placements per shape number, same system as the beer
-         poster's divider - hand-place each shape once */
-      shape:       { kind: 'shape', perShape: {} },
-      headline:    { kind: 'headline', x: 546, y: 2130, anchor: 'middle', size: 86, track: 0.08, lh: 1.25 },
-      partner:     { kind: 'partner', cx: 1265, y: 2000, w: 600 }
+         poster's divider - hand-place each shape once.
+         Shapes 8-15 placed by Ben 2026-07-31; 1-7 still on the
+         automatic box. */
+      shape:       { kind: 'shape', perShape: {
+        '8':  { kind: 'shape', cx: 914, y: 1182, w: 2065, h: 1230 },
+        '9':  { kind: 'shape', cx: 922, y: 412,  w: 1529, h: 1585 },
+        '10': { kind: 'shape', cx: 896, y: 442,  w: 1479, h: 1510 },
+        '11': { kind: 'shape', cx: 900, y: 462,  w: 1504, h: 1460 },
+        '12': { kind: 'shape', cx: 902, y: -66,  w: 1820, h: 2508 },
+        '13': { kind: 'shape', cx: 910, y: 2269, w: 1868, h: 1857 },
+        '14': { kind: 'shape', cx: 900, y: 476,  w: 2085, h: 1433 },
+        '15': { kind: 'shape', cx: 903, y: 457,  w: 1466, h: 1473 }
+      } },
+      headline:    { kind: 'headline', x: 546, y: 2130, anchor: 'middle', size: 126, track: 0.03, lh: 1.04 },
+      partner:     { kind: 'partner', cx: 1281, y: 2032, w: 509 }
     }
   }
 };
