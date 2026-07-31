@@ -172,15 +172,17 @@ window.PryesPoster = (function () {
       '<text x="' + (r.x + r.w / 2) + '" y="' + (r.y + r.h / 2) + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 62 * KX + '" letter-spacing="' + 62 * KX * 0.05 + '" fill="' + fam.bg + '" fill-opacity="0.92">HERO IMAGE</text>' +
       '<text x="' + (r.x + r.w / 2) + '" y="' + (r.y + r.h / 2 + 66 * KY) + '" text-anchor="middle" font-family="' + SANS + '" font-weight="300" font-size="' + 30 * KX + '" letter-spacing="' + 30 * KX * 0.15 + '" fill="' + fam.bg + '" fill-opacity="0.72">CAN RENDER OR LIFESTYLE PHOTO</text>';
   }
-  function heroBehind(img, fam, seed) {
+  function heroBehind(img, fam, seed, hero, elId, tag) {
     /* tonal families render background art in the guide's tonal colorway at full strength;
        others fall back to a faint accent tint */
     const color = fam.tonal || fam.accent;
     const op = fam.tonal ? 1 : 0.10;
     if (img === 'laurel') return patternCoverColored({ x: 0, y: 0, w: W, h: H }, color, op);
-    if (img === 'emblem') return placeAsset({ key: 'crest', cx: W / 2, y: H * 0.30, w: 1450 * KX, color: color, opacity: fam.tonal ? 1 : op + 0.02 });
     if (img === 'shapes') return shapeDecorColored(color, op, seed);
-    return placeAsset({ key: 'pmark', cx: W / 2, y: H * 0.30, w: 1150 * KX, color: color, opacity: op });
+    /* positionable background mark (crest emblem or P watermark) driven by the hero element */
+    const h = hero || { cx: 900, y: 720, w: 1450 };
+    const key = img === 'emblem' ? 'crest' : 'pmark';
+    return wrap(elId, placeAsset({ key: key, cx: h.cx * KX, y: h.y * KY, w: h.w * KX, color: color, opacity: fam.tonal ? 1 : (key === 'crest' ? op + 0.02 : op) }), tag);
   }
   function patternCoverColored(r, color, op) {
     if (!A.laurel) return '';
@@ -211,7 +213,7 @@ window.PryesPoster = (function () {
   const LAY = {
     stacked: function (c, fam, card, tag) {
       const E = SPEC.stacked.elements;
-      let s = heroBehind(card.img, fam, card.seed);
+      let s = heroBehind(card.img, fam, card.seed, E.hero, 'stacked.hero', tag);
       s += wrap('stacked.lockup', assetEl(E.lockup, fam.ink), tag);
       s += wrap('stacked.name', nameEl(E.name, c.beer, fam.ink), tag);
       if (c.style) s += wrap('stacked.style', subEl(E.style, c.style, fam.accent), tag);
@@ -239,7 +241,7 @@ window.PryesPoster = (function () {
     },
     framed: function (c, fam, card, tag) {
       const E = SPEC.framed.elements;
-      let s = heroBehind(card.img, fam, card.seed);
+      let s = heroBehind(card.img, fam, card.seed, E.hero, 'framed.hero', tag);
       const fx = E.frame.x * KX, fy = E.frame.y * KY;
       s += wrap('framed.frame', '<rect x="' + fx + '" y="' + fy + '" width="' + (W - 2 * fx) + '" height="' + (H - 2 * fy) + '" fill="none" stroke="' + fam.ink + '" stroke-width="' + (E.frame.stroke || 4) + '"/>', tag);
       s += wrap('framed.wordmark', assetEl(E.wordmark, fam.ink), tag);

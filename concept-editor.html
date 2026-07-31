@@ -304,7 +304,7 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
       if (o.y != null) e.y = Math.round(o.y + dy);
     } else {
       if (e.kind === 'photo') { e.w = Math.max(120, Math.round(o.w + dx)); e.h = Math.max(120, Math.round(o.h + dy)); }
-      else if (e.kind === 'asset') e.w = Math.max(80, Math.round(o.w + dx));
+      else if (e.kind === 'asset' || e.kind === 'hero') e.w = Math.max(80, Math.round(o.w + dx));
       else if (e.kind === 'name') e.scale = Math.max(0.2, Math.round((o.scale + dx / 800) * 100) / 100);
       else if (e.kind === 'rule') e.x2 = Math.round(o.x2 + dx);
       else if (e.kind === 'band') e.h = Math.max(200, Math.round(o.h + dy));

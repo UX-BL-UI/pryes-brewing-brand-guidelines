@@ -16,6 +16,7 @@ window.PRYES_LAYOUT_DEFAULTS = {
     elements: {
       /* Tuned by Ben, 2026-07-31: wordmark+Brewing mark, raised 40 */
       lockup:   { kind: 'asset', asset: 'wordmarktag', cx: 900, y: 100, w: 760 },
+      hero:     { kind: 'hero', cx: 900, y: 720, w: 1450 },
       name:     { kind: 'name', x: 900, y: 1150, anchor: 'middle', scale: 1, track: 0 },
       style:    { kind: 'sub', x: 900, y: 1285, anchor: 'middle', size: 108, track: 0.05 },
       body:     { kind: 'body', x: 900, y: 1480, anchor: 'middle', size: 62, lh: 1.5 },
@@ -43,6 +44,7 @@ window.PRYES_LAYOUT_DEFAULTS = {
     label: 'Framed',
     elements: {
       frame:    { kind: 'frame', x: 96, y: 96, stroke: 4 },
+      hero:     { kind: 'hero', cx: 900, y: 720, w: 1450 },
       wordmark: { kind: 'asset', asset: 'wordmark', cx: 900, y: 156, w: 860 },
       eyebrow:  { kind: 'sub', x: 900, y: 536, anchor: 'middle', size: 66, track: 0.05 },
       name:     { kind: 'name', x: 900, y: 1090, anchor: 'middle', scale: 1, track: 0 },
