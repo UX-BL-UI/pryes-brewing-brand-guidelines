@@ -12,17 +12,17 @@ window.PRYES_LAYOUT_DEFAULTS_V2 = {
   beerfeature: {
     label: 'Beer feature',
     elements: {
-      /* Grounded to the Pragmatic Pils reference poster, 2026-07-31:
-         the Pryes Brewing wordmark (one brand asset) bleeding the
-         top edge, patterned field, centered can, brand shape cutting
-         into the beer foam band that carries headline + subheadline. */
-      wordmark:    { kind: 'asset', asset: 'wordmarktag', cx: 900, y: -44, w: 1724 },
-      can:         { kind: 'photo', cx: 900, y: 610, h: 1330 },
-      band:        { kind: 'band', y: 1985, poke: 150 },
-      headline:    { kind: 'headline', x: 900, y: 2200, anchor: 'middle', size: 150, track: 0.06 },
-      subheadline: { kind: 'sub',  x: 900, y: 2312, anchor: 'middle', size: 74, track: 0.14 },
-      diamondL:    { kind: 'diamond', cx: 150,  cy: 2226, s: 26 },
-      diamondR:    { kind: 'diamond', cx: 1650, cy: 2226, s: 26 }
+      /* Grounded to the Pragmatic Pils reference poster; tuned by
+         Ben in concept-editor-v2, 2026-07-31: bigger can, higher
+         band, larger band type. Diamonds normalized to matching
+         size, inset, and line. */
+      wordmark:    { kind: 'asset', asset: 'wordmarktag', cx: 907, y: -4, w: 1577 },
+      can:         { kind: 'photo', cx: 893, y: 405, h: 1544 },
+      band:        { kind: 'band', y: 1642, poke: 150 },
+      headline:    { kind: 'headline', x: 906, y: 2127, anchor: 'middle', size: 191, track: 0.06 },
+      subheadline: { kind: 'sub',  x: 895, y: 2238, anchor: 'middle', size: 98, track: 0.14 },
+      diamondL:    { kind: 'diamond', cx: 200,  cy: 2147, s: 50 },
+      diamondR:    { kind: 'diamond', cx: 1600, cy: 2147, s: 50 }
     }
   }
 };
