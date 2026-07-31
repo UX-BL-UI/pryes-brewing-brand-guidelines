@@ -595,7 +595,8 @@ function showToast(msg) {
       let s = heroBlock(card.img, fam, card.seed, { x: 0, y: HH, w: W, h: split - HH }, card);
       s += placeAsset({ key:'wordmark', x: M, y: 96*KY, w: 470*KX, color: fam.ink });
       if (c.date) s += '<text x="' + (W-M) + '" y="' + 172*KY + '" text-anchor="end" font-family="' + COND + '" font-weight="600" font-size="' + 62*KX + '" letter-spacing="' + 62*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(c.date) + '</text>';
-      s += '<line x1="' + M + '" y1="' + (HH - 42*KY) + '" x2="' + (W-M) + '" y2="' + (HH - 42*KY) + '" stroke="' + fam.ink + '" stroke-opacity="0.22" stroke-width="2"/>';
+      /* rule sits flush with the top edge of the photo block */
+      s += '<line x1="' + M + '" y1="' + HH + '" x2="' + (W-M) + '" y2="' + HH + '" stroke="' + fam.ink + '" stroke-opacity="0.22" stroke-width="2"/>';
       s += '<line x1="0" y1="' + split + '" x2="' + W + '" y2="' + split + '" stroke="' + fam.ink + '" stroke-opacity="0.2" stroke-width="2"/>';
       if (c.style) s += '<text x="' + M + '" y="' + (split + 120*KY) + '" font-family="' + COND + '" font-weight="600" font-size="' + 98*KX + '" letter-spacing="' + 98*KX*TRK_SUB + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
       const fs = nameSize(c.beer) * KX;
