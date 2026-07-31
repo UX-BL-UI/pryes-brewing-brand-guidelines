@@ -21,7 +21,7 @@ window.PRYES_LAYOUT_DEFAULTS_V2 = {
       band:        { kind: 'band', y: 1960 },
       /* Tile overlap as a percent of tile size, so it holds at any
          pattern density. ovX pulls columns together; ovY pulls rows. */
-      pattern:     { kind: 'pattern', ovX: 18, ovY: 0 },
+      pattern:     { kind: 'pattern', ovX: 6, ovY: 0 },
       /* Each of the 15 brand shapes keeps its own placement here,
          keyed by shape number: { cx, y, w, h }. A shape without an
          entry gets an automatic placement against the band line.

@@ -165,10 +165,16 @@ window.PryesPosterV2 = (function () {
        come from the layout defaults (editable in the editor) */
     const ovX = tw * Math.min(90, Math.max(0, pE.ovX != null ? pE.ovX : 18)) / 100;
     const ovY = th * Math.min(90, Math.max(0, pE.ovY != null ? pE.ovY : 0)) / 100;
+    /* center the tile grid so any leftover margin splits evenly
+       across both edges instead of collecting on one side */
+    const strideX = tw - ovX, strideY = th - ovY;
+    const nCols = Math.max(1, Math.ceil((W - tw) / strideX) + 1);
+    const nRows = Math.max(1, Math.ceil((H - th) / strideY) + 1);
+    const x0 = (W - ((nCols - 1) * strideX + tw)) / 2;
     let s = '';
-    for (let y = 0; y < H; y += th - ovY) {
-      for (let x = 0; x < W; x += tw - ovX) {
-        s += '<svg x="' + x + '" y="' + y + '" width="' + tw + '" height="' + th + '" viewBox="' + pat.vb + '" preserveAspectRatio="xMidYMid slice"><g fill="' + color + '">' + pat.body + '</g></svg>';
+    for (let r = 0; r < nRows; r++) {
+      for (let c = 0; c < nCols; c++) {
+        s += '<svg x="' + (x0 + c * strideX) + '" y="' + (r * strideY) + '" width="' + tw + '" height="' + th + '" viewBox="' + pat.vb + '" preserveAspectRatio="xMidYMid slice"><g fill="' + color + '">' + pat.body + '</g></svg>';
       }
     }
     return s;
