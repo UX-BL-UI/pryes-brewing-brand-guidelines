@@ -28,12 +28,14 @@ window.PryesPoster = (function () {
   /* Type matches the guide page's own specimen CSS: subheads 0.05em at 600, headers serif 600,
      body serif 500, callouts sans 300 at 0.15em. Per-element track/lh come from layout-defaults. */
 
+  /* tonal = the guide's background-art colorway ("keep colorways tonal - Beige on Beer Foam,
+     Off-Black Burgundy on Regal Burgundy"); families without one fall back to a faint accent. */
   const FAMILIES = [
-    { id:'burgundy',  name:'Regal Burgundy',   bg:'#3E0F23', ink:'#FFF1E4', accent:'#EBCFB8', weight:3 },
-    { id:'foam',      name:'Beer Foam',        bg:'#FFF1E4', ink:'#3E0F23', accent:'#3E0F23', weight:1 },
+    { id:'burgundy',  name:'Regal Burgundy',   bg:'#3E0F23', ink:'#FFF1E4', accent:'#EBCFB8', tonal:'#320C1C', weight:3 },
+    { id:'foam',      name:'Beer Foam',        bg:'#FFF1E4', ink:'#3E0F23', accent:'#3E0F23', tonal:'#EBCFB8', weight:1 },
     { id:'miraculum', name:'Miraculum Green',  bg:'#213B1E', ink:'#FFF1E4', accent:'#EBCFB8', weight:1 },
     { id:'beige',     name:'Beige',            bg:'#EBCFB8', ink:'#3E0F23', accent:'#213B1E', weight:1 },
-    { id:'offblack',  name:'Off-Black',        bg:'#101019', ink:'#FFF1E4', accent:'#EBCFB8', weight:1 }
+    { id:'offblack',  name:'Off-Black',        bg:'#101019', ink:'#FFF1E4', accent:'#EBCFB8', tonal:'#3E0F23', weight:1 }
   ];
   const IMAGES  = [ {id:'laurel',label:'Laurel field'}, {id:'emblem',label:'Crest emblem'}, {id:'shapes',label:'Shape block'}, {id:'well',label:'Photo well'} ];
   const LAYOUTS = [ {id:'stacked',label:'Stacked'}, {id:'anchored',label:'Anchored'}, {id:'framed',label:'Framed'}, {id:'feature',label:'Featured can'} ];
@@ -171,11 +173,26 @@ window.PryesPoster = (function () {
       '<text x="' + (r.x + r.w / 2) + '" y="' + (r.y + r.h / 2 + 66 * KY) + '" text-anchor="middle" font-family="' + SANS + '" font-weight="300" font-size="' + 30 * KX + '" letter-spacing="' + 30 * KX * 0.15 + '" fill="' + fam.bg + '" fill-opacity="0.72">CAN RENDER OR LIFESTYLE PHOTO</text>';
   }
   function heroBehind(img, fam, seed) {
-    const op = 0.10;
-    if (img === 'laurel') return patternCover({ x: 0, y: 0, w: W, h: H }, fam, op);
-    if (img === 'emblem') return placeAsset({ key: 'crest', cx: W / 2, y: H * 0.30, w: 1450 * KX, color: fam.accent, opacity: op + 0.02 });
-    if (img === 'shapes') return shapeDecor(fam, op + 0.05, seed);
-    return placeAsset({ key: 'pmark', cx: W / 2, y: H * 0.30, w: 1150 * KX, color: fam.accent, opacity: op });
+    /* tonal families render background art in the guide's tonal colorway at full strength;
+       others fall back to a faint accent tint */
+    const color = fam.tonal || fam.accent;
+    const op = fam.tonal ? 1 : 0.10;
+    if (img === 'laurel') return patternCoverColored({ x: 0, y: 0, w: W, h: H }, color, op);
+    if (img === 'emblem') return placeAsset({ key: 'crest', cx: W / 2, y: H * 0.30, w: 1450 * KX, color: color, opacity: fam.tonal ? 1 : op + 0.02 });
+    if (img === 'shapes') return shapeDecorColored(color, op, seed);
+    return placeAsset({ key: 'pmark', cx: W / 2, y: H * 0.30, w: 1150 * KX, color: color, opacity: op });
+  }
+  function patternCoverColored(r, color, op) {
+    if (!A.laurel) return '';
+    return '<svg x="' + r.x + '" y="' + r.y + '" width="' + r.w + '" height="' + r.h + '" viewBox="' + A.laurel.vb + '" preserveAspectRatio="xMidYMid slice"><g fill="' + color + '" opacity="' + op + '">' + A.laurel.body + '</g></svg>';
+  }
+  function shapeDecorColored(color, op, seed) {
+    const r = { x: 0, y: 0, w: W, h: H };
+    if (!A.shapes.length || !A.shapes[0]) return patternCoverColored(r, color, op);
+    const sh = A.shapes[seed % A.shapes.length];
+    const pp = sh.vb.split(/\s+/).map(Number), vw = pp[2], vh = pp[3];
+    const w = r.w * 1.25, h = w * (vh / vw);
+    return '<svg x="' + (r.x - r.w * 0.12) + '" y="' + (r.y + r.h - h * 0.86) + '" width="' + w + '" height="' + h + '" viewBox="' + sh.vb + '" preserveAspectRatio="xMidYMid meet"><g fill="' + color + '" opacity="' + op + '">' + sh.body + '</g></svg>';
   }
   function heroBlock(img, fam, seed, r, card) {
     const id = 'cbc' + (UID++);
