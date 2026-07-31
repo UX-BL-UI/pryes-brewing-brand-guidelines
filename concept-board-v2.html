@@ -294,6 +294,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
   <div class="cb-occasions" role="group" aria-label="Poster type" id="cb-concepts">
     <button class="cb-occasion" type="button" data-concept="beerfeature" aria-pressed="true">Beer feature</button>
     <button class="cb-occasion" type="button" data-concept="brandfocus" aria-pressed="false">Brand focus</button>
+    <button class="cb-occasion" type="button" data-concept="cobrand" aria-pressed="false">Co-branded</button>
     <button class="cb-occasion" type="button" disabled>Event</button>
     <button class="cb-occasion" type="button" disabled>Announcement</button>
   </div>
@@ -309,6 +310,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
       </div>
       <div class="cb-field" id="cb-beer-field"><label for="cb-beer-select">Beer</label><select id="cb-beer-select"></select></div>
       <div class="cb-field" id="cb-showp-field" style="display:none"><label for="cb-showp">P watermark</label><select id="cb-showp"><option value="on" selected>Show</option><option value="off">Hide</option></select></div>
+      <div class="cb-field" id="cb-partner-field" style="display:none"><label for="cb-partner-select">Partner</label><select id="cb-partner-select"></select></div>
       <div class="cb-field cb-wide"><label for="cb-headline">Headline</label><textarea id="cb-headline" data-k="headline" rows="2" autocomplete="off"></textarea></div>
       <div class="cb-field cb-wide"><label for="cb-subheadline">Subheadline</label><textarea id="cb-subheadline" data-k="subheadline" rows="2" autocomplete="off"></textarea></div>
     </div>
@@ -452,19 +454,32 @@ function showToast(msg) {
       { concept: 'brandfocus', colorway: 'burgundy', held: false, lock: { colorway: false } },
       { concept: 'brandfocus', colorway: 'beige',    held: false, lock: { colorway: false } },
       { concept: 'brandfocus', colorway: 'offblack', held: false, lock: { colorway: false } }
+    ],
+    cobrand: [
+      { concept: 'cobrand', beer: beerId, partner: 'twins', shape: 3,  colorway: 'foam',      held: false, lock: { shape: false, colorway: false } },
+      { concept: 'cobrand', beer: beerId, partner: 'twins', shape: 5,  colorway: 'beerplaque', held: false, lock: { shape: false, colorway: false } },
+      { concept: 'cobrand', beer: beerId, partner: 'twins', shape: 11, colorway: 'beige',     held: false, lock: { shape: false, colorway: false } },
+      { concept: 'cobrand', beer: beerId, partner: 'twins', shape: 8,  colorway: 'burgundy',  held: false, lock: { shape: false, colorway: false } }
     ]
   };
   let cards = cardsByConcept[concept];
   /* each poster type keeps its own words */
   const contentByConcept = {
     beerfeature: { headline: BEERS[0].headline, subheadline: BEERS[0].subheadline },
-    brandfocus:  { headline: "It's a\nMidwest\nThing", subheadline: 'Available\nNow' }
+    brandfocus:  { headline: "It's a\nMidwest\nThing", subheadline: 'Available\nNow' },
+    cobrand:     { headline: 'See You\nAt the Game', subheadline: '' }
   };
   let selected = -1;
 
-  const REEL_KEYS = { beerfeature: ['shape', 'colorway', 'density'], brandfocus: ['colorway'] };
+  const weightedCobrandWays = P.COBRAND_WAYS.reduce((a, w) => a.concat(Array(w.weight).fill(w.id)), []);
+  const REEL_KEYS = { beerfeature: ['shape', 'colorway', 'density'], brandfocus: ['colorway'], cobrand: ['shape', 'colorway'] };
   function rerollReel(card, key) {
     if (card.concept === 'brandfocus') { card.colorway = rndDiff(weightedBrandWays, card.colorway); return; }
+    if (card.concept === 'cobrand') {
+      if (key === 'shape') card.shape = rndShape(card.shape);
+      else card.colorway = rndDiff(weightedCobrandWays, card.colorway);
+      return;
+    }
     if (key === 'shape') card.shape = rndShape(card.shape);
     else if (key === 'colorway') card.colorway = rndDiff(weightedWays, card.colorway);
     else card.density = rndDiff(densityIds, card.density);
@@ -485,7 +500,11 @@ function showToast(msg) {
   const REEL_LABELS = { shape: 'Shape', colorway: 'Color', density: 'Pattern' };
   function reelValueLabel(card, key) {
     if (key === 'shape') return 'Shape ' + String(card.shape).padStart(2, '0');
-    if (key === 'colorway') return card.concept === 'brandfocus' ? P.brandColorwayById(card.colorway).name : P.colorwayById(card.colorway).name;
+    if (key === 'colorway') {
+      if (card.concept === 'brandfocus') return P.brandColorwayById(card.colorway).name;
+      if (card.concept === 'cobrand') return P.cobrandWayById(card.colorway).name;
+      return P.colorwayById(card.colorway).name;
+    }
     return P.densityById(card.density).name;
   }
   function reelHTML(i, key, card) {
@@ -531,6 +550,17 @@ function showToast(msg) {
         '<b>Poster type</b> Brand focus<br>' +
         '<b>Color</b> ' + P.brandColorwayById(card.colorway).name + ' · field ' + bp.bg + ' · ink ' + bp.ink + '<br>' +
         '<b>Marks</b> Pryes Brewing wordmark · laurel wreath · P watermark<br>' +
+        '<b>Size</b> ' + P.SIZE.label;
+    } else if (card.concept === 'cobrand') {
+      const beer = P.beerById(card.beer);
+      const partner = P.partnerById(card.partner);
+      const cp = P.cobrandWayById(card.colorway).paint(beer);
+      document.getElementById('cb-spot-recipe').innerHTML =
+        '<b>Poster type</b> Co-branded<br>' +
+        '<b>Beer</b> ' + esc(beer.name) + '<br>' +
+        '<b>Partner</b> ' + esc(partner.name) + ' · logo in ' + (cp.dark ? partner.onDark : partner.color) + '<br>' +
+        '<b>Plaque</b> Shape ' + String(card.shape).padStart(2, '0') + ' · ' + cp.plaque + '<br>' +
+        '<b>Color</b> ' + P.cobrandWayById(card.colorway).name + ' · field ' + cp.bg + ' · ink ' + cp.ink + '<br>' +
         '<b>Size</b> ' + P.SIZE.label;
     } else {
       const beer = P.beerById(card.beer);
@@ -584,6 +614,28 @@ function showToast(msg) {
       '<h1>' + esc(c.headline || 'Concept') + ' - build recipe</h1><p class="sub">From the Pryes Concept Board V2. Every ingredient below rebuilds this concept exactly; the SVG in this package is the concept itself, fully editable.</p>' +
       '<table>' + rows.map(tr).join('') + '</table></body></html>';
   }
+  function cobrandSpecSheetHTML(c, card) {
+    const beer = P.beerById(card.beer);
+    const partner = P.partnerById(card.partner);
+    const way = P.cobrandWayById(card.colorway);
+    const cp = way.paint(beer);
+    const E = P.SPEC.cobrand.elements;
+    const rows = [
+      ['Poster type', 'Co-branded · ' + P.SIZE.label + ' portrait'],
+      ['Beer', beer.name + ' · ' + beer.can.split('/').pop() + ' (full-resolution copy in this package)'],
+      ['Partner', partner.name + ' · ' + partner.file.split('/').pop() + ' · printed in ' + (cp.dark ? partner.onDark : partner.color)],
+      ['Plaque', 'Brand shape ' + String(card.shape).padStart(2, '0') + ' · printed in ' + cp.plaque],
+      ['Colors', way.name + ' · field ' + cp.bg + ' · plaque ' + cp.plaque + ' · ink ' + cp.ink],
+      ['Headline', '"' + c.headline.replace(/\n/g, ' / ') + '" · Alternate Gothic No.2 D · ' + Math.round(E.headline.size * c.h1Mul) + ' design units · tracking ' + (E.headline.track + c.h1Track).toFixed(2) + 'em'],
+      ['Fonts', 'Alternate Gothic No.2 D / Gotham / Superclarendon - SVG text is live and editable'],
+      ['Design space', '1800 × 2400 units; the SVG opens at true print size in Illustrator']
+    ];
+    const tr = r => '<tr><th>' + r[0] + '</th><td>' + esc(String(r[1])) + '</td></tr>';
+    return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>' + esc(c.headline || 'Concept') + ' - Pryes build recipe</title>' +
+      '<style>body{font-family:Georgia,serif;max-width:640px;margin:40px auto;padding:0 20px;color:#3e0f23;line-height:1.5}h1{font-size:24px;margin-bottom:4px}p.sub{margin:0 0 24px;color:#6b4351;font-size:14px}table{border-collapse:collapse;width:100%}th{text-align:left;padding:7px 16px 7px 0;white-space:nowrap;vertical-align:top;font-size:14px}td{padding:7px 0;font-size:14px}tr{border-bottom:1px solid #eee}@media print{body{margin:0}}</style></head><body>' +
+      '<h1>' + esc((c.headline || 'Concept').replace(/\n/g, ' ')) + ' - build recipe</h1><p class="sub">From the Pryes Concept Board V2. Every ingredient below rebuilds this concept exactly; the SVG in this package is the concept itself, fully editable.</p>' +
+      '<table>' + rows.map(tr).join('') + '</table></body></html>';
+  }
   function specSheetHTML(c, card) {
     const beer = P.beerById(card.beer);
     const paint = P.colorwayById(card.colorway).paint(beer);
@@ -619,7 +671,7 @@ function showToast(msg) {
     if (window.JSZip) {
       const zip = new JSZip();
       zip.file(svgName, svg);
-      zip.file('build-recipe.html', isBrand ? brandSpecSheetHTML(c, card) : specSheetHTML(c, card));
+      zip.file('build-recipe.html', isBrand ? brandSpecSheetHTML(c, card) : card.concept === 'cobrand' ? cobrandSpecSheetHTML(c, card) : specSheetHTML(c, card));
       if (can) zip.file(can.name, can.blob);
       const blob = await zip.generateAsync({ type: 'blob' });
       downloadBlob(blob, 'pryes-' + slug + '-concept.zip');
@@ -689,6 +741,8 @@ function showToast(msg) {
     conceptBox.querySelectorAll('[data-concept]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
     document.getElementById('cb-beer-field').style.display = concept === 'brandfocus' ? 'none' : '';
     document.getElementById('cb-showp-field').style.display = concept === 'brandfocus' ? '' : 'none';
+    document.getElementById('cb-partner-field').style.display = concept === 'cobrand' ? '' : 'none';
+    document.getElementById('cb-subheadline').closest('.cb-field').style.display = concept === 'cobrand' ? 'none' : '';
     document.getElementById('cb-headline').value = contentByConcept[concept].headline;
     document.getElementById('cb-subheadline').value = contentByConcept[concept].subheadline;
     selected = -1; spot.classList.remove('is-open');
@@ -701,14 +755,27 @@ function showToast(msg) {
   function applyBeer() {
     beerId = beerSelect.value;
     const b = P.beerById(beerId);
-    cards.forEach(card => { card.beer = beerId; });
-    document.getElementById('cb-headline').value = b.headline;
-    document.getElementById('cb-subheadline').value = b.subheadline;
+    cardsByConcept.beerfeature.forEach(card => { card.beer = beerId; });
+    cardsByConcept.cobrand.forEach(card => { card.beer = beerId; });
+    /* the beer's own words only drive the beer feature poster */
+    if (concept === 'beerfeature') {
+      document.getElementById('cb-headline').value = b.headline;
+      document.getElementById('cb-subheadline').value = b.subheadline;
+      contentByConcept.beerfeature = { headline: b.headline, subheadline: b.subheadline };
+    }
     renderBoard();
   }
   beerSelect.addEventListener('change', applyBeer);
   document.getElementById('cb-headline').value = BEERS[0].headline;
   document.getElementById('cb-subheadline').value = BEERS[0].subheadline;
+
+  /* ---------- partner select ---------- */
+  const partnerSelect = document.getElementById('cb-partner-select');
+  partnerSelect.innerHTML = P.PARTNERS.map(p => '<option value="' + p.id + '">' + esc(p.name) + '</option>').join('');
+  partnerSelect.addEventListener('change', () => {
+    cardsByConcept.cobrand.forEach(card => { card.partner = partnerSelect.value; });
+    if (concept === 'cobrand') renderBoard();
+  });
 
   /* ---------- boot ---------- */
   P.load().then(() => renderBoard());

@@ -99,8 +99,31 @@ window.PryesPosterV2 = (function () {
   /* ---------- concepts ---------- */
   const CONCEPTS = [
     { id: 'beerfeature', label: 'Beer feature' },
-    { id: 'brandfocus',  label: 'Brand focus' }
+    { id: 'brandfocus',  label: 'Brand focus' },
+    { id: 'cobrand',     label: 'Co-branded' }
   ];
+
+  /* ---------- partners ----------
+     One-color logo files painted in the partner's own brand color.
+     onDark swaps in when the poster field is dark so the mark stays
+     legible. Add a partner by dropping an SVG in assets/partners
+     and adding a row here. */
+  const PARTNERS = [
+    { id: 'twins', name: 'Twins', file: 'assets/partners/twins.svg', color: '#D31145', onDark: BRAND.foam }
+  ];
+  function partnerById(id) { return PARTNERS.find(p => p.id === id) || PARTNERS[0]; }
+
+  /* Co-branded colorways: brand palette plus the featured beer's
+     own colors; dark = use the partner's onDark ink. */
+  const COBRAND_WAYS = [
+    { id:'foam',      name:'Beer Foam',       weight:2, paint: b => ({ bg:BRAND.foam, plaque:BRAND.beige, ink:BRAND.burgundy, dark:false }) },
+    { id:'beerfield', name:'Beer color',      weight:1, paint: b => ({ bg:b.colors.bg, plaque:BRAND.foam, ink:b.colors.accent, dark:false }) },
+    { id:'beerplaque',name:'Beer plaque',     weight:1, paint: b => ({ bg:BRAND.foam, plaque:b.colors.bg, ink:BRAND.burgundy, dark:false }) },
+    { id:'beige',     name:'Beige',           weight:1, paint: b => ({ bg:BRAND.beige, plaque:BRAND.foam, ink:BRAND.burgundy, dark:false }) },
+    { id:'burgundy',  name:'Regal Burgundy',  weight:1, paint: b => ({ bg:BRAND.burgundy, plaque:BRAND.burgundyDeep, ink:BRAND.foam, dark:true }) },
+    { id:'offblack',  name:'Off-Black',       weight:1, paint: b => ({ bg:BRAND.offblack, plaque:BRAND.burgundy, ink:BRAND.foam, dark:true }) }
+  ];
+  function cobrandWayById(id) { return COBRAND_WAYS.find(c => c.id === id) || COBRAND_WAYS[0]; }
 
   /* Brand-focus colorways: no beer involved - background, ink, and
      the two center marks move through the brand palette. Wreath and
@@ -116,7 +139,7 @@ window.PryesPosterV2 = (function () {
   const SHAPE_COUNT = 15;
   const shapeUrl = n => 'assets/shapes/svg/BEERFOAM/BEER FOAM SHAPE ' + String(n).padStart(2, '0') + '.svg';
 
-  const A = { assets: {}, shapes: [], patterns: {} };
+  const A = { assets: {}, shapes: [], patterns: {}, partners: {} };
   let SPEC = window.PRYES_LAYOUT_DEFAULTS_V2;
   function setSpec(s) { SPEC = s; }
 
@@ -241,6 +264,18 @@ window.PryesPosterV2 = (function () {
     const ps = (E.shape && E.shape.perShape) || {};
     return ps[n] || shapeFallback(n, E.band.y);
   }
+  /* Concept-aware variants: the co-branded plaque anchors shapes to
+     a centered box instead of the band line. */
+  function shapeFallbackFor(concept, n, spec) {
+    spec = spec || SPEC;
+    if (concept === 'cobrand') return { kind: 'shape', cx: 900, y: 476, w: 1440, h: 1455 };
+    return shapeFallback(n, spec.beerfeature.elements.band.y);
+  }
+  function resolveShapeFor(concept, n) {
+    const lay = SPEC[concept];
+    const ps = (lay && lay.elements.shape && lay.elements.shape.perShape) || {};
+    return ps[n] || shapeFallbackFor(concept, n);
+  }
   function shapeDividerEl(n, shape, bandColor) {
     if (!shape) return '';
     const r = resolveShape(n);
@@ -279,9 +314,45 @@ window.PryesPosterV2 = (function () {
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + SIZE.inW + '" height="' + SIZE.inH + '">' + s + '</svg>';
   }
 
+  /* Co-branded poster: giant PRYES over a shape plaque framing the
+     can, message left and partner logo right at the foot.
+     card = { concept:'cobrand', beer, partner, shape, colorway } */
+  function buildCobrand(card, c, opts) {
+    opts = opts || {};
+    const E = SPEC.cobrand.elements;
+    const beer = beerById(card.beer);
+    const partner = partnerById(card.partner);
+    const paint = cobrandWayById(card.colorway).paint(beer);
+    const tag = !!opts.tag;
+
+    let s = '<rect width="' + W + '" height="' + H + '" fill="' + paint.bg + '"/>';
+
+    /* plaque: brand shape stretched into its hand-placed box */
+    const shapeAsset = A.shapes[(card.shape - 1 + SHAPE_COUNT) % SHAPE_COUNT];
+    if (shapeAsset) {
+      const r = resolveShapeFor('cobrand', card.shape);
+      s += wrap('cobrand.shape', '<svg x="' + (r.cx - r.w / 2) * KX + '" y="' + r.y * KY + '" width="' + r.w * KX + '" height="' + r.h * KY + '" viewBox="' + shapeAsset.vb + '" preserveAspectRatio="none"><g fill="' + paint.plaque + '">' + shapeAsset.body + '</g></svg>', tag);
+    }
+
+    const canH = E.can.h * KY, canW = canH * beer.canAspect;
+    const href = opts.canHref || beer.can;
+    s += wrap('cobrand.can', '<image x="' + (E.can.cx * KX - canW / 2) + '" y="' + (E.can.y * KY) + '" width="' + canW + '" height="' + canH + '" href="' + esc(href) + '" preserveAspectRatio="xMidYMid meet"/>', tag);
+
+    const mark = A.assets[E.wordmark.asset || 'wordmark'];
+    if (mark) s += wrap('cobrand.wordmark', placeSVG(mark, { cx: E.wordmark.cx * KX, y: E.wordmark.y * KY, w: E.wordmark.w * KX, color: paint.ink }), tag);
+
+    s += wrap('cobrand.headline', condText(E.headline, c.headline, paint.ink, { sizeMul: c.h1Mul, trackAdd: c.h1Track }), tag);
+
+    const logo = A.partners[partner.id];
+    if (logo) s += wrap('cobrand.partner', placeSVG(logo, { cx: E.partner.cx * KX, y: E.partner.y * KY, w: E.partner.w * KX, color: paint.dark ? partner.onDark : partner.color }), tag);
+
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + SIZE.inW + '" height="' + SIZE.inH + '">' + s + '</svg>';
+  }
+
   function buildPosterSVG(card, c, opts) {
     opts = opts || {};
     if ((card.concept || 'beerfeature') === 'brandfocus') return buildBrandFocus(card, c, opts);
+    if ((card.concept || 'beerfeature') === 'cobrand') return buildCobrand(card, c, opts);
     const E = SPEC.beerfeature.elements;
     const beer = beerById(card.beer);
     const paint = colorwayById(card.colorway).paint(beer);
@@ -348,12 +419,15 @@ window.PryesPosterV2 = (function () {
     await Promise.all(Object.keys(ASSET_URLS).map(async k => { A.assets[k] = await loadOne(ASSET_URLS[k]); }));
     A.shapes = await Promise.all(Array.from({ length: SHAPE_COUNT }, (_, i) => loadOne(shapeUrl(i + 1))));
     await Promise.all(BEERS.map(async b => { A.patterns[b.id] = await loadOne(b.pattern); }));
+    await Promise.all(PARTNERS.map(async p => { A.partners[p.id] = await loadOne(p.file); }));
     measureShapes();
   }
 
   return {
     SIZES: SIZES, BEERS: BEERS, COLORWAYS: COLORWAYS, DENSITIES: DENSITIES, SHAPE_COUNT: SHAPE_COUNT, ASSET_OPTIONS: ASSET_OPTIONS,
     CONCEPTS: CONCEPTS, BRAND_COLORWAYS: BRAND_COLORWAYS, brandColorwayById: brandColorwayById,
+    PARTNERS: PARTNERS, partnerById: partnerById, COBRAND_WAYS: COBRAND_WAYS, cobrandWayById: cobrandWayById,
+    resolveShapeFor: resolveShapeFor, shapeFallbackFor: shapeFallbackFor,
     get SIZE() { return SIZE; },
     get SPEC() { return SPEC; },
     setSize: setSize, setSpec: setSpec,

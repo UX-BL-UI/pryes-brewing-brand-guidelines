@@ -130,6 +130,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
       <select id="ed-density"></select></span>
     <span class="ed-ctl" id="ed-showp-ctl" style="display:none">P watermark
       <select id="ed-showp"><option value="on" selected>Show</option><option value="off">Hide</option></select></span>
+    <span class="ed-ctl" id="ed-partner-ctl" style="display:none">Partner
+      <select id="ed-partner"></select></span>
     <span class="ed-count" id="ed-count">No changes yet</span>
   </div>
 
@@ -242,11 +244,12 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   });
 
   const stage = document.getElementById('ed-poster');
-  let card = { concept: 'beerfeature', beer: P.BEERS[0].id, colorway: 'beer', shape: 5, density: 'medium' };
+  let card = { concept: 'beerfeature', beer: P.BEERS[0].id, partner: P.PARTNERS[0].id, colorway: 'beer', shape: 5, density: 'medium' };
   let selectedEl = null;   /* "<concept>.element" */
 
   function content() {
     if (card.concept === 'brandfocus') return { headline: "It's a\nMidwest\nThing", subheadline: 'Available\nNow', showP: document.getElementById('ed-showp').value !== 'off', h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
+    if (card.concept === 'cobrand') return { headline: 'See You\nAt the Game', subheadline: '', h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
     const b = P.beerById(card.beer);
     return { headline: b.headline, subheadline: b.subheadline, h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
   }
@@ -255,23 +258,28 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   const conceptBox = document.getElementById('ed-concepts');
   conceptBox.innerHTML = P.CONCEPTS.map(cn => '<button class="ed-chip" type="button" data-concept="' + cn.id + '" aria-pressed="' + (cn.id === card.concept) + '">' + cn.label + '</button>').join('');
   function syncColorwayOptions() {
-    const ways = card.concept === 'brandfocus' ? P.BRAND_COLORWAYS : P.COLORWAYS;
+    const ways = card.concept === 'brandfocus' ? P.BRAND_COLORWAYS : card.concept === 'cobrand' ? P.COBRAND_WAYS : P.COLORWAYS;
     waySel.innerHTML = ways.map(w => '<option value="' + w.id + '"' + (w.id === card.colorway ? ' selected' : '') + '>' + w.name + '</option>').join('');
   }
   conceptBox.addEventListener('click', e => {
     const b = e.target.closest('[data-concept]'); if (!b || b.dataset.concept === card.concept) return;
     card.concept = b.dataset.concept;
-    card.colorway = card.concept === 'brandfocus' ? 'foam' : 'beer';
+    card.colorway = card.concept === 'brandfocus' ? 'foam' : card.concept === 'cobrand' ? 'foam' : 'beer';
     conceptBox.querySelectorAll('.ed-chip').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
     const isBrand = card.concept === 'brandfocus';
+    const isCobrand = card.concept === 'cobrand';
     document.getElementById('ed-beer-ctl').style.display = isBrand ? 'none' : '';
     document.getElementById('ed-shape-ctl').style.display = isBrand ? 'none' : '';
-    document.getElementById('ed-density-ctl').style.display = isBrand ? 'none' : '';
+    document.getElementById('ed-density-ctl').style.display = (isBrand || isCobrand) ? 'none' : '';
     document.getElementById('ed-showp-ctl').style.display = isBrand ? '' : 'none';
+    document.getElementById('ed-partner-ctl').style.display = isCobrand ? '' : 'none';
     syncColorwayOptions();
     selectedEl = null; render(); syncPanel(); syncChanges();
   });
   document.getElementById('ed-showp').addEventListener('change', () => render());
+  const partnerSel = document.getElementById('ed-partner');
+  partnerSel.innerHTML = P.PARTNERS.map(p => '<option value="' + p.id + '">' + p.name + '</option>').join('');
+  partnerSel.addEventListener('change', () => { card.partner = partnerSel.value; render(); });
   const beerSel = document.getElementById('ed-beer');
   beerSel.innerHTML = P.BEERS.map(b => '<option value="' + b.id + '">' + b.name + '</option>').join('');
   beerSel.addEventListener('change', () => { card.beer = beerSel.value; render(); });
@@ -323,7 +331,7 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
        editor always works on the placement of the shape on screen */
     if (e && e.kind === 'shape') {
       if (!e.perShape) e.perShape = {};
-      if (!e.perShape[card.shape]) e.perShape[card.shape] = JSON.parse(JSON.stringify(P.resolveShape(card.shape)));
+      if (!e.perShape[card.shape]) e.perShape[card.shape] = JSON.parse(JSON.stringify(P.resolveShapeFor(l, card.shape)));
       return e.perShape[card.shape];
     }
     return e;
@@ -357,7 +365,7 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
       if (o.cy != null) e.cy = Math.round(o.cy + dy);
     } else {
       if (e.kind === 'photo') e.h = Math.max(300, Math.round(o.h + dy));
-      else if (e.kind === 'asset') e.w = Math.max(80, Math.round(o.w + dx));
+      else if (e.kind === 'asset' || e.kind === 'partner') e.w = Math.max(80, Math.round(o.w + dx));
       else if (e.kind === 'shape') { e.w = Math.max(200, Math.round(o.w + dx)); e.h = Math.max(60, Math.round(o.h + dy)); }
       else if (e.kind === 'diamond') e.s = Math.max(6, Math.round(o.s + dx / 4));
       else if (o.size != null) e.size = Math.max(14, Math.round(o.size + dx / 5));
@@ -430,13 +438,17 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
       Object.keys(a).forEach(p => { if ((typeof a[p] === 'number' || typeof a[p] === 'string') && a[p] !== b[p]) out.push({ el: l + '.' + k, prop: p, from: a[p], to: b[p] }); });
     }));
     /* per-shape placements: each shape number diffs against its own
-       baseline (a shipped entry, or the automatic placement) */
-    const cur = (spec.beerfeature.elements.shape && spec.beerfeature.elements.shape.perShape) || {};
-    const pris = (PRISTINE.beerfeature.elements.shape && PRISTINE.beerfeature.elements.shape.perShape) || {};
-    Object.keys(cur).forEach(n => {
-      const base = pris[n] || P.shapeFallback(+n, PRISTINE.beerfeature.elements.band.y);
-      ['cx', 'y', 'w', 'h'].forEach(p => {
-        if (cur[n][p] != null && base[p] != null && cur[n][p] !== base[p]) out.push({ el: 'beerfeature.shape.' + String(n).padStart(2, '0'), prop: p, from: base[p], to: cur[n][p] });
+       baseline (a shipped entry, or the automatic placement), for
+       every concept that carries a shape element */
+    Object.keys(PRISTINE).forEach(l => {
+      if (!PRISTINE[l].elements.shape) return;
+      const cur = (spec[l].elements.shape && spec[l].elements.shape.perShape) || {};
+      const pris = PRISTINE[l].elements.shape.perShape || {};
+      Object.keys(cur).forEach(n => {
+        const base = pris[n] || P.shapeFallbackFor(l, +n, PRISTINE);
+        ['cx', 'y', 'w', 'h'].forEach(p => {
+          if (cur[n][p] != null && base[p] != null && cur[n][p] !== base[p]) out.push({ el: l + '.shape.' + String(n).padStart(2, '0'), prop: p, from: base[p], to: cur[n][p] });
+        });
       });
     });
     return out;

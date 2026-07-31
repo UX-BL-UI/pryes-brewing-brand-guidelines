@@ -63,5 +63,21 @@ window.PRYES_LAYOUT_DEFAULTS_V2 = {
       headline:    { kind: 'headline', x: 900, y: 1065, anchor: 'middle', size: 283, track: 0.01, lh: 0.93 },
       subheadline: { kind: 'serif', x: 898, y: 2043, anchor: 'middle', size: 206, lh: 0.92 }
     }
+  },
+  cobrand: {
+    label: 'Co-branded',
+    elements: {
+      /* Grounded to the Twins reference, 2026-07-31: giant PRYES,
+         brand-shape plaque framing the can, message left and
+         partner logo right at the foot. Partner colors live in the
+         engine's partner list, not here. */
+      wordmark:    { kind: 'asset', asset: 'wordmark', cx: 900, y: 90, w: 1600 },
+      can:         { kind: 'photo', cx: 900, y: 620, h: 1170 },
+      /* plaque placements per shape number, same system as the beer
+         poster's divider - hand-place each shape once */
+      shape:       { kind: 'shape', perShape: {} },
+      headline:    { kind: 'headline', x: 546, y: 2130, anchor: 'middle', size: 86, track: 0.08, lh: 1.25 },
+      partner:     { kind: 'partner', cx: 1265, y: 2000, w: 600 }
+    }
   }
 };
