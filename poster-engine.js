@@ -39,12 +39,27 @@ window.PryesPoster = (function () {
   const LAYOUTS = [ {id:'stacked',label:'Stacked'}, {id:'anchored',label:'Anchored'}, {id:'framed',label:'Framed'}, {id:'feature',label:'Featured can'} ];
 
   const ASSET_URLS = {
-    wordmark: 'assets/logos/svg/BEERFOAM/PRYES-WORDMARK-BEERFOAM.svg',
-    lockup:   'assets/logos/svg/BEERFOAM/PRYES-CREST+WORDMARK+TAGLINE-BEERFOAM.svg',
-    crest:    'assets/logos/svg/BEERFOAM/PRYES-CREST-NOBORDER-BEERFOAM.svg',
-    pmark:    'assets/logos/svg/BEERFOAM/PRYES-P-WATERMARK-BEERFOAM.svg',
-    laurel:   'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg'
+    wordmark:    'assets/logos/svg/BEERFOAM/PRYES-WORDMARK-BEERFOAM.svg',
+    wordmarktag: 'assets/logos/svg/BEERFOAM/PRYES-WORDMARK+TAGLINE-BEERFOAM.svg',
+    lockup:      'assets/logos/svg/BEERFOAM/PRYES-CREST+WORDMARK+TAGLINE-BEERFOAM.svg',
+    lockupopen:  'assets/logos/svg/BEERFOAM/PRYES-CREST-NOBORDER+WORDMARK+TAGLINE-BEERFOAM.svg',
+    crest:       'assets/logos/svg/BEERFOAM/PRYES-CREST-NOBORDER-BEERFOAM.svg',
+    crestcircle: 'assets/logos/svg/BEERFOAM/PRYES-CREST-CIRCLE01-BEERFOAM.svg',
+    pmark:       'assets/logos/svg/BEERFOAM/PRYES-P-WATERMARK-BEERFOAM.svg',
+    mnicon:      'assets/logos/svg/BEERFOAM/PRYES-MN-ICON-BEERFOAM.svg',
+    laurel:      'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg'
   };
+  /* Marks the editor can swap between on any asset element */
+  const ASSET_OPTIONS = [
+    { id: 'wordmark',    label: 'Wordmark - PRYES' },
+    { id: 'wordmarktag', label: 'Wordmark + Brewing' },
+    { id: 'lockup',      label: 'Crest + wordmark lockup' },
+    { id: 'lockupopen',  label: 'Open crest + wordmark' },
+    { id: 'crest',       label: 'Crest' },
+    { id: 'crestcircle', label: 'Crest circle' },
+    { id: 'pmark',       label: 'P watermark' },
+    { id: 'mnicon',      label: 'Minnesota icon' }
+  ];
   const SHAPE_URLS = [3,5,8,11,14].map(n => 'assets/shapes/svg/BEERFOAM/BEER FOAM SHAPE ' + String(n).padStart(2,'0') + '.svg');
   const A = { shapes: [] };
   const PHOTOS = [];
@@ -274,7 +289,7 @@ window.PryesPoster = (function () {
   }
 
   return {
-    SIZES: SIZES, FAMILIES: FAMILIES, IMAGES: IMAGES, LAYOUTS: LAYOUTS, PHOTOS: PHOTOS,
+    SIZES: SIZES, FAMILIES: FAMILIES, IMAGES: IMAGES, LAYOUTS: LAYOUTS, PHOTOS: PHOTOS, ASSET_OPTIONS: ASSET_OPTIONS,
     get SIZE() { return SIZE; },
     get SPEC() { return SPEC; },
     setSize: setSize, setSpec: setSpec,
