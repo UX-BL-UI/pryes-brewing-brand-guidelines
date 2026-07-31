@@ -583,7 +583,7 @@ function showToast(msg) {
       s += placeAsset({ key:'lockup', cx: W/2, y: 180*KY, w: 500*KX, color: fam.ink });
       const fs = nameSize(c.beer) * KX;
       s += '<text x="' + (W/2) + '" y="' + 1150*KY + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" font-weight="600" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
-      if (c.style) s += '<text x="' + (W/2) + '" y="' + 1285*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 86*KX + '" letter-spacing="' + 86*KX*TRK_SUB + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
+      if (c.style) s += '<text x="' + (W/2) + '" y="' + 1285*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 108*KX + '" letter-spacing="' + 108*KX*TRK_SUB + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
       s += tagline(c.tagline, W/2, 1480*KY, 62*KX, fam.ink, 'middle');
       s += '<line x1="' + M + '" y1="' + 2000*KY + '" x2="' + (W-M) + '" y2="' + 2000*KY + '" stroke="' + fam.ink + '" stroke-opacity="0.24" stroke-width="2"/>';
       s += statTrio(c, fam, 2120*KY);
@@ -594,10 +594,10 @@ function showToast(msg) {
       const HH = 250*KY, split = 1500*KY;
       let s = heroBlock(card.img, fam, card.seed, { x: 0, y: HH, w: W, h: split - HH }, card);
       s += placeAsset({ key:'wordmark', x: M, y: 96*KY, w: 470*KX, color: fam.ink });
-      if (c.date) s += '<text x="' + (W-M) + '" y="' + 172*KY + '" text-anchor="end" font-family="' + COND + '" font-weight="600" font-size="' + 52*KX + '" letter-spacing="' + 52*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(c.date) + '</text>';
+      if (c.date) s += '<text x="' + (W-M) + '" y="' + 172*KY + '" text-anchor="end" font-family="' + COND + '" font-weight="600" font-size="' + 62*KX + '" letter-spacing="' + 62*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(c.date) + '</text>';
       s += '<line x1="' + M + '" y1="' + (HH - 42*KY) + '" x2="' + (W-M) + '" y2="' + (HH - 42*KY) + '" stroke="' + fam.ink + '" stroke-opacity="0.22" stroke-width="2"/>';
       s += '<line x1="0" y1="' + split + '" x2="' + W + '" y2="' + split + '" stroke="' + fam.ink + '" stroke-opacity="0.2" stroke-width="2"/>';
-      if (c.style) s += '<text x="' + M + '" y="' + (split + 120*KY) + '" font-family="' + COND + '" font-weight="600" font-size="' + 78*KX + '" letter-spacing="' + 78*KX*TRK_SUB + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
+      if (c.style) s += '<text x="' + M + '" y="' + (split + 120*KY) + '" font-family="' + COND + '" font-weight="600" font-size="' + 98*KX + '" letter-spacing="' + 98*KX*TRK_SUB + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
       const fs = nameSize(c.beer) * KX;
       s += '<text x="' + M + '" y="' + (split + 120*KY + fs*0.86) + '" font-family="' + SERIF + '" font-size="' + fs + '" font-weight="600" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
       s += tagline(c.tagline, M, split + 120*KY + fs*0.86 + 110*KY, 54*KX, fam.ink, 'start');
@@ -611,10 +611,10 @@ function showToast(msg) {
       let s = heroBehind(card.img, fam, card.seed);
       s += '<rect x="' + fm + '" y="' + fm + '" width="' + (W - 2*fm) + '" height="' + (H - 2*fm) + '" fill="none" stroke="' + fam.ink + '" stroke-width="4"/>';
       s += placeAsset({ key:'wordmark', cx: W/2, y: fm + 80*KY, w: 430*KX, color: fam.ink });
-      s += '<text x="' + (W/2) + '" y="' + (fm + 300*KY) + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 52*KX + '" letter-spacing="' + 52*KX*TRK_SUB + '" fill="' + fam.accent + '">NEW RELEASE</text>';
+      s += '<text x="' + (W/2) + '" y="' + (fm + 300*KY) + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 66*KX + '" letter-spacing="' + 66*KX*TRK_SUB + '" fill="' + fam.accent + '">NEW RELEASE</text>';
       const fs = nameSize(c.beer) * KX;
       s += '<text x="' + (W/2) + '" y="' + 1090*KY + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" font-weight="600" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
-      if (c.style) s += '<text x="' + (W/2) + '" y="' + 1215*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 74*KX + '" letter-spacing="' + 74*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(c.style) + '</text>';
+      if (c.style) s += '<text x="' + (W/2) + '" y="' + 1215*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 92*KX + '" letter-spacing="' + 92*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(c.style) + '</text>';
       s += tagline(c.tagline, W/2, 1420*KY, 58*KX, fam.ink, 'middle');
       s += placeAsset({ key:'crest', cx: W/2, y: 1640*KY, w: 290*KX, color: fam.ink });
       const line = [c.abv, c.ibu, c.date].filter(Boolean).join('    ·    ');
@@ -625,7 +625,7 @@ function showToast(msg) {
       let s = '';
       if (A.laurel) s += patternCover({ x: 0, y: 0, w: W, h: H }, fam, 0.08);
       s += placeAsset({ key: 'wordmark', cx: W/2, y: 150*KY, w: 520*KX, color: fam.ink });
-      if (c.style) s += '<text x="' + (W/2) + '" y="' + 330*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 56*KX + '" letter-spacing="' + 56*KX*TRK_SUB + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
+      if (c.style) s += '<text x="' + (W/2) + '" y="' + 330*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 76*KX + '" letter-spacing="' + 76*KX*TRK_SUB + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
       if (PHOTOS.length) {
         const p = PHOTOS[(card.ph || 0) % PHOTOS.length];
         s += '<image x="' + (W/2 - 520*KX) + '" y="' + 430*KY + '" width="' + 1040*KX + '" height="' + 1200*KY + '" href="assets/photos/' + esc(p.file) + '" preserveAspectRatio="xMidYMid meet"/>';
@@ -635,7 +635,7 @@ function showToast(msg) {
       const fs = nameSize(c.beer) * KX;
       s += '<text x="' + (W/2) + '" y="' + 1860*KY + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" font-weight="600" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
       const line = [c.date, c.avail].filter(Boolean).join('   ·   ');
-      if (line) s += '<text x="' + (W/2) + '" y="' + 2010*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 66*KX + '" letter-spacing="' + 66*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(line) + '</text>';
+      if (line) s += '<text x="' + (W/2) + '" y="' + 2010*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 84*KX + '" letter-spacing="' + 84*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(line) + '</text>';
       if (c.cta) s += '<text x="' + (W/2) + '" y="' + 2290*KY + '" text-anchor="middle" font-family="' + SANS + '" font-weight="300" font-size="' + 36*KX + '" letter-spacing="' + 36*KX*TRK_CAP + '" fill="' + fam.ink + '" fill-opacity="0.75">' + up(c.cta) + '</text>';
       return s;
     }
