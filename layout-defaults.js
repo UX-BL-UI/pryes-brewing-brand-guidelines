@@ -55,13 +55,14 @@ window.PRYES_LAYOUT_DEFAULTS = {
   feature: {
     label: 'Featured can',
     elements: {
-      wordmark: { kind: 'asset', asset: 'wordmark', cx: 900, y: 110, w: 1240 },
-      style:    { kind: 'sub', x: 900, y: 470, anchor: 'middle', size: 76, track: 0.05 },
-      photo:    { kind: 'photo', x: 380, y: 540, w: 1040, h: 1100 },
+      /* Tuned by Ben in concept-editor, 2026-07-31 */
+      wordmark: { kind: 'asset', asset: 'wordmark', cx: 900, y: -1, w: 1539 },
+      style:    { kind: 'sub', x: 900, y: 396, anchor: 'middle', size: 100, track: 0.05 },
+      photo:    { kind: 'photo', x: 118, y: 359, w: 1529, h: 1503 },
       crestAlt: { kind: 'asset', asset: 'crest', cx: 900, y: 560, w: 900, opacity: 0.9 },
-      name:     { kind: 'name', x: 900, y: 1860, anchor: 'middle', scale: 1, track: 0 },
-      subline:  { kind: 'sub', x: 900, y: 2010, anchor: 'middle', size: 84, track: 0.05 },
-      callout2: { kind: 'cap', x: 900, y: 2290, anchor: 'middle', size: 36, track: 0.15, opacity: 0.75 }
+      name:     { kind: 'name', x: 890, y: 2093, anchor: 'middle', scale: 1, track: 0 },
+      subline:  { kind: 'sub', x: 898, y: 2216, anchor: 'middle', size: 84, track: 0.05 },
+      callout2: { kind: 'cap', x: 900, y: 2306, anchor: 'middle', size: 36, track: 0.15, opacity: 0.75 }
     }
   }
 };
