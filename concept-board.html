@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pryes Concept Board — Prototype</title>
+<title>Pryes Concept Board - Prototype</title>
 <meta name="description" content="Internal sandbox for generating on-brand Pryes poster concepts. Experimental.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -422,8 +422,9 @@ function showToast(msg) {
 
 /* ============================================================
    CONCEPT BOARD — generative poster tool
-   Renders 18x24 posters as live SVG built from the real brand
-   kit. Reels: image -> layout -> color. Export = serialize SVG.
+   Renders posters at the chosen print size as live SVG built
+   from the real brand kit. Reels: image -> layout -> color.
+   Export = serialize SVG.
    ============================================================ */
 (function () {
   const board = document.getElementById('cb-board');
@@ -664,7 +665,9 @@ function showToast(msg) {
     if (key === 'img') {
       card.img = rndDiff(imgIds, card.img);
       card.seed = (card.seed + 1 + Math.floor(Math.random() * 5)) % 997;
-      if (card.img === 'well' && PHOTOS.length) card.ph = Math.floor(Math.random() * PHOTOS.length);
+      if ((card.img === 'well' || card.lay === 'feature') && PHOTOS.length) {
+        card.ph = rndDiff(Array.from({ length: PHOTOS.length }, (_, idx) => idx), card.ph);
+      }
     }
     else if (key === 'lay') card.lay = rndDiff(layIds, card.lay);
     else card.fam = rndDiff(weightedFams, card.fam);
@@ -685,7 +688,7 @@ function showToast(msg) {
   const REELS = { img: { label: 'Image', opts: IMAGES }, lay: { label: 'Layout', opts: LAYOUTS } };
   function reelValueLabel(card, key) {
     if (key === 'fam') return famById(card.fam).name;
-    if (key === 'img' && card.img === 'well' && PHOTOS.length) {
+    if (key === 'img' && (card.img === 'well' || card.lay === 'feature') && PHOTOS.length) {
       const p = PHOTOS[card.ph % PHOTOS.length];
       return 'Photo · ' + (p.label || p.file);
     }
@@ -694,7 +697,7 @@ function showToast(msg) {
   function reelHTML(i, key, card) {
     const locked = card.lock[key];
     const label = key === 'fam' ? 'Color' : REELS[key].label;
-    return '<button class="cb-reel' + (locked ? ' is-locked' : '') + '" type="button" data-i="' + i + '" data-reel="' + key + '" title="Tap to re-roll ' + label + '">' +
+    return '<button class="cb-reel' + (locked ? ' is-locked' : '') + '" type="button" data-i="' + i + '" data-reel="' + key + '" title="Tap to swap ' + label + '">' +
       '<span class="cb-reel-k">' + label + '<span class="cb-lock" data-lock="' + key + '" role="button" aria-label="' + (locked ? 'Unlock' : 'Lock') + ' ' + label + '" aria-pressed="' + locked + '">' + (locked ? ICON_LOCK : ICON_UNLOCK) + '</span></span>' +
       '<span class="cb-reel-v">' + reelValueLabel(card, key) + '</span></button>';
   }
@@ -784,10 +787,13 @@ function showToast(msg) {
   async function downloadPackage() {
     const card = cards[selected] || cards[0];
     const c = content(), fam = famById(card.fam);
-    const slug = (c.beer || 'concept').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const slug = (c.beer || 'concept').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'concept';
+    const photoExpected = (card.img === 'well' || card.lay === 'feature') && PHOTOS.length;
     let photo = null;
-    if ((card.img === 'well' || card.lay === 'feature') && PHOTOS.length) photo = await photoData(PHOTOS[card.ph % PHOTOS.length].file);
-    const svg = '<?xml version="1.0" encoding="UTF-8"?>\n' + buildPosterSVG(card, photo && photo.dataUrl);
+    if (photoExpected) photo = await photoData(PHOTOS[card.ph % PHOTOS.length].file);
+    const photoMissing = photoExpected && !photo;
+    let svg = '<?xml version="1.0" encoding="UTF-8"?>\n' + buildPosterSVG(card, photo && photo.dataUrl);
+    if (photoMissing) svg = svg.replace(/<image\b[^>]*href="assets\/photos\/[^"]*"[^>]*\/>/, '');
     const svgName = 'pryes-' + slug + '-' + SIZE.slug + '.svg';
     if (window.JSZip) {
       const zip = new JSZip();
@@ -796,7 +802,7 @@ function showToast(msg) {
       if (photo) zip.file(photo.name, photo.blob);
       const blob = await zip.generateAsync({ type: 'blob' });
       downloadBlob(blob, 'pryes-' + slug + '-concept.zip');
-      showToast('Concept package downloaded');
+      showToast(photoMissing ? 'Photo file missing, exported without it' : 'Concept package downloaded');
     } else {
       downloadBlob(new Blob([svg], { type: 'image/svg+xml' }), svgName);
       showToast('ZIP unavailable, SVG downloaded');
