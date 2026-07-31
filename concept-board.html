@@ -363,7 +363,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
       <div class="cb-spot-cta">
         <button class="cb-btn cb-btn--solid" type="button" id="cb-export">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
-          Export SVG
+          Download package
         </button>
         <button class="cb-btn" type="button" id="cb-spot-close">Back to board</button>
       </div>
@@ -380,6 +380,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 
 <div class="toast" id="toast">Copied</div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
 /* ---------- Password (shares the guide's session key) ---------- */
 const CORRECT_PASSWORD = 'pryes2026';
@@ -724,18 +725,63 @@ function showToast(msg) {
   }
   function closeSpotlight() { selected = -1; spot.classList.remove('is-open'); }
 
-  function exportSVG() {
-    const card = cards[selected] || cards[0];
-    const svg = '<?xml version="1.0" encoding="UTF-8"?>\n' + buildPosterSVG(card);
-    const c = content();
-    const slug = (c.beer || 'concept').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-    const blob = new Blob([svg], { type: 'image/svg+xml' });
+  function downloadBlob(blob, name) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = 'pryes-' + slug + '-' + card.lay + '-' + card.fam + '.svg';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1500);
-    if (window.showToast) showToast('SVG exported');
+  }
+  async function photoData(file) {
+    const r = await fetch('assets/photos/' + file);
+    if (!r.ok) return null;
+    const blob = await r.blob();
+    const dataUrl = await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); });
+    return { name: file, blob: blob, dataUrl: dataUrl };
+  }
+  function specSheetHTML(c, card, fam, photo) {
+    const req = [
+      ['Brand', document.getElementById('cb-brand').value || 'Pryes'],
+      ['Sign Type', SIZE.signType],
+      ['Quantity', document.getElementById('cb-qty').value || '4'],
+      ['Orientation', document.getElementById('cb-orient').value],
+      ['Laminate', document.getElementById('cb-lam').value],
+      ['Message', document.getElementById('cb-msg').value]
+    ];
+    const recipe = [
+      ['Layout', LAYOUTS.find(l => l.id === card.lay).label],
+      ['Color family', fam.name + ' / background ' + fam.bg + ' / ink ' + fam.ink + ' / accent ' + fam.accent],
+      ['Print fonts', 'Superclarendon / Gotham / Alternate Gothic No.2 D (SVG text is live and editable)'],
+      ['Photo', photo ? photo.name + ' (full-resolution copy in this package)' : 'None - brand art only'],
+      ['Final size', SIZE.label + ', portrait']
+    ];
+    const tr = r => '<tr><th>' + r[0] + '</th><td>' + esc(String(r[1])) + '</td></tr>';
+    return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>' + esc(c.beer || 'Concept') + ' - Pryes poster spec</title>' +
+      '<style>body{font-family:Georgia,serif;max-width:640px;margin:40px auto;padding:0 20px;color:#3e0f23;line-height:1.5}h1{font-size:24px;margin-bottom:4px}p.sub{margin:0 0 24px;color:#6b4351;font-size:14px}h2{font-size:13px;text-transform:uppercase;letter-spacing:.12em;margin:28px 0 8px}table{border-collapse:collapse;width:100%}th{text-align:left;padding:7px 16px 7px 0;white-space:nowrap;vertical-align:top;font-size:14px}td{padding:7px 0;font-size:14px}tr{border-bottom:1px solid #eee}@media print{body{margin:0}}</style></head><body>' +
+      '<h1>' + esc(c.beer || 'Concept') + ' - poster concept</h1><p class="sub">From the Pryes Concept Board. The SVG in this package is the concept to finalize; everything in it is editable.</p>' +
+      '<h2>Request</h2><table>' + req.map(tr).join('') + '</table>' +
+      '<h2>Concept recipe</h2><table>' + recipe.map(tr).join('') + '</table></body></html>';
+  }
+  async function downloadPackage() {
+    const card = cards[selected] || cards[0];
+    const c = content(), fam = famById(card.fam);
+    const slug = (c.beer || 'concept').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    let photo = null;
+    if (card.img === 'well' && PHOTOS.length) photo = await photoData(PHOTOS[card.ph % PHOTOS.length].file);
+    const svg = '<?xml version="1.0" encoding="UTF-8"?>\n' + buildPosterSVG(card, photo && photo.dataUrl);
+    const svgName = 'pryes-' + slug + '-' + SIZE.slug + '.svg';
+    if (window.JSZip) {
+      const zip = new JSZip();
+      zip.file(svgName, svg);
+      zip.file('spec-sheet.html', specSheetHTML(c, card, fam, photo));
+      if (photo) zip.file(photo.name, photo.blob);
+      const blob = await zip.generateAsync({ type: 'blob' });
+      downloadBlob(blob, 'pryes-' + slug + '-concept.zip');
+      showToast('Concept package downloaded');
+    } else {
+      downloadBlob(new Blob([svg], { type: 'image/svg+xml' }), svgName);
+      showToast('ZIP unavailable, SVG downloaded');
+    }
   }
 
   /* ---------- events ---------- */
@@ -749,7 +795,7 @@ function showToast(msg) {
   });
   document.getElementById('cb-deal').addEventListener('click', () => { dealUnheld(); renderBoard(new Set(cards.map((c, i) => c.held ? -1 : i).filter(i => i >= 0))); });
   document.getElementById('cb-release-holds').addEventListener('click', () => { cards.forEach(c => { c.held = false; c.lock = { img: false, lay: false, fam: false }; }); renderBoard(); });
-  document.getElementById('cb-export').addEventListener('click', exportSVG);
+  document.getElementById('cb-export').addEventListener('click', downloadPackage);
   document.getElementById('cb-spot-close').addEventListener('click', closeSpotlight);
   document.querySelectorAll('.cb-size').forEach(btn => btn.addEventListener('click', () => {
     SIZE = SIZES.find(s => s.key === btn.dataset.size) || SIZES[0];
