@@ -458,7 +458,7 @@ function showToast(msg) {
     { id:'offblack',  name:'Off-Black',        bg:'#101019', ink:'#FFF1E4', accent:'#EBCFB8', weight:1 }
   ];
   const IMAGES  = [ {id:'laurel',label:'Laurel field'}, {id:'emblem',label:'Crest emblem'}, {id:'shapes',label:'Shape block'}, {id:'well',label:'Photo well'} ];
-  const LAYOUTS = [ {id:'stacked',label:'Stacked'}, {id:'anchored',label:'Anchored'}, {id:'framed',label:'Framed'} ];
+  const LAYOUTS = [ {id:'stacked',label:'Stacked'}, {id:'anchored',label:'Anchored'}, {id:'framed',label:'Framed'}, {id:'feature',label:'Featured can'} ];
 
   const ASSET_URLS = {
     wordmark: 'assets/logos/svg/BEERFOAM/PRYES-WORDMARK-BEERFOAM.svg',
@@ -612,6 +612,25 @@ function showToast(msg) {
       const line = [c.abv, c.ibu, c.date].filter(Boolean).join('    ·    ');
       if (line) s += '<text x="' + (W/2) + '" y="' + (H - fm - 70*KY) + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 54*KX + '" letter-spacing="' + 7*KX + '" fill="' + fam.ink + '">' + up(line) + '</text>';
       return s;
+    },
+    feature: function (c, fam, card) {
+      let s = '';
+      if (A.laurel) s += patternCover({ x: 0, y: 0, w: W, h: H }, fam, 0.08);
+      s += placeAsset({ key: 'wordmark', cx: W/2, y: 150*KY, w: 520*KX, color: fam.ink });
+      if (c.style) s += '<text x="' + (W/2) + '" y="' + 330*KY + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 56*KX + '" letter-spacing="' + 11*KX + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
+      if (PHOTOS.length) {
+        const p = PHOTOS[(card.ph || 0) % PHOTOS.length];
+        s += '<ellipse cx="' + (W/2) + '" cy="' + 1620*KY + '" rx="' + 330*KX + '" ry="' + 42*KY + '" fill="' + fam.ink + '" fill-opacity="0.16"/>';
+        s += '<image x="' + (W/2 - 520*KX) + '" y="' + 430*KY + '" width="' + 1040*KX + '" height="' + 1200*KY + '" href="assets/photos/' + esc(p.file) + '" preserveAspectRatio="xMidYMid meet"/>';
+      } else {
+        s += placeAsset({ key: 'crest', cx: W/2, y: 500*KY, w: 900*KX, color: fam.accent, opacity: 0.9 });
+      }
+      const fs = nameSize(c.beer) * KX;
+      s += '<text x="' + (W/2) + '" y="' + 1860*KY + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
+      const line = [c.date, c.avail].filter(Boolean).join('   ·   ');
+      if (line) s += '<text x="' + (W/2) + '" y="' + 2010*KY + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 66*KX + '" letter-spacing="' + 8*KX + '" fill="' + fam.ink + '">' + up(line) + '</text>';
+      if (c.cta) s += '<text x="' + (W/2) + '" y="' + 2290*KY + '" text-anchor="middle" font-family="' + SANS + '" font-size="' + 36*KX + '" letter-spacing="' + 5*KX + '" fill="' + fam.ink + '" fill-opacity="0.75">' + up(c.cta) + '</text>';
+      return s;
     }
   };
 
@@ -634,7 +653,7 @@ function showToast(msg) {
 
   /* Curated opening hand so the first paint looks intentional. */
   let cards = [
-    { img:'emblem', lay:'stacked',  fam:'burgundy',  held:false, seed:2, ph:0, lock:{img:false,lay:false,fam:false} },
+    { img:'emblem', lay:'feature',  fam:'foam',      held:false, seed:2, ph:0, lock:{img:false,lay:false,fam:false} },
     { img:'well',   lay:'anchored', fam:'foam',      held:false, seed:4, ph:0, lock:{img:false,lay:false,fam:false} },
     { img:'laurel', lay:'framed',   fam:'miraculum', held:false, seed:1, ph:0, lock:{img:false,lay:false,fam:false} },
     { img:'shapes', lay:'anchored', fam:'beige',     held:false, seed:3, ph:0, lock:{img:false,lay:false,fam:false} }
@@ -767,7 +786,7 @@ function showToast(msg) {
     const c = content(), fam = famById(card.fam);
     const slug = (c.beer || 'concept').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     let photo = null;
-    if (card.img === 'well' && PHOTOS.length) photo = await photoData(PHOTOS[card.ph % PHOTOS.length].file);
+    if ((card.img === 'well' || card.lay === 'feature') && PHOTOS.length) photo = await photoData(PHOTOS[card.ph % PHOTOS.length].file);
     const svg = '<?xml version="1.0" encoding="UTF-8"?>\n' + buildPosterSVG(card, photo && photo.dataUrl);
     const svgName = 'pryes-' + slug + '-' + SIZE.slug + '.svg';
     if (window.JSZip) {
