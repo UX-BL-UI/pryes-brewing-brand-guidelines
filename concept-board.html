@@ -92,6 +92,10 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 .cb-note { font-size: 0.9rem; color: var(--ink-soft); max-width: 78ch; margin-top: 14px; line-height: 1.65; }
 .cb-note b { color: var(--ink); font-weight: 600; }
 
+.cb-steps { display: flex; flex-wrap: wrap; gap: 10px 26px; list-style: none; margin: 0 0 26px; padding: 14px 18px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,0.5); }
+.cb-steps li { display: flex; align-items: center; gap: 10px; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.85rem; color: var(--ink); }
+.cb-step-n { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: var(--burgundy); color: var(--beer-foam); font-size: 0.78rem; flex: none; }
+
 /* ============================================================
    CONCEPT BOARD  (generative poster tool)
    ============================================================ */
@@ -275,9 +279,15 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 <main class="tool-wrap">
   <div class="tool-lede">
     <div class="kick"><span class="dot"></span> Sandbox · WIP</div>
-    <h1>Explore concepts quickly.</h1>
-    <p>A place to play with generative poster concepts, built live from the 2026 kit. Fill the content once, let the board deal, hold what you like, re-roll the rest, and converge on a winner to export. This is an experiment we are feeling out, not a finished feature.</p>
+    <h1>Poster ideas, fast.</h1>
+    <p>Fill in the details once and the board lays out four poster ideas built from the 2026 brand kit. Shuffle until something clicks, pin what you like, and download the winner as a ready-to-finalize package.</p>
   </div>
+
+  <ol class="cb-steps" aria-label="How this works">
+    <li><span class="cb-step-n">1</span> Fill in the details</li>
+    <li><span class="cb-step-n">2</span> Shuffle until something clicks</li>
+    <li><span class="cb-step-n">3</span> Download the winner as a package</li>
+  </ol>
 
   <div class="cb-occasions" role="group" aria-label="Occasion">
     <button class="cb-occasion" type="button" data-occasion="release" aria-pressed="true">Beer Release</button>
@@ -304,13 +314,13 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
   <div class="cb-toolbar">
     <span class="cb-count" id="cb-count">4 concepts</span>
     <span class="cb-spacer"></span>
-    <button class="cb-btn" type="button" id="cb-release-holds">Release all holds</button>
+    <button class="cb-btn" type="button" id="cb-release-holds">Unpin everything</button>
     <button class="cb-btn cb-btn--solid" type="button" id="cb-deal">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.3L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.3L3 16"/><path d="M3 21v-5h5"/></svg>
-      Reroll unheld
+      Shuffle
     </button>
   </div>
-  <p class="cb-note">Tap a <b>reel</b> (Image · Layout · Color) to re-roll just that dimension. Tap its lock to hold that reel while the rest change. Hold a whole card to protect it. Reroll shuffles in priority order: image, then layout, then color.</p>
+  <p class="cb-note"><b>Shuffle</b> swaps out every idea you have not pinned. On each card, tap <b>Image</b>, <b>Layout</b>, or <b>Color</b> to swap just that piece, or tap its little lock to keep that piece while everything else shuffles. <b>Pin</b> a card to keep the whole thing exactly as it is.</p>
 
   <div class="cb-board" id="cb-board">
     <div class="cb-loading">Loading the brand kit…</div>
@@ -615,19 +625,19 @@ function showToast(msg) {
   }
   function cardHTML(card, i) {
     return '<div class="cb-card' + (card.held ? ' is-held' : '') + '" data-i="' + i + '">' +
-      '<div class="cb-poster" data-role="poster"><span class="cb-held-badge">' + ICON_PIN + ' Held</span>' + buildPosterSVG(card) + '</div>' +
+      '<div class="cb-poster" data-role="poster"><span class="cb-held-badge">' + ICON_PIN + ' Pinned</span>' + buildPosterSVG(card) + '</div>' +
       '<div class="cb-card-foot">' +
         '<div class="cb-card-top"><span class="cb-card-idx">Concept ' + (i + 1) + '</span>' +
           '<div class="cb-card-actions">' +
-            '<button class="cb-mini" type="button" data-act="hold" data-i="' + i + '" aria-pressed="' + card.held + '">' + ICON_PIN + (card.held ? ' Held' : ' Hold') + '</button>' +
-            '<button class="cb-mini cb-mini--keep" type="button" data-act="keep" data-i="' + i + '">Keep this →</button>' +
+            '<button class="cb-mini" type="button" data-act="hold" data-i="' + i + '" aria-pressed="' + card.held + '" title="Keep this whole card when you shuffle">' + ICON_PIN + (card.held ? ' Pinned' : ' Pin') + '</button>' +
+            '<button class="cb-mini cb-mini--keep" type="button" data-act="keep" data-i="' + i + '" title="Choose this concept and get the finalize-ready package">Pick this one →</button>' +
           '</div></div>' +
         '<div class="cb-reels">' + reelHTML(i, 'img', card) + reelHTML(i, 'lay', card) + reelHTML(i, 'fam', card) + '</div>' +
       '</div></div>';
   }
   function renderBoard(bumpSet) {
     board.innerHTML = cards.map(cardHTML).join('');
-    document.getElementById('cb-count').textContent = cards.filter(c => c.held).length + ' held · ' + cards.length + ' concepts';
+    document.getElementById('cb-count').textContent = cards.filter(c => c.held).length + ' pinned · ' + cards.length + ' concepts';
     if (!reduce && bumpSet) bumpSet.forEach(i => { const p = board.querySelector('.cb-card[data-i="' + i + '"] .cb-poster'); if (p) { void p.offsetWidth; p.classList.add('is-rolling'); } });
     if (selected >= 0) renderSpotlight();
   }
