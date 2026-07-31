@@ -195,8 +195,8 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
 (function () {
   const P = window.PryesPosterV2;
   const STORE_KEY = 'pryes_editor_v2_spec_v1';
-  const PROP_LABELS = { x: 'X', cx: 'Center X', y: 'Y', cy: 'Center Y', w: 'Width', h: 'Height', size: 'Font size', track: 'Tracking (em)', lh: 'Line height', s: 'Size', poke: 'Edge poke' };
-  const EDITABLE = ['x', 'cx', 'y', 'cy', 'w', 'h', 'size', 'track', 'lh', 's', 'poke'];
+  const PROP_LABELS = { x: 'X', cx: 'Center X', y: 'Y', cy: 'Center Y', w: 'Width', h: 'Height', size: 'Font size', track: 'Tracking (em)', lh: 'Line height', s: 'Size' };
+  const EDITABLE = ['x', 'cx', 'y', 'cy', 'w', 'h', 'size', 'track', 'lh', 's'];
 
   const PRISTINE = JSON.parse(JSON.stringify(window.PRYES_LAYOUT_DEFAULTS_V2));
   let spec = JSON.parse(JSON.stringify(window.PRYES_LAYOUT_DEFAULTS_V2));
@@ -252,7 +252,7 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   waySel.addEventListener('change', () => { card.colorway = waySel.value; render(); });
   const shapeSel = document.getElementById('ed-shape');
   shapeSel.innerHTML = Array.from({ length: P.SHAPE_COUNT }, (_, i) => '<option value="' + (i + 1) + '"' + (i + 1 === card.shape ? ' selected' : '') + '>Shape ' + String(i + 1).padStart(2, '0') + '</option>').join('');
-  shapeSel.addEventListener('change', () => { card.shape = +shapeSel.value; render(); });
+  shapeSel.addEventListener('change', () => { card.shape = +shapeSel.value; render(); syncPanel(); syncChanges(); });
   const denSel = document.getElementById('ed-density');
   denSel.innerHTML = P.DENSITIES.map(d => '<option value="' + d.id + '"' + (d.id === card.density ? ' selected' : '') + '>' + d.name + '</option>').join('');
   denSel.addEventListener('change', () => { card.density = denSel.value; render(); });
@@ -287,7 +287,19 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
     const pt = new DOMPoint(evt.clientX, evt.clientY).matrixTransform(svg.getScreenCTM().inverse());
     return pt;
   }
-  function elSpec(id) { if (!id) return null; const [l, k] = id.split('.'); return spec[l] && spec[l].elements[k]; }
+  function elSpec(id) {
+    if (!id) return null;
+    const [l, k] = id.split('.');
+    const e = spec[l] && spec[l].elements[k];
+    /* the divider shape stores one placement per shape number - the
+       editor always works on the placement of the shape on screen */
+    if (e && e.kind === 'shape') {
+      if (!e.perShape) e.perShape = {};
+      if (!e.perShape[card.shape]) e.perShape[card.shape] = JSON.parse(JSON.stringify(P.resolveShape(card.shape)));
+      return e.perShape[card.shape];
+    }
+    return e;
+  }
   let drag = null, raf = false;
   stage.addEventListener('pointerdown', evt => {
     const svg = svgRoot(); if (!svg) return;
@@ -319,7 +331,7 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
     } else {
       if (e.kind === 'photo') e.h = Math.max(300, Math.round(o.h + dy));
       else if (e.kind === 'asset') e.w = Math.max(80, Math.round(o.w + dx));
-      else if (e.kind === 'shape') e.w = Math.max(200, Math.round(o.w + dx));
+      else if (e.kind === 'shape') { e.w = Math.max(200, Math.round(o.w + dx)); e.h = Math.max(60, Math.round(o.h + dy)); }
       else if (e.kind === 'diamond') e.s = Math.max(6, Math.round(o.s + dx / 4));
       else if (o.size != null) e.size = Math.max(14, Math.round(o.size + dx / 5));
     }
@@ -371,10 +383,12 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   document.getElementById('ed-reset-el').addEventListener('click', () => {
     if (!selectedEl) return;
     const [l, k] = selectedEl.split('.');
-    spec[l].elements[k] = JSON.parse(JSON.stringify(PRISTINE[l].elements[k]));
+    if (spec[l].elements[k].kind === 'shape') delete spec[l].elements[k].perShape[card.shape];
+    else spec[l].elements[k] = JSON.parse(JSON.stringify(PRISTINE[l].elements[k]));
     render(); syncPanel(); persist(); syncChanges();
   });
   document.getElementById('ed-reset-all').addEventListener('click', () => {
+    if (!window.confirm('Reset everything? This throws away all unsaved tuning and goes back to the current defaults.')) return;
     spec = JSON.parse(JSON.stringify(PRISTINE)); P.setSpec(spec);
     try { localStorage.removeItem(STORE_KEY); } catch (e) {}
     selectedEl = null; render(); syncPanel(); syncChanges();
@@ -388,6 +402,16 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
       const a = PRISTINE[l].elements[k], b = spec[l].elements[k];
       Object.keys(a).forEach(p => { if ((typeof a[p] === 'number' || typeof a[p] === 'string') && a[p] !== b[p]) out.push({ el: l + '.' + k, prop: p, from: a[p], to: b[p] }); });
     }));
+    /* per-shape placements: each shape number diffs against its own
+       baseline (a shipped entry, or the automatic placement) */
+    const cur = (spec.beerfeature.elements.shape && spec.beerfeature.elements.shape.perShape) || {};
+    const pris = (PRISTINE.beerfeature.elements.shape && PRISTINE.beerfeature.elements.shape.perShape) || {};
+    Object.keys(cur).forEach(n => {
+      const base = pris[n] || P.shapeFallback(+n, PRISTINE.beerfeature.elements.band.y);
+      ['cx', 'y', 'w', 'h'].forEach(p => {
+        if (cur[n][p] != null && base[p] != null && cur[n][p] !== base[p]) out.push({ el: 'beerfeature.shape.' + String(n).padStart(2, '0'), prop: p, from: base[p], to: cur[n][p] });
+      });
+    });
     return out;
   }
   function syncChanges() {

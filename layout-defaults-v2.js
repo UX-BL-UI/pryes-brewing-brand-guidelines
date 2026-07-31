@@ -16,10 +16,16 @@ window.PRYES_LAYOUT_DEFAULTS_V2 = {
          Ben in concept-editor-v2, 2026-07-31: bigger can, higher
          band, larger band type. Diamonds normalized to matching
          size, inset, and line. */
-      wordmark:    { kind: 'asset', asset: 'wordmarktag', cx: 907, y: -4, w: 1577 },
-      can:         { kind: 'photo', cx: 893, y: 405, h: 1544 },
+      wordmark:    { kind: 'asset', asset: 'wordmarktag', cx: 907, y: -5, w: 1504 },
+      can:         { kind: 'photo', cx: 891, y: 437, h: 1458 },
       band:        { kind: 'band', y: 1642 },
-      shape:       { kind: 'shape', cx: 900, w: 1872, poke: 150 },
+      /* Each of the 15 brand shapes keeps its own placement here,
+         keyed by shape number: { cx, y, w, h }. A shape without an
+         entry gets an automatic placement against the band line. */
+      shape:       { kind: 'shape', perShape: {
+        /* Shape 05 - Ben's final placement, 2026-07-31 */
+        '5': { kind: 'shape', cx: 906, y: 1427, w: 1862, h: 1083 }
+      } },
       headline:    { kind: 'headline', x: 906, y: 2127, anchor: 'middle', size: 191, track: 0.06 },
       subheadline: { kind: 'sub',  x: 895, y: 2238, anchor: 'middle', size: 98, track: 0.14 },
       diamondL:    { kind: 'diamond', cx: 200,  cy: 2147, s: 50 },

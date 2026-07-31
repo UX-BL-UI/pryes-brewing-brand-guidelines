@@ -169,27 +169,35 @@ window.PryesPosterV2 = (function () {
   }
 
   /* Brand shape recolored to the band color so its decorative top
-     edge becomes the band's edge. Its own element: the editor moves
-     it (cx) and scales it (w) while it stays glued to the band line.
-     Shapes differ: some are full masses anchored to their viewBox
-     bottom, some are thin strips floating mid-viewBox - the measured
-     bbox (from load()) anchors either kind without gaps. */
-  function shapeDividerEl(eShape, bandE, shape, bandColor) {
-    if (!shape) return '';
-    const bandY = bandE.y * KY;
-    const poke = (eShape.poke != null ? eShape.poke : 150) * KY;
+     edge becomes the band's edge. Every shape number keeps its own
+     placement ({ cx, y, w, h } in perShape); shapeFallback computes
+     a starting placement against the band line for shapes that have
+     not been hand-placed yet, using the measured bbox from load(). */
+  function shapeFallback(n, bandY) {
+    const shape = A.shapes[(n - 1 + SHAPE_COUNT) % SHAPE_COUNT];
+    if (!shape) return { kind: 'shape', cx: 900, y: bandY - 300, w: 1872, h: 300 };
     const p = shape.vb.split(/\s+/).map(Number);
     const vw = p[2] || 100, vh = p[3] || 100;
-    const w = eShape.w * KX, k = w / vw, h = w * (vh / vw);
-    const x = eShape.cx * KX - w / 2;
+    const w = 1872, k = w / vw;
+    /* KX/KY correction keeps the automatic placement aspect-true on
+       the print artboard; hand-placed values render exactly as given */
+    const aspectFix = KX / KY;
+    const h = w * (vh / vw) * aspectFix;
     const bb = shape.bbox || { y: 0, h: vh };
-    const massH = bb.h * k;
-    /* thin strips sit on the band edge; large masses poke above it
-       and their body disappears into the band */
-    const y = massH <= poke * 2.5
-      ? bandY - massH - bb.y * k
-      : (bandY - poke) - bb.y * k;
-    return '<svg x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" viewBox="' + shape.vb + '" preserveAspectRatio="xMidYMid meet"><g fill="' + bandColor + '">' + shape.body + '</g></svg>';
+    const massH = bb.h * k * aspectFix;
+    const bbTop = bb.y * k * aspectFix;
+    const y = massH <= 375 ? bandY - massH - bbTop : (bandY - 150) - bbTop;
+    return { kind: 'shape', cx: 900, y: Math.round(y), w: w, h: Math.round(h) };
+  }
+  function resolveShape(n) {
+    const E = SPEC.beerfeature.elements;
+    const ps = (E.shape && E.shape.perShape) || {};
+    return ps[n] || shapeFallback(n, E.band.y);
+  }
+  function shapeDividerEl(n, shape, bandColor) {
+    if (!shape) return '';
+    const r = resolveShape(n);
+    return '<svg x="' + (r.cx - r.w / 2) * KX + '" y="' + r.y * KY + '" width="' + r.w * KX + '" height="' + r.h * KY + '" viewBox="' + shape.vb + '" preserveAspectRatio="none"><g fill="' + bandColor + '">' + shape.body + '</g></svg>';
   }
   function bandEl(e, bandColor) {
     const bandY = e.y * KY;
@@ -215,7 +223,7 @@ window.PryesPosterV2 = (function () {
 
     /* shape + band sit under the can so the can fronts the divider
        notch, exactly as in the reference poster */
-    s += wrap('beerfeature.shape', shapeDividerEl(E.shape, E.band, shape, paint.band), tag);
+    s += wrap('beerfeature.shape', shapeDividerEl(card.shape, shape, paint.band), tag);
     s += wrap('beerfeature.band', bandEl(E.band, paint.band), tag);
 
     const canH = E.can.h * KY, canW = canH * beer.canAspect;
@@ -279,6 +287,7 @@ window.PryesPosterV2 = (function () {
     setSize: setSize, setSpec: setSpec,
     buildPosterSVG: buildPosterSVG, toPrintFonts: toPrintFonts,
     beerById: beerById, colorwayById: colorwayById, densityById: densityById,
+    resolveShape: resolveShape, shapeFallback: shapeFallback,
     esc: esc, up: up, shapeUrl: shapeUrl,
     load: load
   };
