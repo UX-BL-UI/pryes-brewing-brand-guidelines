@@ -81,7 +81,8 @@ window.PryesPosterV2 = (function () {
     crest:       'assets/logos/svg/BEERFOAM/PRYES-CREST-NOBORDER-BEERFOAM.svg',
     crestcircle: 'assets/logos/svg/BEERFOAM/PRYES-CREST-CIRCLE01-BEERFOAM.svg',
     pmark:       'assets/logos/svg/BEERFOAM/PRYES-P-WATERMARK-BEERFOAM.svg',
-    mnicon:      'assets/logos/svg/BEERFOAM/PRYES-MN-ICON-BEERFOAM.svg'
+    mnicon:      'assets/logos/svg/BEERFOAM/PRYES-MN-ICON-BEERFOAM.svg',
+    laurels:     'assets/logos/svg/BEERFOAM/PRYES-LAURELS-BEERFOAM.svg'
   };
   const ASSET_OPTIONS = [
     { id: 'wordmarktag', label: 'Pryes Brewing wordmark' },
@@ -91,8 +92,27 @@ window.PryesPosterV2 = (function () {
     { id: 'crest',       label: 'Crest' },
     { id: 'crestcircle', label: 'Crest circle' },
     { id: 'pmark',       label: 'P watermark' },
-    { id: 'mnicon',      label: 'Minnesota icon' }
+    { id: 'mnicon',      label: 'Minnesota icon' },
+    { id: 'laurels',     label: 'Laurel wreath' }
   ];
+
+  /* ---------- concepts ---------- */
+  const CONCEPTS = [
+    { id: 'beerfeature', label: 'Beer feature' },
+    { id: 'brandfocus',  label: 'Brand focus' }
+  ];
+
+  /* Brand-focus colorways: no beer involved - background, ink, and
+     the two center marks move through the brand palette. Wreath and
+     P watermark carry their own tint + opacity per colorway. */
+  const BRAND_COLORWAYS = [
+    { id:'foam',      name:'Beer Foam',       weight:2, paint: { bg:BRAND.foam, ink:BRAND.burgundy, wreath:'#E2CCB8', wreathOp:1, pmark:'#E2CCB8', pmarkOp:0.55 } },
+    { id:'beige',     name:'Beige',           weight:1, paint: { bg:BRAND.beige, ink:BRAND.burgundy, wreath:BRAND.foam, wreathOp:1, pmark:BRAND.foam, pmarkOp:0.62 } },
+    { id:'burgundy',  name:'Regal Burgundy',  weight:1, paint: { bg:BRAND.burgundy, ink:BRAND.foam, wreath:BRAND.burgundyDeep, wreathOp:1, pmark:BRAND.burgundyDeep, pmarkOp:0.9 } },
+    { id:'offblack',  name:'Off-Black',       weight:1, paint: { bg:BRAND.offblack, ink:BRAND.foam, wreath:BRAND.burgundy, wreathOp:1, pmark:BRAND.burgundy, pmarkOp:0.85 } },
+    { id:'miraculum', name:'Miraculum Green', weight:1, paint: { bg:BRAND.miraculum, ink:BRAND.foam, wreath:BRAND.beige, wreathOp:0.3, pmark:BRAND.beige, pmarkOp:0.18 } }
+  ];
+  function brandColorwayById(id) { return BRAND_COLORWAYS.find(c => c.id === id) || BRAND_COLORWAYS[0]; }
   const SHAPE_COUNT = 15;
   const shapeUrl = n => 'assets/shapes/svg/BEERFOAM/BEER FOAM SHAPE ' + String(n).padStart(2, '0') + '.svg';
 
@@ -143,6 +163,19 @@ window.PryesPosterV2 = (function () {
     const lh = fs * (e.lh != null ? e.lh : 0.75);
     return open + lines.map((ln, i) => '<tspan x="' + e.x * KX + '" dy="' + (i === 0 ? 0 : lh) + '">' + up(ln) + '</tspan>').join('') + '</text>';
   }
+  /* Serif line (Superclarendon in print, Bitter on the web) - as
+     typed, no uppercasing; multi-line at a tight title leading. */
+  function serifText(e, txt, fill, o) {
+    o = o || {};
+    const lines = String(txt || '').split(/\r?\n/).filter(l => l.trim().length);
+    const fs = e.size * (o.sizeMul || 1) * KX;
+    const track = (e.track || 0) + (o.trackAdd || 0);
+    const open = '<text x="' + e.x * KX + '" y="' + e.y * KY + '" text-anchor="' + (e.anchor || 'middle') + '" font-family="' + SERIF + '" font-weight="600" font-size="' + fs + '"' + (track ? ' letter-spacing="' + fs * track + '"' : '') + ' fill="' + fill + '">';
+    if (lines.length <= 1) return open + esc(txt) + '</text>';
+    const lh = fs * (e.lh != null ? e.lh : 1.12);
+    return open + lines.map((ln, i) => '<tspan x="' + e.x * KX + '" dy="' + (i === 0 ? 0 : lh) + '">' + esc(ln) + '</tspan>').join('') + '</text>';
+  }
+
   function diamondEl(e, fill) {
     const s = e.s * KX, cx = e.cx * KX, cy = e.cy * KY;
     /* four-point spark, quiet curves - matches the reference accents */
@@ -223,8 +256,32 @@ window.PryesPosterV2 = (function () {
      c    = { headline, subheadline, h1Mul, h1Track, h2Mul, h2Track }
      opts = { canHref, tag } */
   function wrap(id, str, tag) { return (tag && str) ? '<g data-el="' + id + '">' + str + '</g>' : str; }
+
+  /* Brand-focus poster: flat brand field, stacked wordmark, laurel
+     wreath + P watermark behind the headline, serif line at the
+     foot. card = { concept:'brandfocus', colorway } */
+  function buildBrandFocus(card, c, opts) {
+    opts = opts || {};
+    const E = SPEC.brandfocus.elements;
+    const paint = brandColorwayById(card.colorway).paint;
+    const tag = !!opts.tag;
+
+    let s = '<rect width="' + W + '" height="' + H + '" fill="' + paint.bg + '"/>';
+    const laurels = A.assets[E.laurels.asset || 'laurels'];
+    if (laurels) s += wrap('brandfocus.laurels', placeSVG(laurels, { cx: E.laurels.cx * KX, y: E.laurels.y * KY, w: E.laurels.w * KX, color: paint.wreath, opacity: paint.wreathOp }), tag);
+    const pm = A.assets[E.pmark.asset || 'pmark'];
+    if (pm) s += wrap('brandfocus.pmark', placeSVG(pm, { cx: E.pmark.cx * KX, y: E.pmark.y * KY, w: E.pmark.w * KX, color: paint.pmark, opacity: paint.pmarkOp }), tag);
+    const mark = A.assets[E.wordmark.asset || 'wordmarktag'];
+    if (mark) s += wrap('brandfocus.wordmark', placeSVG(mark, { cx: E.wordmark.cx * KX, y: E.wordmark.y * KY, w: E.wordmark.w * KX, color: paint.ink }), tag);
+    s += wrap('brandfocus.headline', condText(E.headline, c.headline, paint.ink, { autosize: true, sizeMul: c.h1Mul, trackAdd: c.h1Track }), tag);
+    if (c.subheadline) s += wrap('brandfocus.subheadline', serifText(E.subheadline, c.subheadline, paint.ink, { sizeMul: c.h2Mul, trackAdd: c.h2Track }), tag);
+
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + SIZE.inW + '" height="' + SIZE.inH + '">' + s + '</svg>';
+  }
+
   function buildPosterSVG(card, c, opts) {
     opts = opts || {};
+    if ((card.concept || 'beerfeature') === 'brandfocus') return buildBrandFocus(card, c, opts);
     const E = SPEC.beerfeature.elements;
     const beer = beerById(card.beer);
     const paint = colorwayById(card.colorway).paint(beer);
@@ -296,6 +353,7 @@ window.PryesPosterV2 = (function () {
 
   return {
     SIZES: SIZES, BEERS: BEERS, COLORWAYS: COLORWAYS, DENSITIES: DENSITIES, SHAPE_COUNT: SHAPE_COUNT, ASSET_OPTIONS: ASSET_OPTIONS,
+    CONCEPTS: CONCEPTS, BRAND_COLORWAYS: BRAND_COLORWAYS, brandColorwayById: brandColorwayById,
     get SIZE() { return SIZE; },
     get SPEC() { return SPEC; },
     setSize: setSize, setSpec: setSpec,

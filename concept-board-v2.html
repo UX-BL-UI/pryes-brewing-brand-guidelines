@@ -291,8 +291,9 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
     <li><span class="cb-step-n">3</span> Tune the type, download the package</li>
   </ol>
 
-  <div class="cb-occasions" role="group" aria-label="Poster type">
-    <button class="cb-occasion" type="button" aria-pressed="true">Beer feature</button>
+  <div class="cb-occasions" role="group" aria-label="Poster type" id="cb-concepts">
+    <button class="cb-occasion" type="button" data-concept="beerfeature" aria-pressed="true">Beer feature</button>
+    <button class="cb-occasion" type="button" data-concept="brandfocus" aria-pressed="false">Brand focus</button>
     <button class="cb-occasion" type="button" disabled>Event</button>
     <button class="cb-occasion" type="button" disabled>Announcement</button>
   </div>
@@ -306,9 +307,9 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
           <button class="cb-size" type="button" data-size="s1824" aria-pressed="false">18 × 24</button>
         </div>
       </div>
-      <div class="cb-field"><label for="cb-beer-select">Beer</label><select id="cb-beer-select"></select></div>
+      <div class="cb-field" id="cb-beer-field"><label for="cb-beer-select">Beer</label><select id="cb-beer-select"></select></div>
       <div class="cb-field cb-wide"><label for="cb-headline">Headline</label><textarea id="cb-headline" data-k="headline" rows="2" autocomplete="off"></textarea></div>
-      <div class="cb-field cb-wide"><label for="cb-subheadline">Subheadline</label><input id="cb-subheadline" data-k="subheadline" type="text" autocomplete="off"></div>
+      <div class="cb-field cb-wide"><label for="cb-subheadline">Subheadline</label><textarea id="cb-subheadline" data-k="subheadline" rows="2" autocomplete="off"></textarea></div>
     </div>
   </div>
 
@@ -434,16 +435,34 @@ function showToast(msg) {
   function rndShape(cur) { let v; do { v = 1 + Math.floor(Math.random() * SHAPE_COUNT); } while (v === cur); return v; }
 
   let beerId = BEERS[0].id;
-  /* Curated opening hand so the first paint looks intentional. */
-  let cards = [
-    { beer: beerId, shape: 1,  colorway: 'beer',     density: 'medium', held: false, lock: { shape: false, colorway: false, density: false } },
-    { beer: beerId, shape: 5,  colorway: 'beer',     density: 'loose',  held: false, lock: { shape: false, colorway: false, density: false } },
-    { beer: beerId, shape: 9,  colorway: 'burgundy', density: 'medium', held: false, lock: { shape: false, colorway: false, density: false } },
-    { beer: beerId, shape: 13, colorway: 'foam',     density: 'tight',  held: false, lock: { shape: false, colorway: false, density: false } }
-  ];
+  let concept = 'beerfeature';
+  const weightedBrandWays = P.BRAND_COLORWAYS.reduce((a, w) => a.concat(Array(w.weight).fill(w.id)), []);
+  /* Curated opening hands per poster type so the first paint looks intentional. */
+  const cardsByConcept = {
+    beerfeature: [
+      { concept: 'beerfeature', beer: beerId, shape: 1,  colorway: 'beer',     density: 'medium', held: false, lock: { shape: false, colorway: false, density: false } },
+      { concept: 'beerfeature', beer: beerId, shape: 5,  colorway: 'beer',     density: 'loose',  held: false, lock: { shape: false, colorway: false, density: false } },
+      { concept: 'beerfeature', beer: beerId, shape: 9,  colorway: 'burgundy', density: 'medium', held: false, lock: { shape: false, colorway: false, density: false } },
+      { concept: 'beerfeature', beer: beerId, shape: 13, colorway: 'foam',     density: 'tight',  held: false, lock: { shape: false, colorway: false, density: false } }
+    ],
+    brandfocus: [
+      { concept: 'brandfocus', colorway: 'foam',     held: false, lock: { colorway: false } },
+      { concept: 'brandfocus', colorway: 'burgundy', held: false, lock: { colorway: false } },
+      { concept: 'brandfocus', colorway: 'beige',    held: false, lock: { colorway: false } },
+      { concept: 'brandfocus', colorway: 'offblack', held: false, lock: { colorway: false } }
+    ]
+  };
+  let cards = cardsByConcept[concept];
+  /* each poster type keeps its own words */
+  const contentByConcept = {
+    beerfeature: { headline: BEERS[0].headline, subheadline: BEERS[0].subheadline },
+    brandfocus:  { headline: "It's a\nMidwest\nThing", subheadline: 'Available\nNow' }
+  };
   let selected = -1;
 
+  const REEL_KEYS = { beerfeature: ['shape', 'colorway', 'density'], brandfocus: ['colorway'] };
   function rerollReel(card, key) {
+    if (card.concept === 'brandfocus') { card.colorway = rndDiff(weightedBrandWays, card.colorway); return; }
     if (key === 'shape') card.shape = rndShape(card.shape);
     else if (key === 'colorway') card.colorway = rndDiff(weightedWays, card.colorway);
     else card.density = rndDiff(densityIds, card.density);
@@ -451,7 +470,7 @@ function showToast(msg) {
   function dealUnheld() {
     cards.forEach(card => {
       if (card.held) return;
-      ['shape', 'colorway', 'density'].forEach(key => { if (!card.lock[key]) rerollReel(card, key); });
+      REEL_KEYS[card.concept].forEach(key => { if (!card.lock[key]) rerollReel(card, key); });
     });
   }
 
@@ -464,7 +483,7 @@ function showToast(msg) {
   const REEL_LABELS = { shape: 'Shape', colorway: 'Color', density: 'Pattern' };
   function reelValueLabel(card, key) {
     if (key === 'shape') return 'Shape ' + String(card.shape).padStart(2, '0');
-    if (key === 'colorway') return P.colorwayById(card.colorway).name;
+    if (key === 'colorway') return card.concept === 'brandfocus' ? P.brandColorwayById(card.colorway).name : P.colorwayById(card.colorway).name;
     return P.densityById(card.density).name;
   }
   function reelHTML(i, key, card) {
@@ -483,7 +502,7 @@ function showToast(msg) {
             '<button class="cb-mini" type="button" data-act="hold" data-i="' + i + '" aria-pressed="' + card.held + '" title="Keep this whole card when you shuffle">' + ICON_PIN + (card.held ? ' Pinned' : ' Pin') + '</button>' +
             '<button class="cb-mini cb-mini--keep" type="button" data-act="keep" data-i="' + i + '" title="Choose this concept and get the package">Pick this one →</button>' +
           '</div></div>' +
-        '<div class="cb-reels">' + reelHTML(i, 'shape', card) + reelHTML(i, 'colorway', card) + reelHTML(i, 'density', card) + '</div>' +
+        '<div class="cb-reels">' + REEL_KEYS[card.concept].map(k => reelHTML(i, k, card)).join('') + '</div>' +
       '</div></div>';
   }
   function renderBoard(bumpSet) {
@@ -502,16 +521,25 @@ function showToast(msg) {
   function renderSpotlight() {
     const card = cards[selected]; if (!card) return;
     const c = content();
-    const beer = P.beerById(card.beer);
-    const paint = P.colorwayById(card.colorway).paint(beer);
     document.getElementById('cb-spot-poster').innerHTML = buildPosterSVG(card);
     document.getElementById('cb-spot-title').textContent = (c.headline || 'Concept') + ' · Concept ' + (selected + 1);
-    document.getElementById('cb-spot-recipe').innerHTML =
-      '<b>Beer</b> ' + esc(beer.name) + ' (can + ' + esc(beer.patternName) + ' pattern)<br>' +
-      '<b>Shape</b> ' + String(card.shape).padStart(2, '0') + ' of ' + SHAPE_COUNT + '<br>' +
-      '<b>Color</b> ' + P.colorwayById(card.colorway).name + ' · field ' + paint.bg + ' · band ' + paint.band + '<br>' +
-      '<b>Pattern</b> ' + P.densityById(card.density).name + '<br>' +
-      '<b>Size</b> ' + P.SIZE.label;
+    if (card.concept === 'brandfocus') {
+      const bp = P.brandColorwayById(card.colorway).paint;
+      document.getElementById('cb-spot-recipe').innerHTML =
+        '<b>Poster type</b> Brand focus<br>' +
+        '<b>Color</b> ' + P.brandColorwayById(card.colorway).name + ' · field ' + bp.bg + ' · ink ' + bp.ink + '<br>' +
+        '<b>Marks</b> Pryes Brewing wordmark · laurel wreath · P watermark<br>' +
+        '<b>Size</b> ' + P.SIZE.label;
+    } else {
+      const beer = P.beerById(card.beer);
+      const paint = P.colorwayById(card.colorway).paint(beer);
+      document.getElementById('cb-spot-recipe').innerHTML =
+        '<b>Beer</b> ' + esc(beer.name) + ' (can + ' + esc(beer.patternName) + ' pattern)<br>' +
+        '<b>Shape</b> ' + String(card.shape).padStart(2, '0') + ' of ' + SHAPE_COUNT + '<br>' +
+        '<b>Color</b> ' + P.colorwayById(card.colorway).name + ' · field ' + paint.bg + ' · band ' + paint.band + '<br>' +
+        '<b>Pattern</b> ' + P.densityById(card.density).name + '<br>' +
+        '<b>Size</b> ' + P.SIZE.label;
+    }
   }
   function openSpotlight(i) {
     selected = i; spot.classList.add('is-open'); renderSpotlight();
@@ -533,6 +561,26 @@ function showToast(msg) {
     const blob = await r.blob();
     const dataUrl = await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); });
     return { name: path.split('/').pop(), blob: blob, dataUrl: dataUrl };
+  }
+  function brandSpecSheetHTML(c, card) {
+    const way = P.brandColorwayById(card.colorway);
+    const bp = way.paint;
+    const E = P.SPEC.brandfocus.elements;
+    const h1fs = Math.round(E.headline.size * (c.headline.length <= 10 ? 1 : c.headline.length <= 14 ? 0.86 : c.headline.length <= 18 ? 0.72 : c.headline.length <= 24 ? 0.58 : 0.48) * c.h1Mul);
+    const rows = [
+      ['Poster type', 'Brand focus · ' + P.SIZE.label + ' portrait'],
+      ['Colorway', way.name + ' · field ' + bp.bg + ' · ink ' + bp.ink],
+      ['Marks', 'Pryes Brewing wordmark (' + bp.ink + ') · laurel wreath (' + bp.wreath + ' at ' + Math.round(bp.wreathOp * 100) + '%) · P watermark (' + bp.pmark + ' at ' + Math.round(bp.pmarkOp * 100) + '%)'],
+      ['Headline', '"' + c.headline + '" · Alternate Gothic No.2 D · ' + h1fs + ' design units · tracking ' + (E.headline.track + c.h1Track).toFixed(2) + 'em'],
+      ['Subheadline', '"' + c.subheadline.replace(/\n/g, ' / ') + '" · Superclarendon · ' + Math.round(E.subheadline.size * c.h2Mul) + ' design units'],
+      ['Fonts', 'Alternate Gothic No.2 D / Superclarendon / Gotham - SVG text is live and editable'],
+      ['Design space', '1800 × 2400 units; the SVG opens at true print size in Illustrator']
+    ];
+    const tr = r => '<tr><th>' + r[0] + '</th><td>' + esc(String(r[1])) + '</td></tr>';
+    return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>' + esc(c.headline || 'Concept') + ' - Pryes build recipe</title>' +
+      '<style>body{font-family:Georgia,serif;max-width:640px;margin:40px auto;padding:0 20px;color:#3e0f23;line-height:1.5}h1{font-size:24px;margin-bottom:4px}p.sub{margin:0 0 24px;color:#6b4351;font-size:14px}table{border-collapse:collapse;width:100%}th{text-align:left;padding:7px 16px 7px 0;white-space:nowrap;vertical-align:top;font-size:14px}td{padding:7px 0;font-size:14px}tr{border-bottom:1px solid #eee}@media print{body{margin:0}}</style></head><body>' +
+      '<h1>' + esc(c.headline || 'Concept') + ' - build recipe</h1><p class="sub">From the Pryes Concept Board V2. Every ingredient below rebuilds this concept exactly; the SVG in this package is the concept itself, fully editable.</p>' +
+      '<table>' + rows.map(tr).join('') + '</table></body></html>';
   }
   function specSheetHTML(c, card) {
     const beer = P.beerById(card.beer);
@@ -560,19 +608,20 @@ function showToast(msg) {
   async function downloadPackage() {
     const card = cards[selected] || cards[0];
     const c = content();
-    const beer = P.beerById(card.beer);
-    const slug = (c.headline || beer.name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'concept';
-    const can = await fileData(beer.can);
+    const isBrand = card.concept === 'brandfocus';
+    const beer = isBrand ? null : P.beerById(card.beer);
+    const slug = (c.headline || (beer ? beer.name : 'brand')).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'concept';
+    const can = beer ? await fileData(beer.can) : null;
     let svg = '<?xml version="1.0" encoding="UTF-8"?>\n' + toPrintFonts(buildPosterSVG(card, can && can.dataUrl));
     const svgName = 'pryes-' + slug + '-' + P.SIZE.slug + '.svg';
     if (window.JSZip) {
       const zip = new JSZip();
       zip.file(svgName, svg);
-      zip.file('build-recipe.html', specSheetHTML(c, card));
+      zip.file('build-recipe.html', isBrand ? brandSpecSheetHTML(c, card) : specSheetHTML(c, card));
       if (can) zip.file(can.name, can.blob);
       const blob = await zip.generateAsync({ type: 'blob' });
       downloadBlob(blob, 'pryes-' + slug + '-concept.zip');
-      showToast(can ? 'Concept package downloaded' : 'Can file missing, exported without it');
+      showToast(isBrand || can ? 'Concept package downloaded' : 'Can file missing, exported without it');
     } else {
       downloadBlob(new Blob([svg], { type: 'image/svg+xml' }), svgName);
       showToast('ZIP unavailable, SVG downloaded');
@@ -624,6 +673,22 @@ function showToast(msg) {
       document.getElementById(tc.out).textContent = tc.fmt(tc.reset);
     });
     posterOnlyRefresh();
+  });
+
+  /* ---------- poster type switcher ---------- */
+  const conceptBox = document.getElementById('cb-concepts');
+  conceptBox.addEventListener('click', e => {
+    const b = e.target.closest('[data-concept]'); if (!b || b.dataset.concept === concept) return;
+    /* keep this poster type's words before leaving it */
+    contentByConcept[concept] = { headline: document.getElementById('cb-headline').value, subheadline: document.getElementById('cb-subheadline').value };
+    concept = b.dataset.concept;
+    cards = cardsByConcept[concept];
+    conceptBox.querySelectorAll('[data-concept]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    document.getElementById('cb-beer-field').style.display = concept === 'brandfocus' ? 'none' : '';
+    document.getElementById('cb-headline').value = contentByConcept[concept].headline;
+    document.getElementById('cb-subheadline').value = contentByConcept[concept].subheadline;
+    selected = -1; spot.classList.remove('is-open');
+    renderBoard();
   });
 
   /* ---------- beer select ---------- */

@@ -36,6 +36,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 
 .ed-wrap { max-width: 1500px; margin: 0 auto; padding: 22px clamp(16px, 2.5vw, 32px) 60px; }
 .ed-controls { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin-bottom: 16px; }
+.ed-chip { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; font-size: 0.88rem;
+  padding: 8px 16px; border: 1.5px solid var(--line); border-radius: 999px; background: transparent; color: var(--ink-soft); cursor: pointer; }
+.ed-chip[aria-pressed="true"] { background: var(--burgundy); color: var(--beer-foam); border-color: var(--burgundy); }
 .ed-ctl { display: flex; align-items: center; gap: 7px; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.74rem; color: var(--ink-soft); }
 .ed-ctl select { font-family: var(--sans); font-size: 0.85rem; padding: 7px 9px; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--ink); }
 .ed-count { margin-left: auto; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.82rem; color: var(--ink-soft); }
@@ -112,16 +115,18 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     <button class="ed-btn" id="ed-discard-restore" type="button">Discard them</button>
   </div>
 
+  <div class="ed-controls" id="ed-concepts" role="group" aria-label="Poster type"></div>
+
   <div class="ed-controls">
     <span class="ed-ctl">Size
       <select id="ed-size"><option value="s1117" selected>11 × 17</option><option value="s1824">18 × 24</option></select></span>
-    <span class="ed-ctl">Beer
+    <span class="ed-ctl" id="ed-beer-ctl">Beer
       <select id="ed-beer"></select></span>
     <span class="ed-ctl">Color
       <select id="ed-colorway"></select></span>
-    <span class="ed-ctl">Shape
+    <span class="ed-ctl" id="ed-shape-ctl">Shape
       <select id="ed-shape"></select></span>
-    <span class="ed-ctl">Pattern
+    <span class="ed-ctl" id="ed-density-ctl">Pattern
       <select id="ed-density"></select></span>
     <span class="ed-count" id="ed-count">No changes yet</span>
   </div>
@@ -235,15 +240,34 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   });
 
   const stage = document.getElementById('ed-poster');
-  let card = { beer: P.BEERS[0].id, colorway: 'beer', shape: 5, density: 'medium' };
-  let selectedEl = null;   /* "beerfeature.element" */
+  let card = { concept: 'beerfeature', beer: P.BEERS[0].id, colorway: 'beer', shape: 5, density: 'medium' };
+  let selectedEl = null;   /* "<concept>.element" */
 
   function content() {
+    if (card.concept === 'brandfocus') return { headline: "It's a\nMidwest\nThing", subheadline: 'Available\nNow', h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
     const b = P.beerById(card.beer);
     return { headline: b.headline, subheadline: b.subheadline, h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
   }
 
   /* ---------- controls ---------- */
+  const conceptBox = document.getElementById('ed-concepts');
+  conceptBox.innerHTML = P.CONCEPTS.map(cn => '<button class="ed-chip" type="button" data-concept="' + cn.id + '" aria-pressed="' + (cn.id === card.concept) + '">' + cn.label + '</button>').join('');
+  function syncColorwayOptions() {
+    const ways = card.concept === 'brandfocus' ? P.BRAND_COLORWAYS : P.COLORWAYS;
+    waySel.innerHTML = ways.map(w => '<option value="' + w.id + '"' + (w.id === card.colorway ? ' selected' : '') + '>' + w.name + '</option>').join('');
+  }
+  conceptBox.addEventListener('click', e => {
+    const b = e.target.closest('[data-concept]'); if (!b || b.dataset.concept === card.concept) return;
+    card.concept = b.dataset.concept;
+    card.colorway = card.concept === 'brandfocus' ? 'foam' : 'beer';
+    conceptBox.querySelectorAll('.ed-chip').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    const isBrand = card.concept === 'brandfocus';
+    document.getElementById('ed-beer-ctl').style.display = isBrand ? 'none' : '';
+    document.getElementById('ed-shape-ctl').style.display = isBrand ? 'none' : '';
+    document.getElementById('ed-density-ctl').style.display = isBrand ? 'none' : '';
+    syncColorwayOptions();
+    selectedEl = null; render(); syncPanel(); syncChanges();
+  });
   const beerSel = document.getElementById('ed-beer');
   beerSel.innerHTML = P.BEERS.map(b => '<option value="' + b.id + '">' + b.name + '</option>').join('');
   beerSel.addEventListener('change', () => { card.beer = beerSel.value; render(); });
