@@ -383,6 +383,8 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 
 <div class="toast" id="toast">Copied</div>
 
+<script src="layout-defaults.js"></script>
+<script src="poster-engine.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
 /* ---------- Password (shares the guide's session key) ---------- */
@@ -433,228 +435,14 @@ function showToast(msg) {
   const board = document.getElementById('cb-board');
   if (!board) return;
 
-  let PHOTOS = [];
-
-  const SIZES = [
-    { key:'s1117', label:'11 × 17 in', slug:'11x17', w:1100, h:1700, inW:'11in', inH:'17in', signType:'Standard BOTM Poster 11x17' },
-    { key:'s1824', label:'18 × 24 in', slug:'18x24', w:1800, h:2400, inW:'18in', inH:'24in', signType:'Poster 18x24' }
-  ];
-  let SIZE = SIZES[0];
-  let W, H, M, KX, KY;
-  function applySize() {
-    W = SIZE.w; H = SIZE.h;
-    KX = W / 1800; KY = H / 2400;
-    M = Math.round(150 * KX);
-    document.documentElement.style.setProperty('--poster-ar', SIZE.w + ' / ' + SIZE.h);
-  }
-  applySize();
-  /* Print faces named first so Adobe picks them up; web preview uses the sanctioned substitutes. */
-  /* Preview uses the guide's web faces ONLY - macOS ships Superclarendon, so naming print
-     faces here would make Mac previews render heavier/wider than the guide's specimens.
-     Exports swap in the print faces via toPrintFonts(). */
-  const SERIF = "'Bitter',Georgia,serif";
-  const COND  = "'Barlow Condensed','Barlow Semi Condensed',sans-serif";
-  const SANS  = "'Poppins',system-ui,sans-serif";
-  /* Type matches the guide page's own specimen CSS (.s-header/.s-subhead/.s-body/.s-callout):
-     web substitutes need adjusted values - subheads 0.05em at 600 (Barlow Condensed is wider than
-     Alternate Gothic), headers serif 600, body serif 500, callouts sans 300 at 0.15em. */
-  const TRK_SUB = 0.05, TRK_CAP = 0.15;
+  /* Rendering lives in poster-engine.js; geometry in layout-defaults.js. */
+  const P = window.PryesPoster;
+  const SIZES = P.SIZES, FAMILIES = P.FAMILIES, IMAGES = P.IMAGES, LAYOUTS = P.LAYOUTS, PHOTOS = P.PHOTOS;
+  const famById = P.famById, esc = P.esc, toPrintFonts = P.toPrintFonts;
   const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const FAMILIES = [
-    { id:'burgundy',  name:'Regal Burgundy',   bg:'#3E0F23', ink:'#FFF1E4', accent:'#EBCFB8', weight:3 },
-    { id:'foam',      name:'Beer Foam',        bg:'#FFF1E4', ink:'#3E0F23', accent:'#3E0F23', weight:1 },
-    { id:'miraculum', name:'Miraculum Green',  bg:'#213B1E', ink:'#FFF1E4', accent:'#EBCFB8', weight:1 },
-    { id:'beige',     name:'Beige',            bg:'#EBCFB8', ink:'#3E0F23', accent:'#213B1E', weight:1 },
-    { id:'offblack',  name:'Off-Black',        bg:'#101019', ink:'#FFF1E4', accent:'#EBCFB8', weight:1 }
-  ];
-  const IMAGES  = [ {id:'laurel',label:'Laurel field'}, {id:'emblem',label:'Crest emblem'}, {id:'shapes',label:'Shape block'}, {id:'well',label:'Photo well'} ];
-  const LAYOUTS = [ {id:'stacked',label:'Stacked'}, {id:'anchored',label:'Anchored'}, {id:'framed',label:'Framed'}, {id:'feature',label:'Featured can'} ];
-
-  const ASSET_URLS = {
-    wordmark: 'assets/logos/svg/BEERFOAM/PRYES-WORDMARK-BEERFOAM.svg',
-    lockup:   'assets/logos/svg/BEERFOAM/PRYES-CREST+WORDMARK+TAGLINE-BEERFOAM.svg',
-    crest:    'assets/logos/svg/BEERFOAM/PRYES-CREST-NOBORDER-BEERFOAM.svg',
-    pmark:    'assets/logos/svg/BEERFOAM/PRYES-P-WATERMARK-BEERFOAM.svg',
-    laurel:   'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg'
-  };
-  const SHAPE_URLS = [3,5,8,11,14].map(n => 'assets/shapes/svg/BEERFOAM/BEER FOAM SHAPE ' + String(n).padStart(2,'0') + '.svg');
-  const A = { shapes: [] };
-  let UID = 0;
-
-  /* ---------- asset parsing + placement ---------- */
-  function parse(txt) {
-    const vb = (txt.match(/viewBox="([^"]+)"/) || [])[1] || '0 0 100 100';
-    let body = txt.replace(/<\?xml[^>]*\?>/g, '')
-                  .replace(/<!--[\s\S]*?-->/g, '')
-                  .replace(/<defs>[\s\S]*?<\/defs>/g, '')
-                  .replace(/<style[\s\S]*?<\/style>/g, '');
-    body = body.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
-    return { vb: vb, body: body };
-  }
-  function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-  function up(s) { return esc((s || '').toUpperCase()); }
-
-  function placeAsset(o) {
-    const a = A[o.key];
-    if (!a) return fallbackAsset(o);
-    const p = a.vb.split(/\s+/).map(Number);
-    const vw = p[2] || 100, vh = p[3] || 100;
-    const w = o.w, h = o.h || w * (vh / vw);
-    const x = (o.cx != null) ? o.cx - w / 2 : o.x;
-    const op = o.opacity != null ? ' opacity="' + o.opacity + '"' : '';
-    const par = o.slice ? 'xMidYMid slice' : 'xMidYMid meet';
-    return '<svg x="' + x + '" y="' + o.y + '" width="' + w + '" height="' + h + '" viewBox="' + a.vb + '" preserveAspectRatio="' + par + '"><g fill="' + o.color + '"' + op + '>' + a.body + '</g></svg>';
-  }
-  function fallbackAsset(o) {
-    const w = o.w, x = (o.cx != null) ? o.cx : o.x + w / 2;
-    const op = o.opacity != null ? ' opacity="' + o.opacity + '"' : '';
-    if (o.key === 'pmark' || o.key === 'crest')
-      return '<text x="' + x + '" y="' + (o.y + w * 0.72) + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + (w * 0.9) + '" fill="' + o.color + '"' + op + '>P</text>';
-    return '<text x="' + x + '" y="' + (o.y + (o.h || w * 0.2) * 0.82) + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + (w * 0.2) + '" fill="' + o.color + '"' + op + '>PRYES</text>';
-  }
-
-  /* ---------- text helpers ---------- */
-  function nameSize(s) { const n = (s || '').length; return n <= 6 ? 300 : n <= 9 ? 250 : n <= 12 ? 200 : n <= 16 ? 155 : n <= 22 ? 120 : 96; }
-  function tagline(t, x, y, size, fill, anchor) {
-    if (!t) return '';
-    const words = t.split(/\s+/), max = anchor === 'middle' ? 32 : 36, lines = []; let cur = '';
-    words.forEach(w => { if ((cur + ' ' + w).trim().length > max) { lines.push(cur.trim()); cur = w; } else cur = (cur + ' ' + w).trim(); });
-    if (cur) lines.push(cur);
-    const lh = size * 1.5;
-    const ts = lines.slice(0, 3).map((ln, i) => '<tspan x="' + x + '" dy="' + (i === 0 ? 0 : lh) + '">' + esc(ln) + '</tspan>').join('');
-    return '<text x="' + x + '" y="' + y + '" text-anchor="' + anchor + '" font-family="' + SERIF + '" font-size="' + size + '" font-weight="500" fill="' + fill + '" fill-opacity="0.92">' + ts + '</text>';
-  }
-  function statTrio(c, fam, y) {
-    const vals = [c.abv, c.ibu, c.date];
-    const xs = [W * 0.28, W * 0.5, W * 0.72];
-    let s = '';
-    xs.forEach((x, i) => { if (vals[i]) s += '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 64*KX + '" letter-spacing="' + 64*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(vals[i]) + '</text>'; });
-    s += '<line x1="' + (W * 0.39) + '" y1="' + (y - 50*KY) + '" x2="' + (W * 0.39) + '" y2="' + (y + 8*KY) + '" stroke="' + fam.ink + '" stroke-opacity="0.32"/>';
-    s += '<line x1="' + (W * 0.61) + '" y1="' + (y - 50*KY) + '" x2="' + (W * 0.61) + '" y2="' + (y + 8*KY) + '" stroke="' + fam.ink + '" stroke-opacity="0.32"/>';
-    return s;
-  }
-
-  /* ---------- hero treatments ---------- */
-  function patternCover(r, fam, op) {
-    if (!A.laurel) return '';
-    return '<svg x="' + r.x + '" y="' + r.y + '" width="' + r.w + '" height="' + r.h + '" viewBox="' + A.laurel.vb + '" preserveAspectRatio="xMidYMid slice"><g fill="' + fam.accent + '" opacity="' + op + '">' + A.laurel.body + '</g></svg>';
-  }
-  function shapeDecor(fam, op, seed, r) {
-    r = r || { x: 0, y: 0, w: W, h: H };
-    if (!A.shapes.length || !A.shapes[0]) return patternCover(r, fam, op);
-    const sh = A.shapes[seed % A.shapes.length];
-    const pp = sh.vb.split(/\s+/).map(Number), vw = pp[2], vh = pp[3];
-    const w = r.w * 1.25, h = w * (vh / vw);
-    return '<svg x="' + (r.x - r.w * 0.12) + '" y="' + (r.y + r.h - h * 0.86) + '" width="' + w + '" height="' + h + '" viewBox="' + sh.vb + '" preserveAspectRatio="xMidYMid meet"><g fill="' + fam.accent + '" opacity="' + op + '">' + sh.body + '</g></svg>';
-  }
-  function photoWell(r, fam, card) {
-    if (PHOTOS.length) {
-      const p = PHOTOS[(card && card.ph || 0) % PHOTOS.length];
-      return '<image x="' + r.x + '" y="' + r.y + '" width="' + r.w + '" height="' + r.h + '" href="assets/photos/' + esc(p.file) + '" preserveAspectRatio="xMidYMid slice"/>';
-    }
-    const id = 'cbg' + (UID++);
-    /* fallback: original gradient placeholder, unchanged */
-    return '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + fam.ink + '" stop-opacity="0.92"/><stop offset="1" stop-color="' + fam.accent + '" stop-opacity="0.82"/></linearGradient></defs>' +
-      '<rect x="' + r.x + '" y="' + r.y + '" width="' + r.w + '" height="' + r.h + '" fill="url(#' + id + ')"/>' +
-      '<text x="' + (r.x + r.w / 2) + '" y="' + (r.y + r.h / 2) + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 62*KX + '" letter-spacing="' + 62*KX*TRK_SUB + '" fill="' + fam.bg + '" fill-opacity="0.92">HERO IMAGE</text>' +
-      '<text x="' + (r.x + r.w / 2) + '" y="' + (r.y + r.h / 2 + 66*KY) + '" text-anchor="middle" font-family="' + SANS + '" font-weight="300" font-size="' + 30*KX + '" letter-spacing="' + 30*KX*TRK_CAP + '" fill="' + fam.bg + '" fill-opacity="0.72">CAN RENDER OR LIFESTYLE PHOTO</text>';
-  }
-  function heroBehind(img, fam, seed, mode) {
-    const op = 0.10;
-    if (img === 'laurel') return patternCover({ x: 0, y: 0, w: W, h: H }, fam, op);
-    if (img === 'emblem') return placeAsset({ key: 'crest', cx: W / 2, y: H * 0.30, w: 1450*KX, color: fam.accent, opacity: op + 0.02 });
-    if (img === 'shapes') return shapeDecor(fam, op + 0.05, seed);
-    return placeAsset({ key: 'pmark', cx: W / 2, y: H * 0.30, w: 1150*KX, color: fam.accent, opacity: op });
-  }
-  function heroBlock(img, fam, seed, r, card) {
-    const id = 'cbc' + (UID++);
-    let dec;
-    if (img === 'laurel') dec = patternCover(r, fam, 0.18);
-    else if (img === 'emblem') dec = placeAsset({ key: 'crest', cx: r.x + r.w / 2, y: r.y + r.h * 0.12, w: r.h * 0.92, color: fam.accent, opacity: 0.95 });
-    else if (img === 'shapes') dec = shapeDecor(fam, 0.9, seed, r);
-    else dec = photoWell(r, fam, card);
-    return '<clipPath id="' + id + '"><rect x="' + r.x + '" y="' + r.y + '" width="' + r.w + '" height="' + r.h + '"/></clipPath>' +
-      '<rect x="' + r.x + '" y="' + r.y + '" width="' + r.w + '" height="' + r.h + '" fill="' + fam.bg + '"/>' +
-      '<g clip-path="url(#' + id + ')">' + dec + '</g>';
-  }
-
-  /* ---------- layouts ---------- */
-  const LAY = {
-    stacked: function (c, fam, card) {
-      let s = heroBehind(card.img, fam, card.seed);
-      s += placeAsset({ key:'lockup', cx: W/2, y: 140*KY, w: 760*KX, color: fam.ink });
-      const fs = nameSize(c.beer) * KX;
-      s += '<text x="' + (W/2) + '" y="' + 1150*KY + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" font-weight="600" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
-      if (c.style) s += '<text x="' + (W/2) + '" y="' + 1285*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 108*KX + '" letter-spacing="' + 108*KX*TRK_SUB + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
-      s += tagline(c.tagline, W/2, 1480*KY, 62*KX, fam.ink, 'middle');
-      s += '<line x1="' + M + '" y1="' + 2000*KY + '" x2="' + (W-M) + '" y2="' + 2000*KY + '" stroke="' + fam.ink + '" stroke-opacity="0.24" stroke-width="2"/>';
-      s += statTrio(c, fam, 2120*KY);
-      if (c.cta) s += '<text x="' + (W/2) + '" y="' + 2295*KY + '" text-anchor="middle" font-family="' + SANS + '" font-weight="300" font-size="' + 38*KX + '" letter-spacing="' + 38*KX*TRK_CAP + '" fill="' + fam.ink + '" fill-opacity="0.8">' + up(c.cta) + '</text>';
-      return s;
-    },
-    anchored: function (c, fam, card) {
-      const HH = 250*KY, split = 1500*KY;
-      let s = heroBlock(card.img, fam, card.seed, { x: 0, y: HH, w: W, h: split - HH }, card);
-      s += placeAsset({ key:'wordmark', x: M, y: 60*KY, w: 720*KX, color: fam.ink });
-      if (c.date) s += '<text x="' + (W-M) + '" y="' + 172*KY + '" text-anchor="end" font-family="' + COND + '" font-weight="600" font-size="' + 62*KX + '" letter-spacing="' + 62*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(c.date) + '</text>';
-      /* rule sits flush with the top edge of the photo block */
-      s += '<line x1="' + M + '" y1="' + HH + '" x2="' + (W-M) + '" y2="' + HH + '" stroke="' + fam.ink + '" stroke-opacity="0.22" stroke-width="2"/>';
-      s += '<line x1="0" y1="' + split + '" x2="' + W + '" y2="' + split + '" stroke="' + fam.ink + '" stroke-opacity="0.2" stroke-width="2"/>';
-      if (c.style) s += '<text x="' + M + '" y="' + (split + 120*KY) + '" font-family="' + COND + '" font-weight="600" font-size="' + 98*KX + '" letter-spacing="' + 98*KX*TRK_SUB + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
-      const fs = nameSize(c.beer) * KX;
-      s += '<text x="' + M + '" y="' + (split + 120*KY + fs*0.86) + '" font-family="' + SERIF + '" font-size="' + fs + '" font-weight="600" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
-      s += tagline(c.tagline, M, split + 120*KY + fs*0.86 + 110*KY, 54*KX, fam.ink, 'start');
-      if (c.abv || c.ibu) s += '<text x="' + M + '" y="' + (H - 130*KY) + '" font-family="' + COND + '" font-weight="600" font-size="' + 58*KX + '" letter-spacing="' + 58*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up([c.abv, c.ibu].filter(Boolean).join('   ·   ')) + '</text>';
-      if (c.avail) s += '<text x="' + (W-M) + '" y="' + (H - 130*KY) + '" text-anchor="end" font-family="' + SANS + '" font-weight="300" font-size="' + 38*KX + '" letter-spacing="' + 38*KX*TRK_CAP + '" fill="' + fam.ink + '" fill-opacity="0.85">' + up(c.avail) + '</text>';
-      if (c.cta) s += '<text x="' + M + '" y="' + (H - 72*KY) + '" font-family="' + SANS + '" font-weight="300" font-size="' + 34*KX + '" letter-spacing="' + 34*KX*TRK_CAP + '" fill="' + fam.ink + '" fill-opacity="0.68">' + up(c.cta) + '</text>';
-      return s;
-    },
-    framed: function (c, fam, card) {
-      const fm = 96*KX;
-      let s = heroBehind(card.img, fam, card.seed);
-      s += '<rect x="' + fm + '" y="' + fm + '" width="' + (W - 2*fm) + '" height="' + (H - 2*fm) + '" fill="none" stroke="' + fam.ink + '" stroke-width="4"/>';
-      s += placeAsset({ key:'wordmark', cx: W/2, y: fm + 60*KY, w: 860*KX, color: fam.ink });
-      s += '<text x="' + (W/2) + '" y="' + (fm + 440*KY) + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 66*KX + '" letter-spacing="' + 66*KX*TRK_SUB + '" fill="' + fam.accent + '">NEW RELEASE</text>';
-      const fs = nameSize(c.beer) * KX;
-      s += '<text x="' + (W/2) + '" y="' + 1090*KY + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" font-weight="600" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
-      if (c.style) s += '<text x="' + (W/2) + '" y="' + 1215*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 92*KX + '" letter-spacing="' + 92*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(c.style) + '</text>';
-      s += tagline(c.tagline, W/2, 1420*KY, 58*KX, fam.ink, 'middle');
-      s += placeAsset({ key:'crest', cx: W/2, y: 1640*KY, w: 290*KX, color: fam.ink });
-      const line = [c.abv, c.ibu, c.date].filter(Boolean).join('    ·    ');
-      if (line) s += '<text x="' + (W/2) + '" y="' + (H - fm - 70*KY) + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 54*KX + '" letter-spacing="' + 54*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(line) + '</text>';
-      return s;
-    },
-    feature: function (c, fam, card) {
-      let s = '';
-      if (A.laurel) s += patternCover({ x: 0, y: 0, w: W, h: H }, fam, 0.08);
-      s += placeAsset({ key: 'wordmark', cx: W/2, y: 110*KY, w: 1240*KX, color: fam.ink });
-      if (c.style) s += '<text x="' + (W/2) + '" y="' + 470*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 76*KX + '" letter-spacing="' + 76*KX*TRK_SUB + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
-      if (PHOTOS.length) {
-        const p = PHOTOS[(card.ph || 0) % PHOTOS.length];
-        s += '<image x="' + (W/2 - 520*KX) + '" y="' + 540*KY + '" width="' + 1040*KX + '" height="' + 1100*KY + '" href="assets/photos/' + esc(p.file) + '" preserveAspectRatio="xMidYMid meet"/>';
-      } else {
-        s += placeAsset({ key: 'crest', cx: W/2, y: 560*KY, w: 900*KX, color: fam.accent, opacity: 0.9 });
-      }
-      const fs = nameSize(c.beer) * KX;
-      s += '<text x="' + (W/2) + '" y="' + 1860*KY + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" font-weight="600" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
-      const line = [c.date, c.avail].filter(Boolean).join('   ·   ');
-      if (line) s += '<text x="' + (W/2) + '" y="' + 2010*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 84*KX + '" letter-spacing="' + 84*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(line) + '</text>';
-      if (c.cta) s += '<text x="' + (W/2) + '" y="' + 2290*KY + '" text-anchor="middle" font-family="' + SANS + '" font-weight="300" font-size="' + 36*KX + '" letter-spacing="' + 36*KX*TRK_CAP + '" fill="' + fam.ink + '" fill-opacity="0.75">' + up(c.cta) + '</text>';
-      return s;
-    }
-  };
-
-  function famById(id) { return FAMILIES.find(f => f.id === id) || FAMILIES[0]; }
   function content() { const o = {}; document.querySelectorAll('#cb-form input').forEach(i => o[i.dataset.k] = i.value.trim()); return o; }
-
-  function buildPosterSVG(card, photoHref) {
-    const c = content(), fam = famById(card.fam);
-    /* width/height in inches => opens as a true print-size artboard in Illustrator; CSS keeps the on-screen preview at 100%. */
-    const inner = '<rect width="' + W + '" height="' + H + '" fill="' + fam.bg + '"/>' + LAY[card.lay](c, fam, card);
-    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + SIZE.inW + '" height="' + SIZE.inH + '">' + inner + '</svg>';
-    return photoHref ? svg.replace(/href="assets\/photos\/[^"]+"/, 'href="' + photoHref + '"') : svg;
-  }
+  function buildPosterSVG(card, photoHref) { return P.buildPosterSVG(card, content(), { photoHref: photoHref }); }
 
   /* ---------- state ---------- */
   const weightedFams = FAMILIES.reduce((a, f) => a.concat(Array(f.weight).fill(f.id)), []);
@@ -744,7 +532,7 @@ function showToast(msg) {
     document.getElementById('cb-spot-recipe').innerHTML =
       '<b>Image</b> ' + (((card.lay === 'feature' || card.img === 'well') && PHOTOS.length) ? 'Photo · ' + esc(PHOTOS[card.ph % PHOTOS.length].label || PHOTOS[card.ph % PHOTOS.length].file) : IMAGES.find(o => o.id === card.img).label) + '<br>' +
       '<b>Layout</b> ' + LAYOUTS.find(o => o.id === card.lay).label + '<br>' +
-      '<b>Color</b> ' + famById(card.fam).name + '<br><b>Size</b> ' + SIZE.label;
+      '<b>Color</b> ' + famById(card.fam).name + '<br><b>Size</b> ' + P.SIZE.label;
   }
   function openSpotlight(i) {
     selected = i; spot.classList.add('is-open'); renderSpotlight();
@@ -774,7 +562,7 @@ function showToast(msg) {
   function specSheetHTML(c, card, fam, photo) {
     const req = [
       ['Brand', document.getElementById('cb-brand').value || 'Pryes'],
-      ['Sign Type', SIZE.signType],
+      ['Sign Type', P.SIZE.signType],
       ['Quantity', document.getElementById('cb-qty').value || '4'],
       ['Orientation', document.getElementById('cb-orient').value],
       ['Laminate', document.getElementById('cb-lam').value],
@@ -785,7 +573,7 @@ function showToast(msg) {
       ['Color family', fam.name + ' / background ' + fam.bg + ' / ink ' + fam.ink + ' / accent ' + fam.accent],
       ['Print fonts', 'Superclarendon / Gotham / Alternate Gothic No.2 D (SVG text is live and editable)'],
       ['Photo', photo ? photo.name + ' (full-resolution copy in this package)' : 'None - brand art only'],
-      ['Final size', SIZE.label + ', portrait']
+      ['Final size', P.SIZE.label + ', portrait']
     ];
     const tr = r => '<tr><th>' + r[0] + '</th><td>' + esc(String(r[1])) + '</td></tr>';
     return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>' + esc(c.beer || 'Concept') + ' - Pryes poster spec</title>' +
@@ -793,17 +581,6 @@ function showToast(msg) {
       '<h1>' + esc(c.beer || 'Concept') + ' - poster concept</h1><p class="sub">From the Pryes Concept Board. The SVG in this package is the concept to finalize; everything in it is editable.</p>' +
       '<h2>Request</h2><table>' + req.map(tr).join('') + '</table>' +
       '<h2>Concept recipe</h2><table>' + recipe.map(tr).join('') + '</table></body></html>';
-  }
-  /* Export translation: name the print faces first so Adobe connects them, and restore the
-     print-spec weights (Superclarendon Regular headers, Light body) that the web preview
-     renders as Bitter 600/500. */
-  function toPrintFonts(svg) {
-    return svg
-      .split("'Bitter',Georgia,serif").join("'Superclarendon','Bitter',Georgia,serif")
-      .split("'Barlow Condensed','Barlow Semi Condensed',sans-serif").join("'Alternate Gothic No.2 D','Barlow Condensed','Barlow Semi Condensed',sans-serif")
-      .split("'Poppins',system-ui,sans-serif").join("'Gotham','Poppins',system-ui,sans-serif")
-      .replace(/(font-family="'Superclarendon'[^"]*"[^>]*font-weight=")600/g, '$1400')
-      .replace(/(font-family="'Superclarendon'[^"]*"[^>]*font-weight=")500/g, '$1300');
   }
   async function downloadPackage() {
     const card = cards[selected] || cards[0];
@@ -815,7 +592,7 @@ function showToast(msg) {
     const photoMissing = photoExpected && !photo;
     let svg = '<?xml version="1.0" encoding="UTF-8"?>\n' + toPrintFonts(buildPosterSVG(card, photo && photo.dataUrl));
     if (photoMissing) svg = svg.replace(/<image\b[^>]*href="assets\/photos\/[^"]*"[^>]*\/>/, '');
-    const svgName = 'pryes-' + slug + '-' + SIZE.slug + '.svg';
+    const svgName = 'pryes-' + slug + '-' + P.SIZE.slug + '.svg';
     if (window.JSZip) {
       const zip = new JSZip();
       zip.file(svgName, svg);
@@ -844,8 +621,7 @@ function showToast(msg) {
   document.getElementById('cb-export').addEventListener('click', downloadPackage);
   document.getElementById('cb-spot-close').addEventListener('click', closeSpotlight);
   document.querySelectorAll('.cb-size').forEach(btn => btn.addEventListener('click', () => {
-    SIZE = SIZES.find(s => s.key === btn.dataset.size) || SIZES[0];
-    applySize();
+    P.setSize(btn.dataset.size);
     document.querySelectorAll('.cb-size').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
     renderBoard();
   }));
@@ -876,17 +652,7 @@ function showToast(msg) {
   syncBeerFields();
 
   /* ---------- boot ---------- */
-  async function load(url) { try { const r = await fetch(url); if (r.ok) return parse(await r.text()); } catch (e) {} return null; }
-  (async function () {
-    await Promise.all(Object.keys(ASSET_URLS).map(async k => { A[k] = await load(ASSET_URLS[k]); }));
-    A.shapes = (await Promise.all(SHAPE_URLS.map(load))).filter(Boolean);
-    try {
-      /* no-store: the photo library must never be served from a stale browser cache */
-      const r = await fetch('assets/photos/photos.json', { cache: 'no-store' });
-      if (r.ok) { const j = await r.json(); if (Array.isArray(j)) PHOTOS = j.filter(p => p && p.file); }
-    } catch (e) {}
-    renderBoard();
-  })();
+  P.load().then(() => renderBoard());
 })();
 </script>
 </body>
