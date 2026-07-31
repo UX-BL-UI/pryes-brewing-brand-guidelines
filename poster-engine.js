@@ -117,7 +117,12 @@ window.PryesPoster = (function () {
   }
   function subEl(e, txt, fill) {
     const fs = e.size * KX;
-    return '<text x="' + e.x * KX + '" y="' + e.y * KY + '" text-anchor="' + (e.anchor || 'middle') + '" font-family="' + COND + '" font-weight="600" font-size="' + fs + '" letter-spacing="' + fs * (e.track != null ? e.track : 0.05) + '" fill="' + fill + '">' + up(txt) + '</text>';
+    const open = '<text x="' + e.x * KX + '" y="' + e.y * KY + '" text-anchor="' + (e.anchor || 'middle') + '" font-family="' + COND + '" font-weight="600" font-size="' + fs + '" letter-spacing="' + fs * (e.track != null ? e.track : 0.05) + '" fill="' + fill + '">';
+    const lines = String(txt || '').split(/\r?\n/).filter(l => l.trim().length);
+    if (lines.length <= 1) return open + up(txt) + '</text>';
+    /* stacked all-caps condensed lines at the guide's tight 75% subhead leading */
+    const lh = fs * (e.lh != null ? e.lh : 0.75);
+    return open + lines.map((ln, i) => '<tspan x="' + e.x * KX + '" dy="' + (i === 0 ? 0 : lh) + '">' + up(ln) + '</tspan>').join('') + '</text>';
   }
   function capEl(e, txt, fill) {
     const fs = e.size * KX;

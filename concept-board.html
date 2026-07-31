@@ -129,11 +129,12 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 .cb-field { display: flex; flex-direction: column; gap: 6px; }
 .cb-field.cb-wide { grid-column: 1 / -1; }
 .cb-field label { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; font-size: 0.74rem; color: var(--ink-soft); }
-.cb-field input, .cb-field select {
+.cb-field textarea { resize: vertical; min-height: 42px; }
+.cb-field input, .cb-field select, .cb-field textarea {
   font-family: var(--sans); font-size: 0.95rem; padding: 10px 13px; color: var(--ink);
   border: 1px solid var(--line); border-radius: 3px; background: var(--beer-foam);
 }
-.cb-field input:focus, .cb-field select:focus { outline: none; border-color: var(--burgundy); box-shadow: 0 0 0 2px rgba(62,15,35,0.12); }
+.cb-field input:focus, .cb-field select:focus, .cb-field textarea:focus { outline: none; border-color: var(--burgundy); box-shadow: 0 0 0 2px rgba(62,15,35,0.12); }
 .cb-field.cb-hidden { display: none; }
 
 .cb-toolbar {
@@ -327,7 +328,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
         <option value="main-squeeze">Main Squeeze</option>
         <option value="custom">Custom</option>
       </select></div>
-      <div class="cb-field cb-third cb-hidden"><label for="cb-style">Style</label><input id="cb-style" data-k="style" type="text" value="Midwest IPA" autocomplete="off"></div>
+      <div class="cb-field cb-third cb-hidden"><label for="cb-style">Style</label><textarea id="cb-style" data-k="style" rows="2" autocomplete="off">Midwest IPA</textarea></div>
       <div class="cb-field cb-third cb-hidden"><label for="cb-abv">ABV</label><input id="cb-abv" data-k="abv" type="text" value="6.4% ABV" autocomplete="off"></div>
       <div class="cb-field cb-third cb-hidden"><label for="cb-ibu">IBU / stat</label><input id="cb-ibu" data-k="ibu" type="text" value="75 IBU" autocomplete="off"></div>
       <div class="cb-field cb-wide"><label for="cb-beer">Headline</label><input id="cb-beer" data-k="beer" type="text" value="Miraculum" autocomplete="off"></div>
@@ -441,7 +442,7 @@ function showToast(msg) {
   const famById = P.famById, esc = P.esc, toPrintFonts = P.toPrintFonts;
   const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function content() { const o = {}; document.querySelectorAll('#cb-form input').forEach(i => o[i.dataset.k] = i.value.trim()); return o; }
+  function content() { const o = {}; document.querySelectorAll('#cb-form input, #cb-form textarea').forEach(i => o[i.dataset.k] = i.value.trim()); return o; }
   function buildPosterSVG(card, photoHref) { return P.buildPosterSVG(card, content(), { photoHref: photoHref }); }
 
   /* ---------- state ---------- */
@@ -627,7 +628,7 @@ function showToast(msg) {
   }));
 
   let t;
-  document.querySelectorAll('#cb-form input').forEach(inp => inp.addEventListener('input', () => { clearTimeout(t); t = setTimeout(posterOnlyRefresh, 130); }));
+  document.querySelectorAll('#cb-form input, #cb-form textarea').forEach(inp => inp.addEventListener('input', () => { clearTimeout(t); t = setTimeout(posterOnlyRefresh, 130); }));
 
   /* ---------- beer presets ---------- */
   const BEERS = {

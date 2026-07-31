@@ -14,14 +14,14 @@ window.PRYES_LAYOUT_DEFAULTS = {
   stacked: {
     label: 'Stacked',
     elements: {
-      /* Tuned by Ben, 2026-07-31: wordmark+Brewing mark, raised 40 */
-      lockup:   { kind: 'asset', asset: 'wordmarktag', cx: 900, y: 100, w: 760 },
-      hero:     { kind: 'hero', cx: 900, y: 720, w: 1450 },
-      name:     { kind: 'name', x: 900, y: 1150, anchor: 'middle', scale: 1, track: 0 },
-      style:    { kind: 'sub', x: 900, y: 1285, anchor: 'middle', size: 108, track: 0.05 },
-      body:     { kind: 'body', x: 900, y: 1480, anchor: 'middle', size: 62, lh: 1.5 },
-      stats:    { kind: 'stats', y: 2120, size: 64, track: 0.05 },
-      callout2: { kind: 'cap', x: 900, y: 2295, anchor: 'middle', size: 38, track: 0.15, opacity: 0.8 }
+      /* Tuned by Ben in concept-editor, 2026-07-31: big style headline mid-page, name near the foot */
+      lockup:   { kind: 'asset', asset: 'wordmarktag', cx: 900, y: 132, w: 1046 },
+      hero:     { kind: 'hero', cx: 900, y: 564, w: 1556 },
+      name:     { kind: 'name', x: 906, y: 2025, anchor: 'middle', scale: 0.71, track: 0 },
+      style:    { kind: 'sub', x: 900, y: 1285, anchor: 'middle', size: 306, track: 0.05 },
+      body:     { kind: 'body', x: 902, y: 1391, anchor: 'middle', size: 62, lh: 1.5 },
+      stats:    { kind: 'stats', y: 2131, size: 64, track: 0.05 },
+      callout2: { kind: 'cap', x: 900, y: 2228, anchor: 'middle', size: 38, track: 0.15, opacity: 0.8 }
     }
   },
   anchored: {
