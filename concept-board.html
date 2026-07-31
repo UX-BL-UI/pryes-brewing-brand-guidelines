@@ -126,11 +126,11 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 .cb-field { display: flex; flex-direction: column; gap: 6px; }
 .cb-field.cb-wide { grid-column: 1 / -1; }
 .cb-field label { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; font-size: 0.74rem; color: var(--ink-soft); }
-.cb-field input {
+.cb-field input, .cb-field select {
   font-family: var(--sans); font-size: 0.95rem; padding: 10px 13px; color: var(--ink);
   border: 1px solid var(--line); border-radius: 3px; background: var(--beer-foam);
 }
-.cb-field input:focus { outline: none; border-color: var(--burgundy); box-shadow: 0 0 0 2px rgba(62,15,35,0.12); }
+.cb-field input:focus, .cb-field select:focus { outline: none; border-color: var(--burgundy); box-shadow: 0 0 0 2px rgba(62,15,35,0.12); }
 
 .cb-toolbar {
   position: sticky; top: var(--topbar-h); z-index: 20;
@@ -318,10 +318,15 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
           <button class="cb-size" type="button" data-size="s1824" aria-pressed="false">18 × 24</button>
         </div>
       </div>
+      <div class="cb-field"><label for="cb-beer-select">Beer</label><select id="cb-beer-select">
+        <option value="miraculum" selected>Miraculum</option>
+        <option value="main-squeeze">Main Squeeze</option>
+        <option value="custom">Custom</option>
+      </select></div>
       <div class="cb-field"><label for="cb-beer">Beer name</label><input id="cb-beer" data-k="beer" type="text" value="Miraculum" autocomplete="off"></div>
-      <div class="cb-field"><label for="cb-style">Style</label><input id="cb-style" data-k="style" type="text" value="Double IPA" autocomplete="off"></div>
-      <div class="cb-field"><label for="cb-abv">ABV</label><input id="cb-abv" data-k="abv" type="text" value="8.5% ABV" autocomplete="off"></div>
-      <div class="cb-field"><label for="cb-ibu">IBU / stat</label><input id="cb-ibu" data-k="ibu" type="text" value="60 IBU" autocomplete="off"></div>
+      <div class="cb-field"><label for="cb-style">Style</label><input id="cb-style" data-k="style" type="text" value="Midwest IPA" autocomplete="off"></div>
+      <div class="cb-field"><label for="cb-abv">ABV</label><input id="cb-abv" data-k="abv" type="text" value="6.4% ABV" autocomplete="off"></div>
+      <div class="cb-field"><label for="cb-ibu">IBU / stat</label><input id="cb-ibu" data-k="ibu" type="text" value="75 IBU" autocomplete="off"></div>
       <div class="cb-field"><label for="cb-date">Release</label><input id="cb-date" data-k="date" type="text" value="On tap now" autocomplete="off"></div>
       <div class="cb-field cb-wide"><label for="cb-tagline">Tagline</label><input id="cb-tagline" data-k="tagline" type="text" value="Bold enough for IPA fans, smooth enough for everyone else." autocomplete="off"></div>
       <div class="cb-field"><label for="cb-avail">Availability</label><input id="cb-avail" data-k="avail" type="text" value="Draft · 4-packs to-go" autocomplete="off"></div>
@@ -849,6 +854,25 @@ function showToast(msg) {
 
   let t;
   document.querySelectorAll('#cb-form input').forEach(inp => inp.addEventListener('input', () => { clearTimeout(t); t = setTimeout(posterOnlyRefresh, 130); }));
+
+  /* ---------- beer presets ---------- */
+  const BEERS = {
+    'miraculum':    { beer: 'Miraculum',    style: 'Midwest IPA',       abv: '6.4% ABV', ibu: '75 IBU' },
+    'main-squeeze': { beer: 'Main Squeeze', style: 'Lemon Lime Blonde', abv: '4.6% ABV', ibu: '22 IBU' }
+  };
+  const BEER_FIELDS = [['beer','cb-beer'],['style','cb-style'],['abv','cb-abv'],['ibu','cb-ibu']];
+  const beerSelect = document.getElementById('cb-beer-select');
+  beerSelect.addEventListener('change', () => {
+    const b = BEERS[beerSelect.value];
+    if (!b) return; /* Custom: leave the fields as they are, free to edit */
+    BEER_FIELDS.forEach(([k, id]) => { document.getElementById(id).value = b[k]; });
+    posterOnlyRefresh();
+  });
+  /* hand-editing any beer field flips the dropdown to Custom */
+  BEER_FIELDS.forEach(([k, id]) => document.getElementById(id).addEventListener('input', () => {
+    const b = BEERS[beerSelect.value];
+    if (b && BEER_FIELDS.some(([k2, id2]) => document.getElementById(id2).value !== b[k2])) beerSelect.value = 'custom';
+  }));
 
   /* ---------- boot ---------- */
   async function load(url) { try { const r = await fetch(url); if (r.ok) return parse(await r.text()); } catch (e) {} return null; }
