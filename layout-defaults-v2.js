@@ -52,15 +52,16 @@ window.PRYES_LAYOUT_DEFAULTS_V2 = {
   brandfocus: {
     label: 'Brand focus',
     elements: {
-      /* Grounded to the "It's a Midwest Thing" reference, 2026-07-31:
-         flat brand field, stacked wordmark, laurel wreath + P
-         watermark behind the condensed headline, serif line at the
-         foot. Colors come from the brand colorways, not here. */
+      /* Grounded to the "It's a Midwest Thing" reference; tuned by
+         Ben in concept-editor-v2, 2026-07-31. Flat brand field,
+         stacked wordmark, laurel wreath + P watermark behind the
+         condensed headline, serif line at the foot. Colors come
+         from the brand colorways, not here. */
       wordmark:    { kind: 'asset', asset: 'wordmarktag', cx: 900, y: 170, w: 950 },
-      laurels:     { kind: 'asset', asset: 'laurels', cx: 900, y: 560, w: 1500 },
-      pmark:       { kind: 'asset', asset: 'pmark', cx: 900, y: 820, w: 640 },
-      headline:    { kind: 'headline', x: 900, y: 1030, anchor: 'middle', size: 190, track: 0.05, lh: 1.2 },
-      subheadline: { kind: 'serif', x: 900, y: 2040, anchor: 'middle', size: 130, lh: 1.12 }
+      laurels:     { kind: 'asset', asset: 'laurels', cx: 900, y: 560, w: 1576 },
+      pmark:       { kind: 'asset', asset: 'pmark', cx: 900, y: 861, w: 640 },
+      headline:    { kind: 'headline', x: 900, y: 1065, anchor: 'middle', size: 283, track: 0.01, lh: 0.93 },
+      subheadline: { kind: 'serif', x: 898, y: 2043, anchor: 'middle', size: 206, lh: 0.92 }
     }
   }
 };
