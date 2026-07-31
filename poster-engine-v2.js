@@ -64,8 +64,10 @@ window.PryesPosterV2 = (function () {
     { id:'foam',     name:'Beer Foam',       weight:1, paint: b => ({ bg:BRAND.foam, pattern:BRAND.beige, wordmark:BRAND.burgundy, band:b.colors.bg, bandText:b.colors.accent }) }
   ];
 
+  /* cols = poster widths per tile; Loose stays fractional so even
+     the biggest tiles interleave instead of sitting as one copy */
   const DENSITIES = [
-    { id:'loose',  name:'Loose',  cols: 1 },
+    { id:'loose',  name:'Loose',  cols: 1.5 },
     { id:'medium', name:'Medium', cols: 2 },
     { id:'tight',  name:'Tight',  cols: 3 }
   ];

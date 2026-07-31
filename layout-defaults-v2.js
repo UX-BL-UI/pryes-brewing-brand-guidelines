@@ -32,7 +32,7 @@ window.PRYES_LAYOUT_DEFAULTS_V2 = {
         '3':  { kind: 'shape', cx: 850,  y: 1050, w: 2028, h: 1142 },
         '4':  { kind: 'shape', cx: 1135, y: 788,  w: 2336, h: 1480 },
         '5':  { kind: 'shape', cx: 909,  y: 1155, w: 1862, h: 1083 },
-        '6':  { kind: 'shape', cx: 905,  y: 1701, w: 1872, h: 1059 },
+        '6':  { kind: 'shape', cx: 905,  y: 1465, w: 1872, h: 1059 },
         '7':  { kind: 'shape', cx: 920,  y: -529, w: 1999, h: 2490 },
         '8':  { kind: 'shape', cx: 912,  y: 1842, w: 1872, h: 581 },
         '9':  { kind: 'shape', cx: 911,  y: 1868, w: 1872, h: 851 },
