@@ -154,19 +154,21 @@ window.PryesPosterV2 = (function () {
   /* Beer pattern tiled edge-to-edge; density sets the column count.
      Tonal per the guide: pattern renders at full strength in the
      colorway's pattern hex. */
-  function patternField(pat, color, cols) {
+  function patternField(pat, color, cols, pE) {
     if (!pat) return '';
+    pE = pE || {};
     const p = pat.vb.split(/\s+/).map(Number);
     const vw = p[2] || 100, vh = p[3] || 100;
     const tw = W / cols, th = tw * (vh / vw);
-    /* the laurel art carries side margins inside its viewBox, so
-       columns overlap by about an inch to interleave seamlessly;
-       row spacing needs no correction */
-    const ov = cols > 1 ? 164 * KX : 0;
+    /* the pattern art carries margins inside its viewBox, so tiles
+       overlap to interleave; ovX/ovY are percent of tile size and
+       come from the layout defaults (editable in the editor) */
+    const ovX = tw * Math.min(90, Math.max(0, pE.ovX != null ? pE.ovX : 18)) / 100;
+    const ovY = th * Math.min(90, Math.max(0, pE.ovY != null ? pE.ovY : 0)) / 100;
     let s = '';
-    for (let row = 0; row * th < H; row++) {
-      for (let x = 0; x < W; x += tw - ov) {
-        s += '<svg x="' + x + '" y="' + (row * th) + '" width="' + tw + '" height="' + th + '" viewBox="' + pat.vb + '" preserveAspectRatio="xMidYMid slice"><g fill="' + color + '">' + pat.body + '</g></svg>';
+    for (let y = 0; y < H; y += th - ovY) {
+      for (let x = 0; x < W; x += tw - ovX) {
+        s += '<svg x="' + x + '" y="' + y + '" width="' + tw + '" height="' + th + '" viewBox="' + pat.vb + '" preserveAspectRatio="xMidYMid slice"><g fill="' + color + '">' + pat.body + '</g></svg>';
       }
     }
     return s;
@@ -223,7 +225,7 @@ window.PryesPosterV2 = (function () {
     const tag = !!opts.tag;
 
     let s = '<rect width="' + W + '" height="' + H + '" fill="' + paint.bg + '"/>';
-    s += wrap('beerfeature.pattern', patternField(A.patterns[beer.id], paint.pattern, density.cols), tag);
+    s += wrap('beerfeature.pattern', patternField(A.patterns[beer.id], paint.pattern, density.cols, E.pattern), tag);
 
     /* shape + band sit under the can so the can fronts the divider
        notch, exactly as in the reference poster */

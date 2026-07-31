@@ -195,8 +195,8 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
 (function () {
   const P = window.PryesPosterV2;
   const STORE_KEY = 'pryes_editor_v2_spec_v1';
-  const PROP_LABELS = { x: 'X', cx: 'Center X', y: 'Y', cy: 'Center Y', w: 'Width', h: 'Height', size: 'Font size', track: 'Tracking (em)', lh: 'Line height', s: 'Size' };
-  const EDITABLE = ['x', 'cx', 'y', 'cy', 'w', 'h', 'size', 'track', 'lh', 's'];
+  const PROP_LABELS = { x: 'X', cx: 'Center X', y: 'Y', cy: 'Center Y', w: 'Width', h: 'Height', size: 'Font size', track: 'Tracking (em)', lh: 'Line height', s: 'Size', ovX: 'Overlap X (%)', ovY: 'Overlap Y (%)' };
+  const EDITABLE = ['x', 'cx', 'y', 'cy', 'w', 'h', 'size', 'track', 'lh', 's', 'ovX', 'ovY'];
 
   const PRISTINE = JSON.parse(JSON.stringify(window.PRYES_LAYOUT_DEFAULTS_V2));
   let spec = JSON.parse(JSON.stringify(window.PRYES_LAYOUT_DEFAULTS_V2));
@@ -305,7 +305,6 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
     const svg = svgRoot(); if (!svg) return;
     const handle = evt.target.closest('#ed-handle');
     const g = evt.target.closest('[data-el]');
-    /* the pattern field is generated, not positioned - clicks fall through to deselect */
     if (g && !handle && !elSpec(g.getAttribute('data-el'))) { selectedEl = null; drawOverlay(); syncPanel(); return; }
     if (!handle && !g) { selectedEl = null; drawOverlay(); syncPanel(); return; }
     if (g && !handle) { selectedEl = g.getAttribute('data-el'); drawOverlay(); syncPanel(); }
