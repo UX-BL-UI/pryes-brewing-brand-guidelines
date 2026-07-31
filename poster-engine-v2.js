@@ -159,10 +159,14 @@ window.PryesPosterV2 = (function () {
     const p = pat.vb.split(/\s+/).map(Number);
     const vw = p[2] || 100, vh = p[3] || 100;
     const tw = W / cols, th = tw * (vh / vw);
+    /* the laurel art carries side margins inside its viewBox, so
+       columns overlap by about an inch to interleave seamlessly;
+       row spacing needs no correction */
+    const ov = cols > 1 ? 164 * KX : 0;
     let s = '';
     for (let row = 0; row * th < H; row++) {
-      for (let col = 0; col < cols; col++) {
-        s += '<svg x="' + (col * tw) + '" y="' + (row * th) + '" width="' + tw + '" height="' + th + '" viewBox="' + pat.vb + '" preserveAspectRatio="xMidYMid slice"><g fill="' + color + '">' + pat.body + '</g></svg>';
+      for (let x = 0; x < W; x += tw - ov) {
+        s += '<svg x="' + x + '" y="' + (row * th) + '" width="' + tw + '" height="' + th + '" viewBox="' + pat.vb + '" preserveAspectRatio="xMidYMid slice"><g fill="' + color + '">' + pat.body + '</g></svg>';
       }
     }
     return s;

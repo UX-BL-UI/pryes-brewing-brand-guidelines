@@ -17,14 +17,27 @@ window.PRYES_LAYOUT_DEFAULTS_V2 = {
          band, larger band type. Diamonds normalized to matching
          size, inset, and line. */
       wordmark:    { kind: 'asset', asset: 'wordmarktag', cx: 907, y: -5, w: 1504 },
-      can:         { kind: 'photo', cx: 891, y: 437, h: 1458 },
-      band:        { kind: 'band', y: 1642 },
+      can:         { kind: 'photo', cx: 906, y: 370, h: 1458 },
+      band:        { kind: 'band', y: 1960 },
       /* Each of the 15 brand shapes keeps its own placement here,
          keyed by shape number: { cx, y, w, h }. A shape without an
-         entry gets an automatic placement against the band line. */
+         entry gets an automatic placement against the band line.
+         All 15 hand-placed by Ben in concept-editor-v2, 2026-07-31. */
       shape:       { kind: 'shape', perShape: {
-        /* Shape 05 - Ben's final placement, 2026-07-31 */
-        '5': { kind: 'shape', cx: 906, y: 1427, w: 1862, h: 1083 }
+        '1':  { kind: 'shape', cx: 875,  y: 1375, w: 1872, h: 1493 },
+        '2':  { kind: 'shape', cx: 883,  y: 1422, w: 1872, h: 2071 },
+        '3':  { kind: 'shape', cx: 850,  y: 1050, w: 2028, h: 1142 },
+        '4':  { kind: 'shape', cx: 1135, y: 788,  w: 2336, h: 1480 },
+        '5':  { kind: 'shape', cx: 903,  y: 1201, w: 1862, h: 1083 },
+        '6':  { kind: 'shape', cx: 905,  y: 1701, w: 1872, h: 1059 },
+        '8':  { kind: 'shape', cx: 912,  y: 1863, w: 1872, h: 581 },
+        '9':  { kind: 'shape', cx: 911,  y: 1868, w: 1872, h: 851 },
+        '10': { kind: 'shape', cx: 901,  y: 1892, w: 1872, h: 1620 },
+        '11': { kind: 'shape', cx: 894,  y: 1866, w: 2077, h: 1475 },
+        '12': { kind: 'shape', cx: 917,  y: -545, w: 2878, h: 2735 },
+        '13': { kind: 'shape', cx: 924,  y: 1915, w: 1872, h: 1003 },
+        '14': { kind: 'shape', cx: 923,  y: 1903, w: 1350, h: 124 },
+        '15': { kind: 'shape', cx: 920,  y: 1850, w: 1872, h: 1790 }
       } },
       headline:    { kind: 'headline', x: 906, y: 2127, anchor: 'middle', size: 191, track: 0.06 },
       subheadline: { kind: 'sub',  x: 895, y: 2238, anchor: 'middle', size: 98, track: 0.14 },
