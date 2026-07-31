@@ -216,6 +216,14 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 .cb-spot-side .cb-btn--solid:hover { background: var(--beige); }
 .cb-spot-note { font-size: 0.78rem; color: rgba(255,241,228,0.6); margin-top: 16px; line-height: 1.6; }
 
+.cb-handoff { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 14px; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,241,228,0.2); }
+.cb-h-field { display: flex; flex-direction: column; gap: 5px; }
+.cb-h-field.cb-h-wide { grid-column: 1 / -1; }
+.cb-h-field label { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; font-size: 0.7rem; color: var(--beige); }
+.cb-h-field input, .cb-h-field select { font-family: var(--sans); font-size: 0.9rem; padding: 8px 10px; color: var(--beer-foam); background: rgba(255,241,228,0.08); border: 1px solid rgba(255,241,228,0.3); border-radius: 3px; }
+.cb-h-field input:focus, .cb-h-field select:focus { outline: none; border-color: var(--beige); }
+.cb-h-field select option { color: var(--ink); }
+
 .cb-loading { padding: 40px 0; text-align: center; color: var(--ink-soft); font-size: 0.9rem; }
 
 /* ---------- toast ---------- */
@@ -342,6 +350,16 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
       <div class="cb-eye">Selected concept</div>
       <h3 id="cb-spot-title">Concept</h3>
       <div class="cb-recipe" id="cb-spot-recipe"></div>
+      <div class="cb-handoff">
+        <div class="cb-h-field"><label for="cb-brand">Brand</label><input id="cb-brand" type="text" value="Pryes" autocomplete="off"></div>
+        <div class="cb-h-field"><label for="cb-qty">Quantity</label><input id="cb-qty" type="number" value="4" min="1" max="99"></div>
+        <div class="cb-h-field"><label for="cb-orient">Orientation</label>
+          <select id="cb-orient"><option>Portrait</option><option>Landscape</option></select></div>
+        <div class="cb-h-field"><label for="cb-lam">Laminate</label>
+          <select id="cb-lam"><option>No</option><option>Yes</option></select></div>
+        <div class="cb-h-field cb-h-wide"><label for="cb-msg">Message</label><input id="cb-msg" type="text" autocomplete="off"></div>
+      </div>
+      <p class="cb-spot-note">Brand is whose sign this is - Pryes, or a partner account like a bar, restaurant, or the Twins. Orientation and laminate ride along on the request sheet; the poster itself is composed portrait.</p>
       <div class="cb-spot-cta">
         <button class="cb-btn cb-btn--solid" type="button" id="cb-export">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
@@ -695,7 +713,15 @@ function showToast(msg) {
       '<b>Layout</b> ' + LAYOUTS.find(o => o.id === card.lay).label + '<br>' +
       '<b>Color</b> ' + famById(card.fam).name + '<br><b>Size</b> ' + SIZE.label;
   }
-  function openSpotlight(i) { selected = i; spot.classList.add('is-open'); renderSpotlight(); spot.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); }
+  function openSpotlight(i) {
+    selected = i; spot.classList.add('is-open'); renderSpotlight();
+    const msg = document.getElementById('cb-msg');
+    if (!msg.value.trim()) {
+      const c = content();
+      msg.value = (c.beer || 'New beer') + ' Now Available on Draft';
+    }
+    spot.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+  }
   function closeSpotlight() { selected = -1; spot.classList.remove('is-open'); }
 
   function exportSVG() {
