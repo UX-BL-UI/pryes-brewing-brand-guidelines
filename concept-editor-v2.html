@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pryes Concept Editor V2 - Internal</title>
+<meta name="description" content="Internal editor for tuning the default V2 concept layouts.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Barlow+Condensed:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@500;600&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --burgundy: #3e0f23; --burgundy-deep: #320c1c; --beer-foam: #fff1e4; --beige: #ebcfb8;
+  --orange: #e3884d; --orange-shade: #be442a;
+  --ink: #3e0f23; --ink-soft: #6b4351; --line: rgba(62,15,35,0.14);
+  --serif: 'Bitter','Georgia',serif; --sans: 'Poppins',system-ui,-apple-system,sans-serif;
+  --condensed: 'Barlow Condensed','Barlow Semi Condensed',system-ui,sans-serif;
+  --topbar-h: 58px; --poster-ar: 11 / 17;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; }
+body { font-family: var(--sans); color: var(--ink); background: var(--beer-foam); line-height: 1.5;
+  background-image: linear-gradient(rgba(62,15,35,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(62,15,35,0.035) 1px, transparent 1px);
+  background-size: 26px 26px; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+.tool-bar { position: sticky; top: 0; z-index: 50; height: var(--topbar-h); background: var(--burgundy); color: var(--beer-foam);
+  display: flex; align-items: center; gap: 14px; padding: 0 clamp(18px, 3vw, 32px); border-bottom: 1px solid rgba(255,241,228,0.12); }
+.tool-bar img { height: 26px; }
+.tb-title { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.14em; font-weight: 600; font-size: 1rem; }
+.tb-badge { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.14em; font-weight: 600; font-size: 0.64rem; padding: 3px 9px; border: 1px solid var(--beige); color: var(--beige); border-radius: 999px; }
+.tb-spacer { flex: 1; }
+.tb-back { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.8rem; color: rgba(255,241,228,0.62); text-decoration: none; }
+.tb-back:hover { color: var(--beer-foam); }
+
+.ed-wrap { max-width: 1500px; margin: 0 auto; padding: 22px clamp(16px, 2.5vw, 32px) 60px; }
+.ed-controls { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin-bottom: 16px; }
+.ed-ctl { display: flex; align-items: center; gap: 7px; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.74rem; color: var(--ink-soft); }
+.ed-ctl select { font-family: var(--sans); font-size: 0.85rem; padding: 7px 9px; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--ink); }
+.ed-count { margin-left: auto; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.82rem; color: var(--ink-soft); }
+.ed-count b { color: var(--orange-shade); }
+
+.ed-main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; align-items: start; }
+.ed-stagebox { border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,0.55); padding: 20px; display: flex; justify-content: center; }
+.ed-poster { height: min(78vh, 900px); aspect-ratio: var(--poster-ar); box-shadow: 0 14px 40px rgba(16,16,25,0.18); border-radius: 2px; overflow: hidden; touch-action: none; }
+.ed-poster > svg { width: 100% !important; height: 100% !important; display: block; }
+.ed-poster [data-el] { cursor: grab; }
+.ed-poster [data-el]:hover { opacity: 0.88; }
+
+.ed-panel { border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,0.6); padding: 18px; position: sticky; top: calc(var(--topbar-h) + 14px); display: flex; flex-direction: column; gap: 16px; max-height: calc(100vh - var(--topbar-h) - 30px); overflow: auto; }
+.ed-h { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.14em; font-weight: 600; font-size: 0.85rem; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.ed-selname { font-family: var(--serif); font-weight: 600; font-size: 1.1rem; }
+.ed-hint { font-size: 0.78rem; color: var(--ink-soft); line-height: 1.55; }
+.ed-props { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
+.ed-prop label { display: block; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.68rem; color: var(--ink-soft); margin-bottom: 3px; }
+.ed-prop input { width: 100%; font-family: var(--sans); font-size: 0.88rem; padding: 7px 9px; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--ink); }
+.ed-btn { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.85rem;
+  padding: 10px 16px; border-radius: 2px; border: 1.5px solid var(--burgundy); color: var(--burgundy); background: transparent; cursor: pointer; }
+.ed-btn:hover { background: var(--burgundy); color: var(--beer-foam); }
+.ed-btn--solid { background: var(--burgundy); color: var(--beer-foam); }
+.ed-btn--solid:hover { background: var(--burgundy-deep); }
+.ed-btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+.ed-btnrow { display: flex; flex-direction: column; gap: 8px; }
+.ed-changes { display: flex; flex-direction: column; gap: 5px; font-size: 0.78rem; }
+.ed-change { display: flex; gap: 8px; align-items: baseline; padding: 5px 8px; background: rgba(227,136,77,0.1); border-left: 3px solid var(--orange-shade); border-radius: 2px; }
+.ed-change b { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.72rem; }
+.ed-empty { font-size: 0.8rem; color: var(--ink-soft); font-style: italic; }
+.ed-restore { background: rgba(227,136,77,0.14); border: 1px solid var(--orange-shade); border-radius: 6px; padding: 10px 14px; font-size: 0.82rem; display: flex; gap: 12px; align-items: center; margin-bottom: 14px; }
+.ed-restore button { font-size: 0.74rem; padding: 5px 10px; }
+.toast { position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--burgundy); color: var(--beer-foam);
+  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.85rem; padding: 12px 22px; border-radius: 999px; z-index: 200;
+  opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+#password-overlay { position: fixed; inset: 0; z-index: 1000; background: var(--burgundy); display: flex; align-items: center; justify-content: center; padding: 24px; }
+#password-overlay.hidden { display: none; }
+.password-box { width: 100%; max-width: 380px; text-align: center; }
+.password-box img { width: 150px; margin: 0 auto 30px; }
+.password-eyebrow { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.28em; font-weight: 600; font-size: 0.74rem; color: var(--beige); margin-bottom: 10px; }
+.password-title { font-family: var(--serif); font-weight: 600; font-size: 2rem; color: var(--beer-foam); margin-bottom: 26px; }
+.password-input { width: 100%; padding: 14px 18px; border-radius: 3px; border: 1.5px solid rgba(255,241,228,0.35); background: rgba(255,241,228,0.06); color: var(--beer-foam); font-family: var(--sans); font-size: 1rem; text-align: center; }
+.password-button { width: 100%; margin-top: 14px; padding: 14px; border: none; border-radius: 3px; background: var(--beer-foam); color: var(--burgundy); cursor: pointer; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; font-size: 0.95rem; }
+.password-error { color: var(--orange); font-size: 0.85rem; margin-top: 16px; min-height: 1.2em; opacity: 0; transition: opacity .2s; }
+.password-error.show { opacity: 1; }
+@media (max-width: 1000px) { .ed-main { grid-template-columns: 1fr; } .ed-panel { position: static; max-height: none; } .ed-poster { height: auto; width: 100%; } }
+</style>
+</head>
+<body>
+
+<div id="password-overlay">
+  <div class="password-box">
+    <img src="assets/logos/svg/BEERFOAM/PRYES-CREST+WORDMARK+TAGLINE-BEERFOAM.svg" alt="Pryes Brewing">
+    <div class="password-eyebrow">Internal Tool</div>
+    <div class="password-title">Concept Editor V2</div>
+    <input type="password" id="password-input" class="password-input" placeholder="Enter password" autocomplete="off">
+    <button class="password-button" onclick="checkPassword()">Enter</button>
+    <div id="password-error" class="password-error">Incorrect password. Please try again.</div>
+  </div>
+</div>
+
+<div class="tool-bar">
+  <img src="assets/logos/svg/BEERFOAM/PRYES-P-WATERMARK-BEERFOAM.svg" alt="Pryes">
+  <span class="tb-title">Concept Editor</span>
+  <span class="tb-badge">V2</span>
+  <span class="tb-spacer"></span>
+  <a class="tb-back" href="concept-board-v2.html">← Concept board V2</a>
+</div>
+
+<main class="ed-wrap">
+  <div id="ed-restore" class="ed-restore" style="display:none">
+    <span>Unsaved edits from a previous session were restored.</span>
+    <button class="ed-btn" id="ed-discard-restore" type="button">Discard them</button>
+  </div>
+
+  <div class="ed-controls">
+    <span class="ed-ctl">Size
+      <select id="ed-size"><option value="s1117" selected>11 × 17</option><option value="s1824">18 × 24</option></select></span>
+    <span class="ed-ctl">Beer
+      <select id="ed-beer"></select></span>
+    <span class="ed-ctl">Color
+      <select id="ed-colorway"></select></span>
+    <span class="ed-ctl">Shape
+      <select id="ed-shape"></select></span>
+    <span class="ed-ctl">Pattern
+      <select id="ed-density"></select></span>
+    <span class="ed-count" id="ed-count">No changes yet</span>
+  </div>
+
+  <div class="ed-main">
+    <div class="ed-stagebox"><div class="ed-poster" id="ed-poster"></div></div>
+
+    <aside class="ed-panel">
+      <div>
+        <div class="ed-h">Selected element</div>
+        <div class="ed-selname" id="ed-selname">Nothing selected</div>
+        <p class="ed-hint" id="ed-selhint">Click any element on the poster to select it. Drag to move. Drag the square handle to resize. Arrow keys nudge (hold Shift for big steps).</p>
+      </div>
+      <div class="ed-props" id="ed-props"></div>
+      <div class="ed-btnrow">
+        <button class="ed-btn" id="ed-reset-el" type="button" disabled>Reset this element</button>
+      </div>
+      <div>
+        <div class="ed-h">Your changes</div>
+        <div class="ed-changes" id="ed-changes"><span class="ed-empty">Move or resize something and it shows up here.</span></div>
+      </div>
+      <div class="ed-btnrow">
+        <button class="ed-btn ed-btn--solid" id="ed-download" type="button">Download new defaults</button>
+        <button class="ed-btn" id="ed-copy" type="button">Copy change summary</button>
+        <button class="ed-btn" id="ed-reset-all" type="button">Reset everything</button>
+      </div>
+      <p class="ed-hint">Downloading gives you a new <b>layout-defaults-v2.js</b>. Hand it to Claude (or replace the file in the repo) and your tuning becomes the default for every V2 concept.</p>
+    </aside>
+  </div>
+</main>
+
+<div class="toast" id="toast">Saved</div>
+
+<script src="layout-defaults-v2.js"></script>
+<script src="poster-engine-v2.js"></script>
+<script>
+/* ---------- password (shares the guide's session key) ---------- */
+const CORRECT_PASSWORD = 'pryes2026';
+function checkPassword() {
+  const input = document.getElementById('password-input');
+  if (input.value.trim().toLowerCase() === CORRECT_PASSWORD) {
+    document.getElementById('password-overlay').classList.add('hidden');
+    document.body.style.overflow = '';
+    try { sessionStorage.setItem('pryes_auth', '1'); } catch (e) {}
+  } else {
+    document.getElementById('password-error').classList.add('show');
+    input.value = ''; input.focus();
+  }
+}
+(function () {
+  let authed = false;
+  try { authed = sessionStorage.getItem('pryes_auth') === '1'; } catch (e) {}
+  if (authed) document.getElementById('password-overlay').classList.add('hidden');
+  else {
+    document.body.style.overflow = 'hidden';
+    const pi = document.getElementById('password-input');
+    if (pi) { pi.focus(); pi.addEventListener('keypress', e => { if (e.key === 'Enter') checkPassword(); }); }
+  }
+})();
+
+const toast = document.getElementById('toast');
+let toastTimer;
+function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 1600); }
+
+/* ============================================================
+   CONCEPT EDITOR V2
+   Edits window.PRYES_LAYOUT_DEFAULTS_V2 geometry live and exports
+   a replacement layout-defaults-v2.js. All edits happen in the
+   1800x2400 design space regardless of the preview size.
+   ============================================================ */
+(function () {
+  const P = window.PryesPosterV2;
+  const STORE_KEY = 'pryes_editor_v2_spec_v1';
+  const PROP_LABELS = { x: 'X', cx: 'Center X', y: 'Y', cy: 'Center Y', w: 'Width', h: 'Height', size: 'Font size', track: 'Tracking (em)', lh: 'Line height', s: 'Size', poke: 'Edge poke' };
+  const EDITABLE = ['x', 'cx', 'y', 'cy', 'w', 'h', 'size', 'track', 'lh', 's', 'poke'];
+
+  const PRISTINE = JSON.parse(JSON.stringify(window.PRYES_LAYOUT_DEFAULTS_V2));
+  let spec = JSON.parse(JSON.stringify(window.PRYES_LAYOUT_DEFAULTS_V2));
+
+  /* restore unsaved work */
+  let restored = false;
+  try {
+    const saved = localStorage.getItem(STORE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed && parsed.beerfeature && JSON.stringify(parsed) !== JSON.stringify(PRISTINE)) { spec = parsed; restored = true; }
+    }
+  } catch (e) {}
+  P.setSpec(spec);
+  if (restored) document.getElementById('ed-restore').style.display = '';
+  document.getElementById('ed-discard-restore').addEventListener('click', () => {
+    spec = JSON.parse(JSON.stringify(PRISTINE)); P.setSpec(spec);
+    try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+    document.getElementById('ed-restore').style.display = 'none';
+    selectedEl = null; render(); syncPanel(); syncChanges();
+  });
+
+  const stage = document.getElementById('ed-poster');
+  let card = { beer: P.BEERS[0].id, colorway: 'beer', shape: 5, density: 'medium' };
+  let selectedEl = null;   /* "beerfeature.element" */
+
+  function content() {
+    const b = P.beerById(card.beer);
+    return { headline: b.headline, subheadline: b.subheadline, h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
+  }
+
+  /* ---------- controls ---------- */
+  const beerSel = document.getElementById('ed-beer');
+  beerSel.innerHTML = P.BEERS.map(b => '<option value="' + b.id + '">' + b.name + '</option>').join('');
+  beerSel.addEventListener('change', () => { card.beer = beerSel.value; render(); });
+  const waySel = document.getElementById('ed-colorway');
+  waySel.innerHTML = P.COLORWAYS.map(w => '<option value="' + w.id + '"' + (w.id === card.colorway ? ' selected' : '') + '>' + w.name + '</option>').join('');
+  waySel.addEventListener('change', () => { card.colorway = waySel.value; render(); });
+  const shapeSel = document.getElementById('ed-shape');
+  shapeSel.innerHTML = Array.from({ length: P.SHAPE_COUNT }, (_, i) => '<option value="' + (i + 1) + '"' + (i + 1 === card.shape ? ' selected' : '') + '>Shape ' + String(i + 1).padStart(2, '0') + '</option>').join('');
+  shapeSel.addEventListener('change', () => { card.shape = +shapeSel.value; render(); });
+  const denSel = document.getElementById('ed-density');
+  denSel.innerHTML = P.DENSITIES.map(d => '<option value="' + d.id + '"' + (d.id === card.density ? ' selected' : '') + '>' + d.name + '</option>').join('');
+  denSel.addEventListener('change', () => { card.density = denSel.value; render(); });
+  document.getElementById('ed-size').addEventListener('change', e => { P.setSize(e.target.value); render(); });
+
+  /* ---------- rendering + selection overlay ---------- */
+  function render() {
+    stage.innerHTML = P.buildPosterSVG(card, content(), { tag: true });
+    drawOverlay();
+  }
+  function svgRoot() { return stage.querySelector('svg'); }
+  function drawOverlay() {
+    const svg = svgRoot(); if (!svg) return;
+    const old = svg.querySelector('#ed-ov'); if (old) old.remove();
+    if (!selectedEl) return;
+    const g = svg.querySelector('[data-el="' + selectedEl + '"]'); if (!g) return;
+    let b; try { b = g.getBBox(); } catch (e) { return; }
+    const vb = svg.viewBox.baseVal;
+    const pad = vb.width * 0.006, hs = vb.width * 0.016;
+    const ov = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    ov.setAttribute('id', 'ed-ov');
+    ov.innerHTML =
+      '<rect x="' + (b.x - pad) + '" y="' + (b.y - pad) + '" width="' + (b.width + 2 * pad) + '" height="' + (b.height + 2 * pad) + '" fill="none" stroke="#be442a" stroke-width="' + (vb.width * 0.0022) + '" stroke-dasharray="' + (vb.width * 0.008) + ' ' + (vb.width * 0.005) + '"/>' +
+      '<rect id="ed-handle" x="' + (b.x + b.width + pad - hs / 2) + '" y="' + (b.y + b.height + pad - hs / 2) + '" width="' + hs + '" height="' + hs + '" fill="#be442a" stroke="#fff1e4" stroke-width="' + (vb.width * 0.0018) + '" style="cursor:nwse-resize"/>' +
+      '<text x="' + (b.x - pad) + '" y="' + Math.max(vb.width * 0.03, b.y - pad - vb.width * 0.008) + '" font-family="Poppins,sans-serif" font-size="' + (vb.width * 0.02) + '" font-weight="600" fill="#be442a">' + selectedEl.split('.')[1] + '</text>';
+    svg.appendChild(ov);
+  }
+
+  /* ---------- pointer editing ---------- */
+  function toViewBox(evt) {
+    const svg = svgRoot();
+    const pt = new DOMPoint(evt.clientX, evt.clientY).matrixTransform(svg.getScreenCTM().inverse());
+    return pt;
+  }
+  function elSpec(id) { if (!id) return null; const [l, k] = id.split('.'); return spec[l] && spec[l].elements[k]; }
+  let drag = null, raf = false;
+  stage.addEventListener('pointerdown', evt => {
+    const svg = svgRoot(); if (!svg) return;
+    const handle = evt.target.closest('#ed-handle');
+    const g = evt.target.closest('[data-el]');
+    /* the pattern field is generated, not positioned - clicks fall through to deselect */
+    if (g && !handle && !elSpec(g.getAttribute('data-el'))) { selectedEl = null; drawOverlay(); syncPanel(); return; }
+    if (!handle && !g) { selectedEl = null; drawOverlay(); syncPanel(); return; }
+    if (g && !handle) { selectedEl = g.getAttribute('data-el'); drawOverlay(); syncPanel(); }
+    const e = elSpec(selectedEl); if (!e) return;
+    const pt = toViewBox(evt);
+    drag = { mode: handle ? 'resize' : 'move', start: pt, orig: JSON.parse(JSON.stringify(e)) };
+    try { stage.setPointerCapture(evt.pointerId); } catch (err) {}
+    evt.preventDefault();
+  });
+  stage.addEventListener('pointermove', evt => {
+    if (!drag) return;
+    const e = elSpec(selectedEl); if (!e) { drag = null; return; }
+    const pt = toViewBox(evt);
+    /* deltas back into design units */
+    const KX = P.SIZE.w / 1800, KY = P.SIZE.h / 2400;
+    const dx = (pt.x - drag.start.x) / KX, dy = (pt.y - drag.start.y) / KY;
+    const o = drag.orig;
+    if (drag.mode === 'move') {
+      if (o.x != null) e.x = Math.round(o.x + dx);
+      if (o.cx != null) e.cx = Math.round(o.cx + dx);
+      if (o.y != null) e.y = Math.round(o.y + dy);
+      if (o.cy != null) e.cy = Math.round(o.cy + dy);
+    } else {
+      if (e.kind === 'photo') e.h = Math.max(300, Math.round(o.h + dy));
+      else if (e.kind === 'asset') e.w = Math.max(80, Math.round(o.w + dx));
+      else if (e.kind === 'band') e.poke = Math.max(0, Math.round((o.poke != null ? o.poke : 150) - dy));
+      else if (e.kind === 'diamond') e.s = Math.max(6, Math.round(o.s + dx / 4));
+      else if (o.size != null) e.size = Math.max(14, Math.round(o.size + dx / 5));
+    }
+    if (!raf) { raf = true; requestAnimationFrame(() => { raf = false; render(); syncPanel(); }); }
+  });
+  function endDrag() { if (!drag) return; drag = null; persist(); syncChanges(); }
+  stage.addEventListener('pointerup', endDrag);
+  stage.addEventListener('pointercancel', endDrag);
+
+  document.addEventListener('keydown', evt => {
+    if (!selectedEl || /INPUT|SELECT/.test(document.activeElement.tagName)) return;
+    const e = elSpec(selectedEl); if (!e) return;
+    const step = evt.shiftKey ? 20 : 2;
+    let hit = true;
+    if (evt.key === 'ArrowLeft') { if (e.x != null) e.x -= step; else if (e.cx != null) e.cx -= step; }
+    else if (evt.key === 'ArrowRight') { if (e.x != null) e.x += step; else if (e.cx != null) e.cx += step; }
+    else if (evt.key === 'ArrowUp') { if (e.y != null) e.y -= step; else if (e.cy != null) e.cy -= step; }
+    else if (evt.key === 'ArrowDown') { if (e.y != null) e.y += step; else if (e.cy != null) e.cy += step; }
+    else if (evt.key === 'Escape') { selectedEl = null; drawOverlay(); syncPanel(); return; }
+    else hit = false;
+    if (hit) { evt.preventDefault(); render(); syncPanel(); persist(); syncChanges(); }
+  });
+
+  /* ---------- panel ---------- */
+  const propsBox = document.getElementById('ed-props');
+  function syncPanel() {
+    const e = elSpec(selectedEl);
+    document.getElementById('ed-selname').textContent = selectedEl ? spec[selectedEl.split('.')[0]].label + ' · ' + selectedEl.split('.')[1] : 'Nothing selected';
+    document.getElementById('ed-reset-el').disabled = !selectedEl;
+    if (!e) { propsBox.innerHTML = ''; return; }
+    propsBox.innerHTML = EDITABLE.filter(k => e[k] != null).map(k =>
+      '<div class="ed-prop"><label for="edp-' + k + '">' + (PROP_LABELS[k] || k) + '</label><input id="edp-' + k + '" data-k="' + k + '" type="number" step="' + (k === 'track' || k === 'lh' ? '0.01' : '1') + '" value="' + e[k] + '"></div>').join('');
+    propsBox.querySelectorAll('input').forEach(inp => inp.addEventListener('input', () => {
+      const v = parseFloat(inp.value); if (isNaN(v)) return;
+      elSpec(selectedEl)[inp.dataset.k] = v;
+      render(); persist(); syncChanges();
+    }));
+  }
+  document.getElementById('ed-reset-el').addEventListener('click', () => {
+    if (!selectedEl) return;
+    const [l, k] = selectedEl.split('.');
+    spec[l].elements[k] = JSON.parse(JSON.stringify(PRISTINE[l].elements[k]));
+    render(); syncPanel(); persist(); syncChanges();
+  });
+  document.getElementById('ed-reset-all').addEventListener('click', () => {
+    spec = JSON.parse(JSON.stringify(PRISTINE)); P.setSpec(spec);
+    try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+    selectedEl = null; render(); syncPanel(); syncChanges();
+    showToast('Back to the current defaults');
+  });
+
+  /* ---------- change tracking ---------- */
+  function diff() {
+    const out = [];
+    Object.keys(PRISTINE).forEach(l => Object.keys(PRISTINE[l].elements).forEach(k => {
+      const a = PRISTINE[l].elements[k], b = spec[l].elements[k];
+      Object.keys(a).forEach(p => { if ((typeof a[p] === 'number' || typeof a[p] === 'string') && a[p] !== b[p]) out.push({ el: l + '.' + k, prop: p, from: a[p], to: b[p] }); });
+    }));
+    return out;
+  }
+  function syncChanges() {
+    const d = diff();
+    document.getElementById('ed-count').innerHTML = d.length ? '<b>' + d.length + '</b> change' + (d.length === 1 ? '' : 's') : 'No changes yet';
+    document.getElementById('ed-changes').innerHTML = d.length
+      ? d.map(c => '<div class="ed-change"><b>' + c.el + ' ' + (PROP_LABELS[c.prop] || c.prop) + '</b><span>' + c.from + ' → ' + c.to + '</span></div>').join('')
+      : '<span class="ed-empty">Move or resize something and it shows up here.</span>';
+  }
+  function persist() { try { localStorage.setItem(STORE_KEY, JSON.stringify(spec)); } catch (e) {} }
+
+  /* ---------- export ---------- */
+  function summaryText() {
+    const d = diff();
+    return d.length ? d.map(c => c.el + ' ' + c.prop + ': ' + c.from + ' -> ' + c.to).join('\n') : 'No changes.';
+  }
+  document.getElementById('ed-copy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(summaryText()); showToast('Change summary copied'); }
+    catch (e) { showToast('Copy failed, use Download instead'); }
+  });
+  document.getElementById('ed-download').addEventListener('click', () => {
+    const d = diff();
+    const stamp = new Date().toISOString().slice(0, 10);
+    const header = '/* ============================================================\n' +
+      '   PRYES CONCEPT LAYOUT DEFAULTS - V2\n' +
+      '   Exported from concept-editor-v2.html on ' + stamp + '\n' +
+      (d.length ? '   Changes in this export:\n' + d.map(c => '   - ' + c.el + ' ' + c.prop + ': ' + c.from + ' -> ' + c.to).join('\n') + '\n' : '   No changes vs the previous defaults.\n') +
+      '   Design space 1800 x 2400. Replace layout-defaults-v2.js with\n   this file to make these positions the default for every V2 concept.\n' +
+      '   ============================================================ */\n';
+    const body = 'window.PRYES_LAYOUT_DEFAULTS_V2 = ' + JSON.stringify(spec, null, 2) + ';\n';
+    const blob = new Blob([header + body], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'layout-defaults-v2.js';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+    showToast(d.length ? 'New defaults downloaded' : 'Downloaded (no changes yet)');
+  });
+
+  /* ---------- boot ---------- */
+  P.setSize('s1117');
+  P.load().then(() => { render(); syncPanel(); syncChanges(); });
+})();
+</script>
+</body>
+</html>
