@@ -583,7 +583,7 @@ function showToast(msg) {
   const LAY = {
     stacked: function (c, fam, card) {
       let s = heroBehind(card.img, fam, card.seed);
-      s += placeAsset({ key:'lockup', cx: W/2, y: 180*KY, w: 500*KX, color: fam.ink });
+      s += placeAsset({ key:'lockup', cx: W/2, y: 140*KY, w: 760*KX, color: fam.ink });
       const fs = nameSize(c.beer) * KX;
       s += '<text x="' + (W/2) + '" y="' + 1150*KY + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" font-weight="600" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
       if (c.style) s += '<text x="' + (W/2) + '" y="' + 1285*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 108*KX + '" letter-spacing="' + 108*KX*TRK_SUB + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
@@ -596,7 +596,7 @@ function showToast(msg) {
     anchored: function (c, fam, card) {
       const HH = 250*KY, split = 1500*KY;
       let s = heroBlock(card.img, fam, card.seed, { x: 0, y: HH, w: W, h: split - HH }, card);
-      s += placeAsset({ key:'wordmark', x: M, y: 96*KY, w: 470*KX, color: fam.ink });
+      s += placeAsset({ key:'wordmark', x: M, y: 60*KY, w: 720*KX, color: fam.ink });
       if (c.date) s += '<text x="' + (W-M) + '" y="' + 172*KY + '" text-anchor="end" font-family="' + COND + '" font-weight="600" font-size="' + 62*KX + '" letter-spacing="' + 62*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(c.date) + '</text>';
       /* rule sits flush with the top edge of the photo block */
       s += '<line x1="' + M + '" y1="' + HH + '" x2="' + (W-M) + '" y2="' + HH + '" stroke="' + fam.ink + '" stroke-opacity="0.22" stroke-width="2"/>';
@@ -614,8 +614,8 @@ function showToast(msg) {
       const fm = 96*KX;
       let s = heroBehind(card.img, fam, card.seed);
       s += '<rect x="' + fm + '" y="' + fm + '" width="' + (W - 2*fm) + '" height="' + (H - 2*fm) + '" fill="none" stroke="' + fam.ink + '" stroke-width="4"/>';
-      s += placeAsset({ key:'wordmark', cx: W/2, y: fm + 80*KY, w: 430*KX, color: fam.ink });
-      s += '<text x="' + (W/2) + '" y="' + (fm + 300*KY) + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 66*KX + '" letter-spacing="' + 66*KX*TRK_SUB + '" fill="' + fam.accent + '">NEW RELEASE</text>';
+      s += placeAsset({ key:'wordmark', cx: W/2, y: fm + 60*KY, w: 860*KX, color: fam.ink });
+      s += '<text x="' + (W/2) + '" y="' + (fm + 440*KY) + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 66*KX + '" letter-spacing="' + 66*KX*TRK_SUB + '" fill="' + fam.accent + '">NEW RELEASE</text>';
       const fs = nameSize(c.beer) * KX;
       s += '<text x="' + (W/2) + '" y="' + 1090*KY + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" font-weight="600" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
       if (c.style) s += '<text x="' + (W/2) + '" y="' + 1215*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 92*KX + '" letter-spacing="' + 92*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(c.style) + '</text>';
@@ -628,13 +628,13 @@ function showToast(msg) {
     feature: function (c, fam, card) {
       let s = '';
       if (A.laurel) s += patternCover({ x: 0, y: 0, w: W, h: H }, fam, 0.08);
-      s += placeAsset({ key: 'wordmark', cx: W/2, y: 150*KY, w: 520*KX, color: fam.ink });
-      if (c.style) s += '<text x="' + (W/2) + '" y="' + 330*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 76*KX + '" letter-spacing="' + 76*KX*TRK_SUB + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
+      s += placeAsset({ key: 'wordmark', cx: W/2, y: 110*KY, w: 1240*KX, color: fam.ink });
+      if (c.style) s += '<text x="' + (W/2) + '" y="' + 470*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 76*KX + '" letter-spacing="' + 76*KX*TRK_SUB + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
       if (PHOTOS.length) {
         const p = PHOTOS[(card.ph || 0) % PHOTOS.length];
-        s += '<image x="' + (W/2 - 520*KX) + '" y="' + 430*KY + '" width="' + 1040*KX + '" height="' + 1200*KY + '" href="assets/photos/' + esc(p.file) + '" preserveAspectRatio="xMidYMid meet"/>';
+        s += '<image x="' + (W/2 - 520*KX) + '" y="' + 540*KY + '" width="' + 1040*KX + '" height="' + 1100*KY + '" href="assets/photos/' + esc(p.file) + '" preserveAspectRatio="xMidYMid meet"/>';
       } else {
-        s += placeAsset({ key: 'crest', cx: W/2, y: 500*KY, w: 900*KX, color: fam.accent, opacity: 0.9 });
+        s += placeAsset({ key: 'crest', cx: W/2, y: 560*KY, w: 900*KX, color: fam.accent, opacity: 0.9 });
       }
       const fs = nameSize(c.beer) * KX;
       s += '<text x="' + (W/2) + '" y="' + 1860*KY + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" font-weight="600" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
