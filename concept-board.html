@@ -131,6 +131,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
   border: 1px solid var(--line); border-radius: 3px; background: var(--beer-foam);
 }
 .cb-field input:focus, .cb-field select:focus { outline: none; border-color: var(--burgundy); box-shadow: 0 0 0 2px rgba(62,15,35,0.12); }
+.cb-field.cb-hidden { display: none; }
 
 .cb-toolbar {
   position: sticky; top: var(--topbar-h); z-index: 20;
@@ -290,9 +291,9 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 
 <main class="tool-wrap">
   <div class="tool-lede">
-    <div class="kick"><span class="dot"></span> Sandbox · WIP</div>
-    <h1>Poster ideas, fast.</h1>
-    <p>Fill in the details once and the board lays out four poster ideas built from the 2026 brand kit. Shuffle until something clicks, pin what you like, and download the winner as a ready-to-finalize package.</p>
+    <div class="kick"><span class="dot"></span> Work in progress</div>
+    <h1>Generate ideas, fast.</h1>
+    <p>Fill in the details and generate ideas built from the brand kit.</p>
   </div>
 
   <ol class="cb-steps" aria-label="How this works">
@@ -302,7 +303,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
   </ol>
 
   <div class="cb-occasions" role="group" aria-label="Occasion">
-    <button class="cb-occasion" type="button" data-occasion="release" aria-pressed="true">Beer Release</button>
+    <button class="cb-occasion" type="button" data-occasion="release" aria-pressed="true">Posters</button>
     <button class="cb-occasion" type="button" disabled>Taproom Event</button>
     <button class="cb-occasion" type="button" disabled>Account / Promo</button>
     <button class="cb-occasion" type="button" disabled>Announcement</button>
@@ -323,14 +324,14 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
         <option value="main-squeeze">Main Squeeze</option>
         <option value="custom">Custom</option>
       </select></div>
-      <div class="cb-field"><label for="cb-beer">Beer name</label><input id="cb-beer" data-k="beer" type="text" value="Miraculum" autocomplete="off"></div>
-      <div class="cb-field"><label for="cb-style">Style</label><input id="cb-style" data-k="style" type="text" value="Midwest IPA" autocomplete="off"></div>
-      <div class="cb-field"><label for="cb-abv">ABV</label><input id="cb-abv" data-k="abv" type="text" value="6.4% ABV" autocomplete="off"></div>
-      <div class="cb-field"><label for="cb-ibu">IBU / stat</label><input id="cb-ibu" data-k="ibu" type="text" value="75 IBU" autocomplete="off"></div>
-      <div class="cb-field"><label for="cb-date">Release</label><input id="cb-date" data-k="date" type="text" value="On tap now" autocomplete="off"></div>
-      <div class="cb-field cb-wide"><label for="cb-tagline">Tagline</label><input id="cb-tagline" data-k="tagline" type="text" value="Bold enough for IPA fans, smooth enough for everyone else." autocomplete="off"></div>
-      <div class="cb-field"><label for="cb-avail">Availability</label><input id="cb-avail" data-k="avail" type="text" value="Draft · 4-packs to-go" autocomplete="off"></div>
-      <div class="cb-field"><label for="cb-cta">Taproom / CTA</label><input id="cb-cta" data-k="cta" type="text" value="Pryes Taproom · North Loop, Mpls" autocomplete="off"></div>
+      <div class="cb-field cb-hidden"><label for="cb-style">Style</label><input id="cb-style" data-k="style" type="text" value="Midwest IPA" autocomplete="off"></div>
+      <div class="cb-field cb-hidden"><label for="cb-abv">ABV</label><input id="cb-abv" data-k="abv" type="text" value="6.4% ABV" autocomplete="off"></div>
+      <div class="cb-field cb-hidden"><label for="cb-ibu">IBU / stat</label><input id="cb-ibu" data-k="ibu" type="text" value="75 IBU" autocomplete="off"></div>
+      <div class="cb-field"><label for="cb-beer">Headline</label><input id="cb-beer" data-k="beer" type="text" value="Miraculum" autocomplete="off"></div>
+      <div class="cb-field"><label for="cb-date">Subheadline</label><input id="cb-date" data-k="date" type="text" value="On tap now" autocomplete="off"></div>
+      <div class="cb-field cb-wide"><label for="cb-tagline">Body</label><input id="cb-tagline" data-k="tagline" type="text" value="Bold enough for IPA fans, smooth enough for everyone else." autocomplete="off"></div>
+      <div class="cb-field"><label for="cb-avail">Callout</label><input id="cb-avail" data-k="avail" type="text" value="Draft · 4-packs to-go" autocomplete="off"></div>
+      <div class="cb-field"><label for="cb-cta">Callout 2</label><input id="cb-cta" data-k="cta" type="text" value="Pryes Taproom · North Loop, Mpls" autocomplete="off"></div>
     </div>
   </div>
 
@@ -343,7 +344,6 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
       Shuffle
     </button>
   </div>
-  <p class="cb-note"><b>Shuffle</b> swaps out every idea you have not pinned. On each card, tap <b>Image</b>, <b>Layout</b>, or <b>Color</b> to swap just that piece, or tap its little lock to keep that piece while everything else shuffles. <b>Pin</b> a card to keep the whole thing exactly as it is.</p>
 
   <div class="cb-board" id="cb-board">
     <div class="cb-loading">Loading the brand kit…</div>
@@ -377,11 +377,6 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
   </div>
 </main>
 
-<footer class="tool-foot">
-  <div class="tf-in">
-    <b>Prototype notes.</b> Photos come from the shared photo library (assets/photos); add new ones with one line in photos.json. Fonts render as web substitutes here; the exported file names the licensed print faces so they connect in Adobe. Built entirely from the 2026 brand kit. Feedback welcome; nothing here is locked in.
-  </div>
-</footer>
 
 <div class="toast" id="toast">Copied</div>
 
@@ -862,17 +857,20 @@ function showToast(msg) {
   };
   const BEER_FIELDS = [['beer','cb-beer'],['style','cb-style'],['abv','cb-abv'],['ibu','cb-ibu']];
   const beerSelect = document.getElementById('cb-beer-select');
+  /* Style / ABV / IBU only show for Custom; a selected beer carries its own data */
+  function syncBeerFields() {
+    const isCustom = !BEERS[beerSelect.value];
+    ['cb-style', 'cb-abv', 'cb-ibu'].forEach(id => document.getElementById(id).closest('.cb-field').classList.toggle('cb-hidden', !isCustom));
+  }
   beerSelect.addEventListener('change', () => {
     const b = BEERS[beerSelect.value];
-    if (!b) return; /* Custom: leave the fields as they are, free to edit */
-    BEER_FIELDS.forEach(([k, id]) => { document.getElementById(id).value = b[k]; });
-    posterOnlyRefresh();
+    if (b) {
+      BEER_FIELDS.forEach(([k, id]) => { document.getElementById(id).value = b[k]; });
+      posterOnlyRefresh();
+    }
+    syncBeerFields();
   });
-  /* hand-editing any beer field flips the dropdown to Custom */
-  BEER_FIELDS.forEach(([k, id]) => document.getElementById(id).addEventListener('input', () => {
-    const b = BEERS[beerSelect.value];
-    if (b && BEER_FIELDS.some(([k2, id2]) => document.getElementById(id2).value !== b[k2])) beerSelect.value = 'custom';
-  }));
+  syncBeerFields();
 
   /* ---------- boot ---------- */
   async function load(url) { try { const r = await fetch(url); if (r.ok) return parse(await r.text()); } catch (e) {} return null; }
