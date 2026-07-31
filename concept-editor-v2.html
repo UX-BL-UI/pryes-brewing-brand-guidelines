@@ -132,6 +132,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
       <select id="ed-showp"><option value="on" selected>Show</option><option value="off">Hide</option></select></span>
     <span class="ed-ctl" id="ed-partner-ctl" style="display:none">Partner
       <select id="ed-partner"></select></span>
+    <span class="ed-ctl" id="ed-photo-ctl" style="display:none">Photo
+      <select id="ed-photo"></select></span>
     <span class="ed-count" id="ed-count">No changes yet</span>
   </div>
 
@@ -244,12 +246,13 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   });
 
   const stage = document.getElementById('ed-poster');
-  let card = { concept: 'beerfeature', beer: P.BEERS[0].id, partner: P.PARTNERS[0].id, colorway: 'beer', shape: 5, density: 'medium' };
+  let card = { concept: 'beerfeature', beer: P.BEERS[0].id, partner: P.PARTNERS[0].id, photo: P.FOCUS_PHOTOS[0].id, colorway: 'beer', shape: 5, density: 'medium' };
   let selectedEl = null;   /* "<concept>.element" */
 
   function content() {
     if (card.concept === 'brandfocus') return { headline: "It's a\nMidwest\nThing", subheadline: 'Available\nNow', showP: document.getElementById('ed-showp').value !== 'off', h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
     if (card.concept === 'cobrand') return { headline: 'See You\nAt the Game', subheadline: '', h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
+    if (card.concept === 'photofocus') return { headline: 'Trust Your Taste', subheadline: '', h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
     const b = P.beerById(card.beer);
     return { headline: b.headline, subheadline: b.subheadline, h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
   }
@@ -258,21 +261,23 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   const conceptBox = document.getElementById('ed-concepts');
   conceptBox.innerHTML = P.CONCEPTS.map(cn => '<button class="ed-chip" type="button" data-concept="' + cn.id + '" aria-pressed="' + (cn.id === card.concept) + '">' + cn.label + '</button>').join('');
   function syncColorwayOptions() {
-    const ways = card.concept === 'brandfocus' ? P.BRAND_COLORWAYS : card.concept === 'cobrand' ? P.COBRAND_WAYS : P.COLORWAYS;
+    const ways = (card.concept === 'brandfocus' || card.concept === 'photofocus') ? P.BRAND_COLORWAYS : card.concept === 'cobrand' ? P.COBRAND_WAYS : P.COLORWAYS;
     waySel.innerHTML = ways.map(w => '<option value="' + w.id + '"' + (w.id === card.colorway ? ' selected' : '') + '>' + w.name + '</option>').join('');
   }
   conceptBox.addEventListener('click', e => {
     const b = e.target.closest('[data-concept]'); if (!b || b.dataset.concept === card.concept) return;
     card.concept = b.dataset.concept;
-    card.colorway = card.concept === 'brandfocus' ? 'foam' : card.concept === 'cobrand' ? 'foam' : 'beer';
+    card.colorway = card.concept === 'beerfeature' ? 'beer' : 'foam';
     conceptBox.querySelectorAll('.ed-chip').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
     const isBrand = card.concept === 'brandfocus';
     const isCobrand = card.concept === 'cobrand';
-    document.getElementById('ed-beer-ctl').style.display = isBrand ? 'none' : '';
-    document.getElementById('ed-shape-ctl').style.display = isBrand ? 'none' : '';
-    document.getElementById('ed-density-ctl').style.display = (isBrand || isCobrand) ? 'none' : '';
+    const isPhoto = card.concept === 'photofocus';
+    document.getElementById('ed-beer-ctl').style.display = (isBrand || isPhoto) ? 'none' : '';
+    document.getElementById('ed-shape-ctl').style.display = (isBrand || isPhoto) ? 'none' : '';
+    document.getElementById('ed-density-ctl').style.display = card.concept === 'beerfeature' ? '' : 'none';
     document.getElementById('ed-showp-ctl').style.display = isBrand ? '' : 'none';
     document.getElementById('ed-partner-ctl').style.display = isCobrand ? '' : 'none';
+    document.getElementById('ed-photo-ctl').style.display = isPhoto ? '' : 'none';
     syncColorwayOptions();
     selectedEl = null; render(); syncPanel(); syncChanges();
   });
@@ -280,6 +285,9 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   const partnerSel = document.getElementById('ed-partner');
   partnerSel.innerHTML = P.PARTNERS.map(p => '<option value="' + p.id + '">' + p.name + '</option>').join('');
   partnerSel.addEventListener('change', () => { card.partner = partnerSel.value; render(); });
+  const photoSel = document.getElementById('ed-photo');
+  photoSel.innerHTML = P.FOCUS_PHOTOS.map(p => '<option value="' + p.id + '">' + p.name + '</option>').join('');
+  photoSel.addEventListener('change', () => { card.photo = photoSel.value; render(); });
   const beerSel = document.getElementById('ed-beer');
   beerSel.innerHTML = P.BEERS.map(b => '<option value="' + b.id + '">' + b.name + '</option>').join('');
   beerSel.addEventListener('change', () => { card.beer = beerSel.value; render(); });
@@ -365,6 +373,7 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
       if (o.cy != null) e.cy = Math.round(o.cy + dy);
     } else {
       if (e.kind === 'photo') e.h = Math.max(300, Math.round(o.h + dy));
+      else if (e.kind === 'photoblock') { e.w = Math.max(300, Math.round(o.w + dx)); e.h = Math.max(300, Math.round(o.h + dy)); }
       else if (e.kind === 'asset' || e.kind === 'partner') e.w = Math.max(80, Math.round(o.w + dx));
       else if (e.kind === 'shape') { e.w = Math.max(200, Math.round(o.w + dx)); e.h = Math.max(60, Math.round(o.h + dy)); }
       else if (e.kind === 'diamond') e.s = Math.max(6, Math.round(o.s + dx / 4));

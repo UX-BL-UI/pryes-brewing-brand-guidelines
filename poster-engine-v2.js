@@ -100,8 +100,16 @@ window.PryesPosterV2 = (function () {
   const CONCEPTS = [
     { id: 'beerfeature', label: 'Beer feature' },
     { id: 'brandfocus',  label: 'Brand focus' },
-    { id: 'cobrand',     label: 'Co-branded' }
+    { id: 'cobrand',     label: 'Co-branded' },
+    { id: 'photofocus',  label: 'Photo focus' }
   ];
+
+  /* Photo-focus library: real photography only. Add a photo by
+     dropping it in assets/photos and adding a row here. */
+  const FOCUS_PHOTOS = [
+    { id: 'miraculum-cooler', name: 'Miraculum cooler', file: 'assets/photos/miraculum-cooler.jpg' }
+  ];
+  function focusPhotoById(id) { return FOCUS_PHOTOS.find(p => p.id === id) || FOCUS_PHOTOS[0]; }
 
   /* ---------- partners ----------
      One-color logo files painted in the partner's own brand color.
@@ -349,10 +357,41 @@ window.PryesPosterV2 = (function () {
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + SIZE.inW + '" height="' + SIZE.inH + '">' + s + '</svg>';
   }
 
+  /* Photo-focus poster: giant PRYES over a big photo well, headline
+     with diamond accents at the foot. Brand colorways only.
+     card = { concept:'photofocus', photo, colorway } */
+  let PF_UID = 0;
+  function buildPhotoFocus(card, c, opts) {
+    opts = opts || {};
+    const E = SPEC.photofocus.elements;
+    const paint = brandColorwayById(card.colorway).paint;
+    const photo = focusPhotoById(card.photo);
+    const tag = !!opts.tag;
+
+    let s = '<rect width="' + W + '" height="' + H + '" fill="' + paint.bg + '"/>';
+
+    const px = E.photo.x * KX, py = E.photo.y * KY, pw = E.photo.w * KX, ph = E.photo.h * KY;
+    const clipId = 'pfclip' + (PF_UID++);
+    const href = opts.photoHref || photo.file;
+    s += wrap('photofocus.photo',
+      '<clipPath id="' + clipId + '"><rect x="' + px + '" y="' + py + '" width="' + pw + '" height="' + ph + '"/></clipPath>' +
+      '<image x="' + px + '" y="' + py + '" width="' + pw + '" height="' + ph + '" href="' + esc(href) + '" preserveAspectRatio="xMidYMid slice" clip-path="url(#' + clipId + ')"/>', tag);
+
+    const mark = A.assets[E.wordmark.asset || 'wordmark'];
+    if (mark) s += wrap('photofocus.wordmark', placeSVG(mark, { cx: E.wordmark.cx * KX, y: E.wordmark.y * KY, w: E.wordmark.w * KX, color: paint.ink }), tag);
+
+    s += wrap('photofocus.headline', condText(E.headline, c.headline, paint.ink, { sizeMul: c.h1Mul, trackAdd: c.h1Track }), tag);
+    s += wrap('photofocus.diamondL', diamondEl(E.diamondL, paint.ink), tag);
+    s += wrap('photofocus.diamondR', diamondEl(E.diamondR, paint.ink), tag);
+
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + SIZE.inW + '" height="' + SIZE.inH + '">' + s + '</svg>';
+  }
+
   function buildPosterSVG(card, c, opts) {
     opts = opts || {};
     if ((card.concept || 'beerfeature') === 'brandfocus') return buildBrandFocus(card, c, opts);
     if ((card.concept || 'beerfeature') === 'cobrand') return buildCobrand(card, c, opts);
+    if ((card.concept || 'beerfeature') === 'photofocus') return buildPhotoFocus(card, c, opts);
     const E = SPEC.beerfeature.elements;
     const beer = beerById(card.beer);
     const paint = colorwayById(card.colorway).paint(beer);
@@ -427,6 +466,7 @@ window.PryesPosterV2 = (function () {
     SIZES: SIZES, BEERS: BEERS, COLORWAYS: COLORWAYS, DENSITIES: DENSITIES, SHAPE_COUNT: SHAPE_COUNT, ASSET_OPTIONS: ASSET_OPTIONS,
     CONCEPTS: CONCEPTS, BRAND_COLORWAYS: BRAND_COLORWAYS, brandColorwayById: brandColorwayById,
     PARTNERS: PARTNERS, partnerById: partnerById, COBRAND_WAYS: COBRAND_WAYS, cobrandWayById: cobrandWayById,
+    FOCUS_PHOTOS: FOCUS_PHOTOS, focusPhotoById: focusPhotoById,
     resolveShapeFor: resolveShapeFor, shapeFallbackFor: shapeFallbackFor,
     get SIZE() { return SIZE; },
     get SPEC() { return SPEC; },
