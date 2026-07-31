@@ -27,17 +27,19 @@ window.PRYES_LAYOUT_DEFAULTS = {
   anchored: {
     label: 'Anchored',
     elements: {
-      band:       { kind: 'band', y: 250, h: 1250 },
-      headerRule: { kind: 'rule', x1: 150, x2: 1650, y: 250 },
-      splitRule:  { kind: 'rule', x1: 0, x2: 1800, y: 1500 },
-      wordmark:   { kind: 'asset', asset: 'wordmark', x: 150, y: 60, w: 720 },
-      subhead:    { kind: 'sub', x: 1650, y: 172, anchor: 'end', size: 62, track: 0.05 },
-      style:      { kind: 'sub', x: 150, y: 1620, anchor: 'start', size: 98, track: 0.05 },
-      name:       { kind: 'name', x: 150, y: 1835, anchor: 'start', scale: 1, track: 0 },
-      body:       { kind: 'body', x: 150, y: 1945, anchor: 'start', size: 54, lh: 1.5 },
-      statline:   { kind: 'sub', x: 150, y: 2270, anchor: 'start', size: 58, track: 0.05 },
-      callout:    { kind: 'cap', x: 1650, y: 2270, anchor: 'end', size: 38, track: 0.15, opacity: 0.85 },
-      callout2:   { kind: 'cap', x: 150, y: 2328, anchor: 'start', size: 34, track: 0.15, opacity: 0.68 }
+      /* Tuned by Ben in concept-editor, 2026-07-31: photo block and rules dropped a half inch,
+         full-bleed header rule */
+      band:       { kind: 'band', y: 320, h: 1250 },
+      headerRule: { kind: 'rule', x1: 0, x2: 1800, y: 320 },
+      splitRule:  { kind: 'rule', x1: 0, x2: 1800, y: 1570 },
+      wordmark:   { kind: 'asset', asset: 'wordmark', x: 149, y: 102, w: 720 },
+      subhead:    { kind: 'sub', x: 1659, y: 140, anchor: 'end', size: 62, track: 0.05 },
+      style:      { kind: 'sub', x: 160, y: 1712, anchor: 'start', size: 98, track: 0.05 },
+      name:       { kind: 'name', x: 149, y: 1911, anchor: 'start', scale: 1, track: 0 },
+      body:       { kind: 'body', x: 152, y: 1992, anchor: 'start', size: 54, lh: 1.5 },
+      statline:   { kind: 'sub', x: 154, y: 2213, anchor: 'start', size: 58, track: 0.05 },
+      callout:    { kind: 'cap', x: 716, y: 1987, anchor: 'end', size: 38, track: 0.15, opacity: 0.85 },
+      callout2:   { kind: 'cap', x: 150, y: 2270, anchor: 'start', size: 34, track: 0.15, opacity: 0.68 }
     }
   },
   framed: {
