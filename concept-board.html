@@ -621,7 +621,6 @@ function showToast(msg) {
       if (c.style) s += '<text x="' + (W/2) + '" y="' + 330*KY + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 56*KX + '" letter-spacing="' + 11*KX + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
       if (PHOTOS.length) {
         const p = PHOTOS[(card.ph || 0) % PHOTOS.length];
-        s += '<ellipse cx="' + (W/2) + '" cy="' + 1620*KY + '" rx="' + 330*KX + '" ry="' + 42*KY + '" fill="' + fam.ink + '" fill-opacity="0.16"/>';
         s += '<image x="' + (W/2 - 520*KX) + '" y="' + 430*KY + '" width="' + 1040*KX + '" height="' + 1200*KY + '" href="assets/photos/' + esc(p.file) + '" preserveAspectRatio="xMidYMid meet"/>';
       } else {
         s += placeAsset({ key: 'crest', cx: W/2, y: 500*KY, w: 900*KX, color: fam.accent, opacity: 0.9 });
