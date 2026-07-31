@@ -356,7 +356,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 
 <footer class="tool-foot">
   <div class="tf-in">
-    <b>Prototype notes.</b> Hero images are placeholders — the "Photo well" treatment is where a real tagged image library drops in. Fonts render as web substitutes here; embedding the licensed print faces makes the preview print-exact. Built entirely from the 2026 brand kit. Feedback welcome; nothing here is locked in.
+    <b>Prototype notes.</b> Photos come from the shared photo library (assets/photos); add new ones with one line in photos.json. Fonts render as web substitutes here; the exported file names the licensed print faces so they connect in Adobe. Built entirely from the 2026 brand kit. Feedback welcome; nothing here is locked in.
   </div>
 </footer>
 
@@ -409,6 +409,8 @@ function showToast(msg) {
 (function () {
   const board = document.getElementById('cb-board');
   if (!board) return;
+
+  let PHOTOS = [];
 
   const SIZES = [
     { key:'s1117', label:'11 × 17 in', slug:'11x17', w:1100, h:1700, inW:'11in', inH:'17in', signType:'Standard BOTM Poster 11x17' },
@@ -517,7 +519,12 @@ function showToast(msg) {
     return '<svg x="' + (r.x - r.w * 0.12) + '" y="' + (r.y + r.h - h * 0.86) + '" width="' + w + '" height="' + h + '" viewBox="' + sh.vb + '" preserveAspectRatio="xMidYMid meet"><g fill="' + fam.accent + '" opacity="' + op + '">' + sh.body + '</g></svg>';
   }
   function photoWell(r, fam, card) {
+    if (PHOTOS.length) {
+      const p = PHOTOS[(card && card.ph || 0) % PHOTOS.length];
+      return '<image x="' + r.x + '" y="' + r.y + '" width="' + r.w + '" height="' + r.h + '" href="assets/photos/' + esc(p.file) + '" preserveAspectRatio="xMidYMid slice"/>';
+    }
     const id = 'cbg' + (UID++);
+    /* fallback: original gradient placeholder, unchanged */
     return '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + fam.ink + '" stop-opacity="0.92"/><stop offset="1" stop-color="' + fam.accent + '" stop-opacity="0.82"/></linearGradient></defs>' +
       '<rect x="' + r.x + '" y="' + r.y + '" width="' + r.w + '" height="' + r.h + '" fill="url(#' + id + ')"/>' +
       '<text x="' + (r.x + r.w / 2) + '" y="' + (r.y + r.h / 2) + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 62*KX + '" letter-spacing="12" fill="' + fam.bg + '" fill-opacity="0.92">HERO IMAGE</text>' +
@@ -608,15 +615,19 @@ function showToast(msg) {
 
   /* Curated opening hand so the first paint looks intentional. */
   let cards = [
-    { img:'emblem', lay:'stacked',  fam:'burgundy',  held:false, seed:2, lock:{img:false,lay:false,fam:false} },
-    { img:'well',   lay:'anchored', fam:'foam',      held:false, seed:4, lock:{img:false,lay:false,fam:false} },
-    { img:'laurel', lay:'framed',   fam:'miraculum', held:false, seed:1, lock:{img:false,lay:false,fam:false} },
-    { img:'shapes', lay:'anchored', fam:'beige',     held:false, seed:3, lock:{img:false,lay:false,fam:false} }
+    { img:'emblem', lay:'stacked',  fam:'burgundy',  held:false, seed:2, ph:0, lock:{img:false,lay:false,fam:false} },
+    { img:'well',   lay:'anchored', fam:'foam',      held:false, seed:4, ph:0, lock:{img:false,lay:false,fam:false} },
+    { img:'laurel', lay:'framed',   fam:'miraculum', held:false, seed:1, ph:0, lock:{img:false,lay:false,fam:false} },
+    { img:'shapes', lay:'anchored', fam:'beige',     held:false, seed:3, ph:0, lock:{img:false,lay:false,fam:false} }
   ];
   let selected = -1;
 
   function rerollReel(card, key) {
-    if (key === 'img') { card.img = rndDiff(imgIds, card.img); card.seed = (card.seed + 1 + Math.floor(Math.random() * 5)) % 997; }
+    if (key === 'img') {
+      card.img = rndDiff(imgIds, card.img);
+      card.seed = (card.seed + 1 + Math.floor(Math.random() * 5)) % 997;
+      if (card.img === 'well' && PHOTOS.length) card.ph = Math.floor(Math.random() * PHOTOS.length);
+    }
     else if (key === 'lay') card.lay = rndDiff(layIds, card.lay);
     else card.fam = rndDiff(weightedFams, card.fam);
   }
@@ -636,6 +647,10 @@ function showToast(msg) {
   const REELS = { img: { label: 'Image', opts: IMAGES }, lay: { label: 'Layout', opts: LAYOUTS } };
   function reelValueLabel(card, key) {
     if (key === 'fam') return famById(card.fam).name;
+    if (key === 'img' && card.img === 'well' && PHOTOS.length) {
+      const p = PHOTOS[card.ph % PHOTOS.length];
+      return 'Photo · ' + (p.label || p.file);
+    }
     return REELS[key].opts.find(o => o.id === card[key]).label;
   }
   function reelHTML(i, key, card) {
@@ -725,6 +740,10 @@ function showToast(msg) {
   (async function () {
     await Promise.all(Object.keys(ASSET_URLS).map(async k => { A[k] = await load(ASSET_URLS[k]); }));
     A.shapes = (await Promise.all(SHAPE_URLS.map(load))).filter(Boolean);
+    try {
+      const r = await fetch('assets/photos/photos.json');
+      if (r.ok) { const j = await r.json(); if (Array.isArray(j)) PHOTOS = j.filter(p => p && p.file); }
+    } catch (e) {}
     renderBoard();
   })();
 })();
