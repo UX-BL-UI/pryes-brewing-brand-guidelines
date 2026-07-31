@@ -122,7 +122,10 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 }
 .cb-panel-head .cb-sub { font-family: var(--sans); text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 0.8rem; color: var(--ink-soft); }
 
-.cb-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px 20px; }
+.cb-form { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px 20px; }
+.cb-field.cb-half { grid-column: span 3; }
+.cb-field.cb-third { grid-column: span 2; }
+@media (max-width: 700px) { .cb-form { grid-template-columns: 1fr; } .cb-form .cb-field { grid-column: 1 / -1; } }
 .cb-field { display: flex; flex-direction: column; gap: 6px; }
 .cb-field.cb-wide { grid-column: 1 / -1; }
 .cb-field label { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; font-size: 0.74rem; color: var(--ink-soft); }
@@ -313,25 +316,25 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
   <div class="cb-panel">
     <div class="cb-panel-head">Content <span class="cb-sub">Fill once. Every concept updates live, nothing is locked.</span></div>
     <div class="cb-form" id="cb-form">
-      <div class="cb-field"><label id="cb-size-label">Size</label>
+      <div class="cb-field cb-half"><label id="cb-size-label">Size</label>
         <div class="cb-sizes" role="group" aria-labelledby="cb-size-label">
           <button class="cb-size" type="button" data-size="s1117" aria-pressed="true">11 × 17</button>
           <button class="cb-size" type="button" data-size="s1824" aria-pressed="false">18 × 24</button>
         </div>
       </div>
-      <div class="cb-field"><label for="cb-beer-select">Beer</label><select id="cb-beer-select">
+      <div class="cb-field cb-half"><label for="cb-beer-select">Beer</label><select id="cb-beer-select">
         <option value="miraculum" selected>Miraculum</option>
         <option value="main-squeeze">Main Squeeze</option>
         <option value="custom">Custom</option>
       </select></div>
-      <div class="cb-field cb-hidden"><label for="cb-style">Style</label><input id="cb-style" data-k="style" type="text" value="Midwest IPA" autocomplete="off"></div>
-      <div class="cb-field cb-hidden"><label for="cb-abv">ABV</label><input id="cb-abv" data-k="abv" type="text" value="6.4% ABV" autocomplete="off"></div>
-      <div class="cb-field cb-hidden"><label for="cb-ibu">IBU / stat</label><input id="cb-ibu" data-k="ibu" type="text" value="75 IBU" autocomplete="off"></div>
-      <div class="cb-field"><label for="cb-beer">Headline</label><input id="cb-beer" data-k="beer" type="text" value="Miraculum" autocomplete="off"></div>
-      <div class="cb-field"><label for="cb-date">Subheadline</label><input id="cb-date" data-k="date" type="text" value="On tap now" autocomplete="off"></div>
+      <div class="cb-field cb-third cb-hidden"><label for="cb-style">Style</label><input id="cb-style" data-k="style" type="text" value="Midwest IPA" autocomplete="off"></div>
+      <div class="cb-field cb-third cb-hidden"><label for="cb-abv">ABV</label><input id="cb-abv" data-k="abv" type="text" value="6.4% ABV" autocomplete="off"></div>
+      <div class="cb-field cb-third cb-hidden"><label for="cb-ibu">IBU / stat</label><input id="cb-ibu" data-k="ibu" type="text" value="75 IBU" autocomplete="off"></div>
+      <div class="cb-field cb-wide"><label for="cb-beer">Headline</label><input id="cb-beer" data-k="beer" type="text" value="Miraculum" autocomplete="off"></div>
+      <div class="cb-field cb-wide"><label for="cb-date">Subheadline</label><input id="cb-date" data-k="date" type="text" value="On tap now" autocomplete="off"></div>
       <div class="cb-field cb-wide"><label for="cb-tagline">Body</label><input id="cb-tagline" data-k="tagline" type="text" value="Bold enough for IPA fans, smooth enough for everyone else." autocomplete="off"></div>
-      <div class="cb-field"><label for="cb-avail">Callout</label><input id="cb-avail" data-k="avail" type="text" value="Draft · 4-packs to-go" autocomplete="off"></div>
-      <div class="cb-field"><label for="cb-cta">Callout 2</label><input id="cb-cta" data-k="cta" type="text" value="Pryes Taproom · North Loop, Mpls" autocomplete="off"></div>
+      <div class="cb-field cb-half"><label for="cb-avail">Callout 1</label><input id="cb-avail" data-k="avail" type="text" value="Draft · 4-packs to-go" autocomplete="off"></div>
+      <div class="cb-field cb-half"><label for="cb-cta">Callout 2</label><input id="cb-cta" data-k="cta" type="text" value="Pryes Taproom · North Loop, Mpls" autocomplete="off"></div>
     </div>
   </div>
 
