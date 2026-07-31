@@ -54,7 +54,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .ed-hint { font-size: 0.78rem; color: var(--ink-soft); line-height: 1.55; }
 .ed-props { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
 .ed-prop label { display: block; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.68rem; color: var(--ink-soft); margin-bottom: 3px; }
-.ed-prop input { width: 100%; font-family: var(--sans); font-size: 0.88rem; padding: 7px 9px; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--ink); }
+.ed-prop input, .ed-prop select { width: 100%; font-family: var(--sans); font-size: 0.88rem; padding: 7px 9px; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--ink); }
 .ed-btn { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.85rem;
   padding: 10px 16px; border-radius: 2px; border: 1.5px solid var(--burgundy); color: var(--burgundy); background: transparent; cursor: pointer; }
 .ed-btn:hover { background: var(--burgundy); color: var(--beer-foam); }
@@ -201,12 +201,27 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   const PRISTINE = JSON.parse(JSON.stringify(window.PRYES_LAYOUT_DEFAULTS_V2));
   let spec = JSON.parse(JSON.stringify(window.PRYES_LAYOUT_DEFAULTS_V2));
 
-  /* restore unsaved work */
+  /* restore unsaved work - migrated forward so saved edits from an
+     older schema pick up new elements and properties from the
+     current defaults instead of diffing as phantom changes */
+  function migrate(saved) {
+    Object.keys(PRISTINE).forEach(l => {
+      if (!saved[l]) { saved[l] = JSON.parse(JSON.stringify(PRISTINE[l])); return; }
+      const out = {};
+      Object.keys(PRISTINE[l].elements).forEach(k => {
+        out[k] = saved[l].elements[k] || JSON.parse(JSON.stringify(PRISTINE[l].elements[k]));
+        Object.keys(PRISTINE[l].elements[k]).forEach(p => { if (out[k][p] == null) out[k][p] = PRISTINE[l].elements[k][p]; });
+      });
+      saved[l].elements = out;
+      saved[l].label = PRISTINE[l].label;
+    });
+    return saved;
+  }
   let restored = false;
   try {
     const saved = localStorage.getItem(STORE_KEY);
     if (saved) {
-      const parsed = JSON.parse(saved);
+      const parsed = migrate(JSON.parse(saved));
       if (parsed && parsed.beerfeature && JSON.stringify(parsed) !== JSON.stringify(PRISTINE)) { spec = parsed; restored = true; }
     }
   } catch (e) {}
@@ -335,13 +350,23 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
     document.getElementById('ed-selname').textContent = selectedEl ? spec[selectedEl.split('.')[0]].label + ' · ' + selectedEl.split('.')[1] : 'Nothing selected';
     document.getElementById('ed-reset-el').disabled = !selectedEl;
     if (!e) { propsBox.innerHTML = ''; return; }
-    propsBox.innerHTML = EDITABLE.filter(k => e[k] != null).map(k =>
+    const assetPicker = e.kind === 'asset'
+      ? '<div class="ed-prop" style="grid-column:1/-1"><label for="edp-asset">Mark</label><select id="edp-asset">' +
+        P.ASSET_OPTIONS.map(o => '<option value="' + o.id + '"' + (o.id === (e.asset || 'wordmarktag') ? ' selected' : '') + '>' + o.label + '</option>').join('') +
+        '</select></div>'
+      : '';
+    propsBox.innerHTML = assetPicker + EDITABLE.filter(k => e[k] != null).map(k =>
       '<div class="ed-prop"><label for="edp-' + k + '">' + (PROP_LABELS[k] || k) + '</label><input id="edp-' + k + '" data-k="' + k + '" type="number" step="' + (k === 'track' || k === 'lh' ? '0.01' : '1') + '" value="' + e[k] + '"></div>').join('');
     propsBox.querySelectorAll('input').forEach(inp => inp.addEventListener('input', () => {
       const v = parseFloat(inp.value); if (isNaN(v)) return;
       elSpec(selectedEl)[inp.dataset.k] = v;
       render(); persist(); syncChanges();
     }));
+    const assetSel = propsBox.querySelector('#edp-asset');
+    if (assetSel) assetSel.addEventListener('change', () => {
+      elSpec(selectedEl).asset = assetSel.value;
+      render(); persist(); syncChanges();
+    });
   }
   document.getElementById('ed-reset-el').addEventListener('click', () => {
     if (!selectedEl) return;

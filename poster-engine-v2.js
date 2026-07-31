@@ -70,11 +70,31 @@ window.PryesPosterV2 = (function () {
     { id:'tight',  name:'Tight',  cols: 3 }
   ];
 
-  const WORDMARK_URL = 'assets/logos/svg/BEERFOAM/PRYES-WORDMARK-BEERFOAM.svg';
+  /* All BEERFOAM masters - recolored per colorway at render time */
+  const ASSET_URLS = {
+    wordmark:    'assets/logos/svg/BEERFOAM/PRYES-WORDMARK-BEERFOAM.svg',
+    wordmarktag: 'assets/logos/svg/BEERFOAM/PRYES-WORDMARK+TAGLINE-BEERFOAM.svg',
+    lockup:      'assets/logos/svg/BEERFOAM/PRYES-CREST+WORDMARK+TAGLINE-BEERFOAM.svg',
+    lockupopen:  'assets/logos/svg/BEERFOAM/PRYES-CREST-NOBORDER+WORDMARK+TAGLINE-BEERFOAM.svg',
+    crest:       'assets/logos/svg/BEERFOAM/PRYES-CREST-NOBORDER-BEERFOAM.svg',
+    crestcircle: 'assets/logos/svg/BEERFOAM/PRYES-CREST-CIRCLE01-BEERFOAM.svg',
+    pmark:       'assets/logos/svg/BEERFOAM/PRYES-P-WATERMARK-BEERFOAM.svg',
+    mnicon:      'assets/logos/svg/BEERFOAM/PRYES-MN-ICON-BEERFOAM.svg'
+  };
+  const ASSET_OPTIONS = [
+    { id: 'wordmarktag', label: 'Pryes Brewing wordmark' },
+    { id: 'wordmark',    label: 'Wordmark - PRYES only' },
+    { id: 'lockup',      label: 'Crest + wordmark lockup' },
+    { id: 'lockupopen',  label: 'Open crest + wordmark' },
+    { id: 'crest',       label: 'Crest' },
+    { id: 'crestcircle', label: 'Crest circle' },
+    { id: 'pmark',       label: 'P watermark' },
+    { id: 'mnicon',      label: 'Minnesota icon' }
+  ];
   const SHAPE_COUNT = 15;
   const shapeUrl = n => 'assets/shapes/svg/BEERFOAM/BEER FOAM SHAPE ' + String(n).padStart(2, '0') + '.svg';
 
-  const A = { wordmark: null, shapes: [], patterns: {} };
+  const A = { assets: {}, shapes: [], patterns: {} };
   let SPEC = window.PRYES_LAYOUT_DEFAULTS_V2;
   function setSpec(s) { SPEC = s; }
 
@@ -200,9 +220,10 @@ window.PryesPosterV2 = (function () {
     const href = opts.canHref || beer.can;
     s += wrap('beerfeature.can', '<image x="' + (E.can.cx * KX - canW / 2) + '" y="' + (E.can.y * KY) + '" width="' + canW + '" height="' + canH + '" href="' + esc(href) + '" preserveAspectRatio="xMidYMid meet"/>', tag);
 
-    /* wordmark bleeds the top edge, over the pattern */
-    if (A.wordmark) s += wrap('beerfeature.wordmark', placeSVG(A.wordmark, { cx: E.wordmark.cx * KX, y: E.wordmark.y * KY, w: E.wordmark.w * KX, color: paint.wordmark }), tag);
-    s += wrap('beerfeature.brewing', condText(E.brewing, 'Brewing', paint.wordmark), tag);
+    /* wordmark bleeds the top edge, over the pattern - one brand
+       asset (Pryes Brewing), swappable in the editor */
+    const mark = A.assets[E.wordmark.asset || 'wordmarktag'];
+    if (mark) s += wrap('beerfeature.wordmark', placeSVG(mark, { cx: E.wordmark.cx * KX, y: E.wordmark.y * KY, w: E.wordmark.w * KX, color: paint.wordmark }), tag);
     s += wrap('beerfeature.headline', condText(E.headline, c.headline, paint.bandText, { autosize: true, sizeMul: c.h1Mul, trackAdd: c.h1Track }), tag);
     if (c.subheadline) s += wrap('beerfeature.subheadline', condText(E.subheadline, c.subheadline, paint.bandText, { sizeMul: c.h2Mul, trackAdd: c.h2Track }), tag);
     s += wrap('beerfeature.diamondL', diamondEl(E.diamondL, paint.bandText), tag);
@@ -243,14 +264,14 @@ window.PryesPosterV2 = (function () {
     document.body.removeChild(host);
   }
   async function load() {
-    A.wordmark = await loadOne(WORDMARK_URL);
+    await Promise.all(Object.keys(ASSET_URLS).map(async k => { A.assets[k] = await loadOne(ASSET_URLS[k]); }));
     A.shapes = await Promise.all(Array.from({ length: SHAPE_COUNT }, (_, i) => loadOne(shapeUrl(i + 1))));
     await Promise.all(BEERS.map(async b => { A.patterns[b.id] = await loadOne(b.pattern); }));
     measureShapes();
   }
 
   return {
-    SIZES: SIZES, BEERS: BEERS, COLORWAYS: COLORWAYS, DENSITIES: DENSITIES, SHAPE_COUNT: SHAPE_COUNT,
+    SIZES: SIZES, BEERS: BEERS, COLORWAYS: COLORWAYS, DENSITIES: DENSITIES, SHAPE_COUNT: SHAPE_COUNT, ASSET_OPTIONS: ASSET_OPTIONS,
     get SIZE() { return SIZE; },
     get SPEC() { return SPEC; },
     setSize: setSize, setSpec: setSpec,
