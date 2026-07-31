@@ -97,11 +97,13 @@ window.PRYES_LAYOUT_DEFAULTS_V2 = {
       /* Grounded to the "Trust Your Taste" reference, 2026-07-31:
          giant PRYES over a big photo well, headline flanked by
          diamonds at the foot. Brand colorways only. */
+      /* Tuned by Ben in concept-editor-v2, 2026-07-31; diamonds
+         normalized to 180 from each edge, same size and line. */
       wordmark:    { kind: 'asset', asset: 'wordmark', cx: 900, y: 90, w: 1529 },
       photo:       { kind: 'photoblock', x: 164, y: 444, w: 1476, h: 1556 },
-      headline:    { kind: 'headline', x: 900, y: 2185, anchor: 'middle', size: 135, track: 0.08 },
-      diamondL:    { kind: 'diamond', cx: 171,  cy: 2140, s: 30 },
-      diamondR:    { kind: 'diamond', cx: 1629, cy: 2140, s: 30 }
+      headline:    { kind: 'headline', x: 900, y: 2223, anchor: 'middle', size: 163, track: 0.04 },
+      diamondL:    { kind: 'diamond', cx: 180,  cy: 2178, s: 38 },
+      diamondR:    { kind: 'diamond', cx: 1620, cy: 2178, s: 38 }
     }
   }
 };
