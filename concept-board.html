@@ -110,6 +110,10 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 .cb-occasion[disabled] { opacity: 0.4; cursor: not-allowed; }
 .cb-occasion[disabled]::after { content: " · soon"; font-weight: 400; letter-spacing: 0; text-transform: none; opacity: 0.8; }
 
+.cb-sizes { display: flex; gap: 8px; }
+.cb-size { flex: 1; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; font-size: 0.88rem; padding: 9px 0; border: 1.5px solid var(--line); border-radius: 3px; background: var(--beer-foam); color: var(--ink-soft); cursor: pointer; }
+.cb-size[aria-pressed="true"] { background: var(--burgundy); color: var(--beer-foam); border-color: var(--burgundy); }
+
 .cb-panel { border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,0.5); padding: 26px 26px 28px; }
 .cb-panel-head {
   font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.14em; font-weight: 600;
@@ -154,7 +158,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
   display: flex; flex-direction: column; transition: box-shadow .18s, border-color .18s;
 }
 .cb-card.is-held { border-color: var(--burgundy); box-shadow: 0 0 0 2px var(--burgundy); }
-.cb-poster { position: relative; width: 100%; aspect-ratio: 3 / 4; background: var(--beer-foam-2); overflow: hidden; }
+.cb-poster { position: relative; width: 100%; aspect-ratio: var(--poster-ar, 11 / 17); background: var(--beer-foam-2); overflow: hidden; }
 .cb-poster svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .cb-poster.is-rolling svg { animation: cbRoll .42s ease; }
 @keyframes cbRoll { 0% { opacity: 0.15; transform: translateY(-8px); } 100% { opacity: 1; transform: none; } }
@@ -300,6 +304,12 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
   <div class="cb-panel">
     <div class="cb-panel-head">Content <span class="cb-sub">Fill once. Every concept updates live, nothing is locked.</span></div>
     <div class="cb-form" id="cb-form">
+      <div class="cb-field"><label id="cb-size-label">Size</label>
+        <div class="cb-sizes" role="group" aria-labelledby="cb-size-label">
+          <button class="cb-size" type="button" data-size="s1117" aria-pressed="true">11 × 17</button>
+          <button class="cb-size" type="button" data-size="s1824" aria-pressed="false">18 × 24</button>
+        </div>
+      </div>
       <div class="cb-field"><label for="cb-beer">Beer name</label><input id="cb-beer" data-k="beer" type="text" value="Miraculum" autocomplete="off"></div>
       <div class="cb-field"><label for="cb-style">Style</label><input id="cb-style" data-k="style" type="text" value="Double IPA" autocomplete="off"></div>
       <div class="cb-field"><label for="cb-abv">ABV</label><input id="cb-abv" data-k="abv" type="text" value="8.5% ABV" autocomplete="off"></div>
@@ -339,7 +349,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
         </button>
         <button class="cb-btn" type="button" id="cb-spot-close">Back to board</button>
       </div>
-      <p class="cb-spot-note">The SVG exports at 18×24 in with live, editable text and intact vectors. Font-family names the print faces (Superclarendon · Gotham · Alternate Gothic) so Adobe picks them up; the web preview uses the sanctioned substitutes.</p>
+      <p class="cb-spot-note">The SVG exports at the chosen print size with live, editable text and intact vectors. Font names call the print faces (Superclarendon · Gotham · Alternate Gothic) so Adobe picks them up; this preview uses the sanctioned web substitutes.</p>
     </div>
   </div>
 </main>
@@ -400,7 +410,19 @@ function showToast(msg) {
   const board = document.getElementById('cb-board');
   if (!board) return;
 
-  const W = 1800, H = 2400, M = 150;
+  const SIZES = [
+    { key:'s1117', label:'11 × 17 in', slug:'11x17', w:1100, h:1700, inW:'11in', inH:'17in', signType:'Standard BOTM Poster 11x17' },
+    { key:'s1824', label:'18 × 24 in', slug:'18x24', w:1800, h:2400, inW:'18in', inH:'24in', signType:'Poster 18x24' }
+  ];
+  let SIZE = SIZES[0];
+  let W, H, M, KX, KY;
+  function applySize() {
+    W = SIZE.w; H = SIZE.h;
+    KX = W / 1800; KY = H / 2400;
+    M = Math.round(150 * KX);
+    document.documentElement.style.setProperty('--poster-ar', SIZE.w + ' / ' + SIZE.h);
+  }
+  applySize();
   /* Print faces named first so Adobe picks them up; web preview uses the sanctioned substitutes. */
   const SERIF = "'Superclarendon','Bitter',Georgia,serif";
   const COND  = "'Alternate Gothic No.2 D','Barlow Condensed','Barlow Semi Condensed',sans-serif";
@@ -475,9 +497,9 @@ function showToast(msg) {
     const vals = [c.abv, c.ibu, c.date];
     const xs = [W * 0.28, W * 0.5, W * 0.72];
     let s = '';
-    xs.forEach((x, i) => { if (vals[i]) s += '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-family="' + COND + '" font-size="64" letter-spacing="3" fill="' + fam.ink + '">' + up(vals[i]) + '</text>'; });
-    s += '<line x1="' + (W * 0.39) + '" y1="' + (y - 50) + '" x2="' + (W * 0.39) + '" y2="' + (y + 8) + '" stroke="' + fam.ink + '" stroke-opacity="0.32"/>';
-    s += '<line x1="' + (W * 0.61) + '" y1="' + (y - 50) + '" x2="' + (W * 0.61) + '" y2="' + (y + 8) + '" stroke="' + fam.ink + '" stroke-opacity="0.32"/>';
+    xs.forEach((x, i) => { if (vals[i]) s += '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 64*KX + '" letter-spacing="' + 3*KX + '" fill="' + fam.ink + '">' + up(vals[i]) + '</text>'; });
+    s += '<line x1="' + (W * 0.39) + '" y1="' + (y - 50*KY) + '" x2="' + (W * 0.39) + '" y2="' + (y + 8*KY) + '" stroke="' + fam.ink + '" stroke-opacity="0.32"/>';
+    s += '<line x1="' + (W * 0.61) + '" y1="' + (y - 50*KY) + '" x2="' + (W * 0.61) + '" y2="' + (y + 8*KY) + '" stroke="' + fam.ink + '" stroke-opacity="0.32"/>';
     return s;
   }
 
@@ -494,27 +516,27 @@ function showToast(msg) {
     const w = r.w * 1.25, h = w * (vh / vw);
     return '<svg x="' + (r.x - r.w * 0.12) + '" y="' + (r.y + r.h - h * 0.86) + '" width="' + w + '" height="' + h + '" viewBox="' + sh.vb + '" preserveAspectRatio="xMidYMid meet"><g fill="' + fam.accent + '" opacity="' + op + '">' + sh.body + '</g></svg>';
   }
-  function photoWell(r, fam) {
+  function photoWell(r, fam, card) {
     const id = 'cbg' + (UID++);
     return '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + fam.ink + '" stop-opacity="0.92"/><stop offset="1" stop-color="' + fam.accent + '" stop-opacity="0.82"/></linearGradient></defs>' +
       '<rect x="' + r.x + '" y="' + r.y + '" width="' + r.w + '" height="' + r.h + '" fill="url(#' + id + ')"/>' +
-      '<text x="' + (r.x + r.w / 2) + '" y="' + (r.y + r.h / 2) + '" text-anchor="middle" font-family="' + COND + '" font-size="62" letter-spacing="12" fill="' + fam.bg + '" fill-opacity="0.92">HERO IMAGE</text>' +
-      '<text x="' + (r.x + r.w / 2) + '" y="' + (r.y + r.h / 2 + 66) + '" text-anchor="middle" font-family="' + SANS + '" font-size="30" letter-spacing="5" fill="' + fam.bg + '" fill-opacity="0.72">CAN RENDER OR LIFESTYLE PHOTO</text>';
+      '<text x="' + (r.x + r.w / 2) + '" y="' + (r.y + r.h / 2) + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 62*KX + '" letter-spacing="12" fill="' + fam.bg + '" fill-opacity="0.92">HERO IMAGE</text>' +
+      '<text x="' + (r.x + r.w / 2) + '" y="' + (r.y + r.h / 2 + 66*KY) + '" text-anchor="middle" font-family="' + SANS + '" font-size="' + 30*KX + '" letter-spacing="5" fill="' + fam.bg + '" fill-opacity="0.72">CAN RENDER OR LIFESTYLE PHOTO</text>';
   }
   function heroBehind(img, fam, seed, mode) {
     const op = 0.10;
     if (img === 'laurel') return patternCover({ x: 0, y: 0, w: W, h: H }, fam, op);
-    if (img === 'emblem') return placeAsset({ key: 'crest', cx: W / 2, y: H * 0.30, w: 1450, color: fam.accent, opacity: op + 0.02 });
+    if (img === 'emblem') return placeAsset({ key: 'crest', cx: W / 2, y: H * 0.30, w: 1450*KX, color: fam.accent, opacity: op + 0.02 });
     if (img === 'shapes') return shapeDecor(fam, op + 0.05, seed);
-    return placeAsset({ key: 'pmark', cx: W / 2, y: H * 0.30, w: 1150, color: fam.accent, opacity: op });
+    return placeAsset({ key: 'pmark', cx: W / 2, y: H * 0.30, w: 1150*KX, color: fam.accent, opacity: op });
   }
-  function heroBlock(img, fam, seed, r) {
+  function heroBlock(img, fam, seed, r, card) {
     const id = 'cbc' + (UID++);
     let dec;
     if (img === 'laurel') dec = patternCover(r, fam, 0.18);
     else if (img === 'emblem') dec = placeAsset({ key: 'crest', cx: r.x + r.w / 2, y: r.y + r.h * 0.12, w: r.h * 0.92, color: fam.accent, opacity: 0.95 });
     else if (img === 'shapes') dec = shapeDecor(fam, 0.9, seed, r);
-    else dec = photoWell(r, fam);
+    else dec = photoWell(r, fam, card);
     return '<clipPath id="' + id + '"><rect x="' + r.x + '" y="' + r.y + '" width="' + r.w + '" height="' + r.h + '"/></clipPath>' +
       '<rect x="' + r.x + '" y="' + r.y + '" width="' + r.w + '" height="' + r.h + '" fill="' + fam.bg + '"/>' +
       '<g clip-path="url(#' + id + ')">' + dec + '</g>';
@@ -522,48 +544,47 @@ function showToast(msg) {
 
   /* ---------- layouts ---------- */
   const LAY = {
-    stacked: function (c, fam, img, seed) {
-      let s = heroBehind(img, fam, seed, 'stacked');
-      s += placeAsset({ key: 'lockup', cx: W / 2, y: 180, w: 500, color: fam.ink });
-      const fs = nameSize(c.beer);
-      s += '<text x="' + (W / 2) + '" y="1150" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
-      if (c.style) s += '<text x="' + (W / 2) + '" y="1285" text-anchor="middle" font-family="' + COND + '" font-size="86" letter-spacing="9" fill="' + fam.accent + '">' + up(c.style) + '</text>';
-      s += tagline(c.tagline, W / 2, 1480, 62, fam.ink, 'middle');
-      s += '<line x1="' + M + '" y1="2000" x2="' + (W - M) + '" y2="2000" stroke="' + fam.ink + '" stroke-opacity="0.24" stroke-width="2"/>';
-      s += statTrio(c, fam, 2120);
-      if (c.cta) s += '<text x="' + (W / 2) + '" y="2295" text-anchor="middle" font-family="' + SANS + '" font-size="38" letter-spacing="5" fill="' + fam.ink + '" fill-opacity="0.8">' + up(c.cta) + '</text>';
+    stacked: function (c, fam, card) {
+      let s = heroBehind(card.img, fam, card.seed);
+      s += placeAsset({ key:'lockup', cx: W/2, y: 180*KY, w: 500*KX, color: fam.ink });
+      const fs = nameSize(c.beer) * KX;
+      s += '<text x="' + (W/2) + '" y="' + 1150*KY + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
+      if (c.style) s += '<text x="' + (W/2) + '" y="' + 1285*KY + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 86*KX + '" letter-spacing="' + 9*KX + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
+      s += tagline(c.tagline, W/2, 1480*KY, 62*KX, fam.ink, 'middle');
+      s += '<line x1="' + M + '" y1="' + 2000*KY + '" x2="' + (W-M) + '" y2="' + 2000*KY + '" stroke="' + fam.ink + '" stroke-opacity="0.24" stroke-width="2"/>';
+      s += statTrio(c, fam, 2120*KY);
+      if (c.cta) s += '<text x="' + (W/2) + '" y="' + 2295*KY + '" text-anchor="middle" font-family="' + SANS + '" font-size="' + 38*KX + '" letter-spacing="' + 5*KX + '" fill="' + fam.ink + '" fill-opacity="0.8">' + up(c.cta) + '</text>';
       return s;
     },
-    anchored: function (c, fam, img, seed) {
-      const HH = 250, split = 1500;
-      /* solid header band keeps brand marks legible over any hero */
-      let s = heroBlock(img, fam, seed, { x: 0, y: HH, w: W, h: split - HH });
-      s += placeAsset({ key: 'wordmark', x: M, y: 96, w: 470, color: fam.ink });
-      if (c.date) s += '<text x="' + (W - M) + '" y="' + 172 + '" text-anchor="end" font-family="' + COND + '" font-size="52" letter-spacing="7" fill="' + fam.ink + '">' + up(c.date) + '</text>';
-      s += '<line x1="' + M + '" y1="' + (HH - 42) + '" x2="' + (W - M) + '" y2="' + (HH - 42) + '" stroke="' + fam.ink + '" stroke-opacity="0.22" stroke-width="2"/>';
+    anchored: function (c, fam, card) {
+      const HH = 250*KY, split = 1500*KY;
+      let s = heroBlock(card.img, fam, card.seed, { x: 0, y: HH, w: W, h: split - HH }, card);
+      s += placeAsset({ key:'wordmark', x: M, y: 96*KY, w: 470*KX, color: fam.ink });
+      if (c.date) s += '<text x="' + (W-M) + '" y="' + 172*KY + '" text-anchor="end" font-family="' + COND + '" font-size="' + 52*KX + '" letter-spacing="' + 7*KX + '" fill="' + fam.ink + '">' + up(c.date) + '</text>';
+      s += '<line x1="' + M + '" y1="' + (HH - 42*KY) + '" x2="' + (W-M) + '" y2="' + (HH - 42*KY) + '" stroke="' + fam.ink + '" stroke-opacity="0.22" stroke-width="2"/>';
       s += '<line x1="0" y1="' + split + '" x2="' + W + '" y2="' + split + '" stroke="' + fam.ink + '" stroke-opacity="0.2" stroke-width="2"/>';
-      if (c.style) s += '<text x="' + M + '" y="' + (split + 120) + '" font-family="' + COND + '" font-size="78" letter-spacing="9" fill="' + fam.accent + '">' + up(c.style) + '</text>';
-      const fs = nameSize(c.beer);
-      s += '<text x="' + M + '" y="' + (split + 120 + fs * 0.86) + '" font-family="' + SERIF + '" font-size="' + fs + '" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
-      s += tagline(c.tagline, M, split + 120 + fs * 0.86 + 110, 54, fam.ink, 'start');
-      if (c.abv || c.ibu) s += '<text x="' + M + '" y="' + (H - 130) + '" font-family="' + COND + '" font-size="58" letter-spacing="3" fill="' + fam.ink + '">' + up([c.abv, c.ibu].filter(Boolean).join('   ·   ')) + '</text>';
-      if (c.avail) s += '<text x="' + (W - M) + '" y="' + (H - 130) + '" text-anchor="end" font-family="' + SANS + '" font-size="38" letter-spacing="4" fill="' + fam.ink + '" fill-opacity="0.85">' + up(c.avail) + '</text>';
-      if (c.cta) s += '<text x="' + M + '" y="' + (H - 72) + '" font-family="' + SANS + '" font-size="34" letter-spacing="5" fill="' + fam.ink + '" fill-opacity="0.68">' + up(c.cta) + '</text>';
+      if (c.style) s += '<text x="' + M + '" y="' + (split + 120*KY) + '" font-family="' + COND + '" font-size="' + 78*KX + '" letter-spacing="' + 9*KX + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
+      const fs = nameSize(c.beer) * KX;
+      s += '<text x="' + M + '" y="' + (split + 120*KY + fs*0.86) + '" font-family="' + SERIF + '" font-size="' + fs + '" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
+      s += tagline(c.tagline, M, split + 120*KY + fs*0.86 + 110*KY, 54*KX, fam.ink, 'start');
+      if (c.abv || c.ibu) s += '<text x="' + M + '" y="' + (H - 130*KY) + '" font-family="' + COND + '" font-size="' + 58*KX + '" letter-spacing="' + 3*KX + '" fill="' + fam.ink + '">' + up([c.abv, c.ibu].filter(Boolean).join('   ·   ')) + '</text>';
+      if (c.avail) s += '<text x="' + (W-M) + '" y="' + (H - 130*KY) + '" text-anchor="end" font-family="' + SANS + '" font-size="' + 38*KX + '" letter-spacing="' + 4*KX + '" fill="' + fam.ink + '" fill-opacity="0.85">' + up(c.avail) + '</text>';
+      if (c.cta) s += '<text x="' + M + '" y="' + (H - 72*KY) + '" font-family="' + SANS + '" font-size="' + 34*KX + '" letter-spacing="' + 5*KX + '" fill="' + fam.ink + '" fill-opacity="0.68">' + up(c.cta) + '</text>';
       return s;
     },
-    framed: function (c, fam, img, seed) {
-      const fm = 96;
-      let s = heroBehind(img, fam, seed, 'framed');
-      s += '<rect x="' + fm + '" y="' + fm + '" width="' + (W - 2 * fm) + '" height="' + (H - 2 * fm) + '" fill="none" stroke="' + fam.ink + '" stroke-width="4"/>';
-      s += placeAsset({ key: 'wordmark', cx: W / 2, y: fm + 80, w: 430, color: fam.ink });
-      s += '<text x="' + (W / 2) + '" y="' + (fm + 300) + '" text-anchor="middle" font-family="' + COND + '" font-size="52" letter-spacing="13" fill="' + fam.accent + '">NEW RELEASE</text>';
-      const fs = nameSize(c.beer);
-      s += '<text x="' + (W / 2) + '" y="1090" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
-      if (c.style) s += '<text x="' + (W / 2) + '" y="1215" text-anchor="middle" font-family="' + COND + '" font-size="74" letter-spacing="9" fill="' + fam.ink + '">' + up(c.style) + '</text>';
-      s += tagline(c.tagline, W / 2, 1420, 58, fam.ink, 'middle');
-      s += placeAsset({ key: 'crest', cx: W / 2, y: 1640, w: 290, color: fam.ink });
+    framed: function (c, fam, card) {
+      const fm = 96*KX;
+      let s = heroBehind(card.img, fam, card.seed);
+      s += '<rect x="' + fm + '" y="' + fm + '" width="' + (W - 2*fm) + '" height="' + (H - 2*fm) + '" fill="none" stroke="' + fam.ink + '" stroke-width="4"/>';
+      s += placeAsset({ key:'wordmark', cx: W/2, y: fm + 80*KY, w: 430*KX, color: fam.ink });
+      s += '<text x="' + (W/2) + '" y="' + (fm + 300*KY) + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 52*KX + '" letter-spacing="' + 13*KX + '" fill="' + fam.accent + '">NEW RELEASE</text>';
+      const fs = nameSize(c.beer) * KX;
+      s += '<text x="' + (W/2) + '" y="' + 1090*KY + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
+      if (c.style) s += '<text x="' + (W/2) + '" y="' + 1215*KY + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 74*KX + '" letter-spacing="' + 9*KX + '" fill="' + fam.ink + '">' + up(c.style) + '</text>';
+      s += tagline(c.tagline, W/2, 1420*KY, 58*KX, fam.ink, 'middle');
+      s += placeAsset({ key:'crest', cx: W/2, y: 1640*KY, w: 290*KX, color: fam.ink });
       const line = [c.abv, c.ibu, c.date].filter(Boolean).join('    ·    ');
-      if (line) s += '<text x="' + (W / 2) + '" y="' + (H - fm - 70) + '" text-anchor="middle" font-family="' + COND + '" font-size="54" letter-spacing="7" fill="' + fam.ink + '">' + up(line) + '</text>';
+      if (line) s += '<text x="' + (W/2) + '" y="' + (H - fm - 70*KY) + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 54*KX + '" letter-spacing="' + 7*KX + '" fill="' + fam.ink + '">' + up(line) + '</text>';
       return s;
     }
   };
@@ -571,11 +592,12 @@ function showToast(msg) {
   function famById(id) { return FAMILIES.find(f => f.id === id) || FAMILIES[0]; }
   function content() { const o = {}; document.querySelectorAll('#cb-form input').forEach(i => o[i.dataset.k] = i.value.trim()); return o; }
 
-  function buildPosterSVG(card) {
+  function buildPosterSVG(card, photoHref) {
     const c = content(), fam = famById(card.fam);
-    const inner = '<rect width="' + W + '" height="' + H + '" fill="' + fam.bg + '"/>' + LAY[card.lay](c, fam, card.img, card.seed);
-    /* width/height in inches => opens as a true 18x24 artboard in Illustrator; CSS keeps the on-screen preview at 100%. */
-    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="18in" height="24in">' + inner + '</svg>';
+    /* width/height in inches => opens as a true print-size artboard in Illustrator; CSS keeps the on-screen preview at 100%. */
+    const inner = '<rect width="' + W + '" height="' + H + '" fill="' + fam.bg + '"/>' + LAY[card.lay](c, fam, card);
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + SIZE.inW + '" height="' + SIZE.inH + '">' + inner + '</svg>';
+    return photoHref ? svg.replace(/href="assets\/photos\/[^"]+"/, 'href="' + photoHref + '"') : svg;
   }
 
   /* ---------- state ---------- */
@@ -656,7 +678,7 @@ function showToast(msg) {
     document.getElementById('cb-spot-recipe').innerHTML =
       '<b>Image</b> ' + IMAGES.find(o => o.id === card.img).label + '<br>' +
       '<b>Layout</b> ' + LAYOUTS.find(o => o.id === card.lay).label + '<br>' +
-      '<b>Color</b> ' + famById(card.fam).name + '<br><b>Size</b> 18 × 24 in';
+      '<b>Color</b> ' + famById(card.fam).name + '<br><b>Size</b> ' + SIZE.label;
   }
   function openSpotlight(i) { selected = i; spot.classList.add('is-open'); renderSpotlight(); spot.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); }
   function closeSpotlight() { selected = -1; spot.classList.remove('is-open'); }
@@ -688,6 +710,12 @@ function showToast(msg) {
   document.getElementById('cb-release-holds').addEventListener('click', () => { cards.forEach(c => { c.held = false; c.lock = { img: false, lay: false, fam: false }; }); renderBoard(); });
   document.getElementById('cb-export').addEventListener('click', exportSVG);
   document.getElementById('cb-spot-close').addEventListener('click', closeSpotlight);
+  document.querySelectorAll('.cb-size').forEach(btn => btn.addEventListener('click', () => {
+    SIZE = SIZES.find(s => s.key === btn.dataset.size) || SIZES[0];
+    applySize();
+    document.querySelectorAll('.cb-size').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+    renderBoard();
+  }));
 
   let t;
   document.querySelectorAll('#cb-form input').forEach(inp => inp.addEventListener('input', () => { clearTimeout(t); t = setTimeout(posterOnlyRefresh, 130); }));
