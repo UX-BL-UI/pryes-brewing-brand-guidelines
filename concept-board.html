@@ -79,8 +79,8 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 .tool-bar .tb-back:hover { color: var(--beer-foam); }
 .tool-bar .tb-back svg { width: 15px; height: 15px; }
 
-.tool-wrap { max-width: 1120px; margin: 0 auto; padding: clamp(28px, 4vw, 48px) clamp(18px, 4vw, 40px) 30px; }
-.tool-lede { max-width: 72ch; margin-bottom: 32px; }
+.tool-wrap { max-width: 1120px; margin: 0 auto; padding: clamp(28px, 4vw, 48px) clamp(18px, 4vw, 40px) 90px; }
+.tool-lede { max-width: 72ch; margin-bottom: 24px; }
 .tool-lede .kick { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.22em; font-weight: 600; font-size: 0.72rem; color: var(--ink-soft); margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
 .tool-lede .kick .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--orange-shade); }
 .tool-lede h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(2rem, 4.4vw, 3.1rem); line-height: 1.02; letter-spacing: -0.015em; }
@@ -92,7 +92,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 .cb-note { font-size: 0.9rem; color: var(--ink-soft); max-width: 78ch; margin-top: 14px; line-height: 1.65; }
 .cb-note b { color: var(--ink); font-weight: 600; }
 
-.cb-steps { display: flex; flex-wrap: wrap; gap: 10px 26px; list-style: none; margin: 0 0 26px; padding: 14px 18px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,0.5); }
+.cb-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px 26px; list-style: none; margin: 0 0 28px; padding: 16px 20px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,0.5); }
 .cb-steps li { display: flex; align-items: center; gap: 10px; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.85rem; color: var(--ink); }
 .cb-step-n { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: var(--burgundy); color: var(--beer-foam); font-size: 0.78rem; flex: none; }
 
@@ -201,13 +201,13 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 .cb-reel .cb-lock svg { width: 100%; height: 100%; }
 
 /* Spotlight — narrowed-to-one */
-.cb-spotlight { margin-top: 34px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--burgundy); color: var(--beer-foam); display: none; }
+.cb-spotlight { margin-top: 34px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--burgundy); color: var(--beer-foam); display: none; scroll-margin-top: calc(var(--topbar-h) + 78px); }
 .cb-spotlight.is-open { display: grid; grid-template-columns: minmax(0, 420px) 1fr; }
 .cb-spot-poster { background: var(--beer-foam-2); padding: 30px; display: flex; align-items: center; justify-content: center; }
 .cb-spot-poster .cb-poster { width: 100%; max-width: 360px; box-shadow: 0 20px 50px rgba(16,16,25,0.4); border-radius: 3px; }
 .cb-spot-side { padding: 34px 36px 38px; display: flex; flex-direction: column; }
 .cb-spot-side .cb-eye { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.24em; font-weight: 600; font-size: 0.72rem; color: var(--beige); }
-.cb-spot-side h3 { font-family: var(--serif); font-weight: 600; font-size: 2rem; line-height: 1.05; margin: 12px 0 6px; }
+.cb-spot-side h2 { font-family: var(--serif); font-weight: 600; font-size: 2rem; line-height: 1.05; margin: 12px 0 6px; }
 .cb-spot-side .cb-recipe { font-size: 0.9rem; color: rgba(255,241,228,0.78); line-height: 1.7; margin-top: 14px; }
 .cb-spot-side .cb-recipe b { color: var(--beige); font-weight: 600; }
 .cb-spot-side .cb-spot-cta { margin-top: auto; padding-top: 24px; display: flex; flex-wrap: wrap; gap: 12px; }
@@ -353,7 +353,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
     <div class="cb-spot-poster"><div class="cb-poster" id="cb-spot-poster"></div></div>
     <div class="cb-spot-side">
       <div class="cb-eye">Selected concept</div>
-      <h3 id="cb-spot-title">Concept</h3>
+      <h2 id="cb-spot-title">Concept</h2>
       <div class="cb-recipe" id="cb-spot-recipe"></div>
       <div class="cb-handoff">
         <div class="cb-h-field"><label for="cb-brand">Brand</label><input id="cb-brand" type="text" value="Pryes" autocomplete="off"></div>
@@ -739,7 +739,7 @@ function showToast(msg) {
     document.getElementById('cb-spot-poster').innerHTML = buildPosterSVG(card);
     document.getElementById('cb-spot-title').textContent = (c.beer || 'Concept') + ' · Concept ' + (selected + 1);
     document.getElementById('cb-spot-recipe').innerHTML =
-      '<b>Image</b> ' + IMAGES.find(o => o.id === card.img).label + '<br>' +
+      '<b>Image</b> ' + (((card.lay === 'feature' || card.img === 'well') && PHOTOS.length) ? 'Photo · ' + esc(PHOTOS[card.ph % PHOTOS.length].label || PHOTOS[card.ph % PHOTOS.length].file) : IMAGES.find(o => o.id === card.img).label) + '<br>' +
       '<b>Layout</b> ' + LAYOUTS.find(o => o.id === card.lay).label + '<br>' +
       '<b>Color</b> ' + famById(card.fam).name + '<br><b>Size</b> ' + SIZE.label;
   }
