@@ -855,7 +855,8 @@ function showToast(msg) {
     await Promise.all(Object.keys(ASSET_URLS).map(async k => { A[k] = await load(ASSET_URLS[k]); }));
     A.shapes = (await Promise.all(SHAPE_URLS.map(load))).filter(Boolean);
     try {
-      const r = await fetch('assets/photos/photos.json');
+      /* no-store: the photo library must never be served from a stale browser cache */
+      const r = await fetch('assets/photos/photos.json', { cache: 'no-store' });
       if (r.ok) { const j = await r.json(); if (Array.isArray(j)) PHOTOS = j.filter(p => p && p.file); }
     } catch (e) {}
     renderBoard();
