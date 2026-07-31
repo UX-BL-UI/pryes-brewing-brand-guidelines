@@ -449,8 +449,10 @@ function showToast(msg) {
   const SERIF = "'Superclarendon','Bitter',Georgia,serif";
   const COND  = "'Alternate Gothic No.2 D','Barlow Condensed','Barlow Semi Condensed',sans-serif";
   const SANS  = "'Gotham','Poppins',system-ui,sans-serif";
-  /* Guide type hierarchy: subheads track 175-200 (condensed), callouts/links track 150 (sans), headers/body track 0 */
-  const TRK_SUB = 0.1875, TRK_CAP = 0.15;
+  /* Type matches the guide page's own specimen CSS (.s-header/.s-subhead/.s-body/.s-callout):
+     web substitutes need adjusted values - subheads 0.05em at 600 (Barlow Condensed is wider than
+     Alternate Gothic), headers serif 600, body serif 500, callouts sans 300 at 0.15em. */
+  const TRK_SUB = 0.05, TRK_CAP = 0.15;
   const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const FAMILIES = [
@@ -515,13 +517,13 @@ function showToast(msg) {
     if (cur) lines.push(cur);
     const lh = size * 1.5;
     const ts = lines.slice(0, 3).map((ln, i) => '<tspan x="' + x + '" dy="' + (i === 0 ? 0 : lh) + '">' + esc(ln) + '</tspan>').join('');
-    return '<text x="' + x + '" y="' + y + '" text-anchor="' + anchor + '" font-family="' + SERIF + '" font-size="' + size + '" font-weight="300" fill="' + fill + '" fill-opacity="0.92">' + ts + '</text>';
+    return '<text x="' + x + '" y="' + y + '" text-anchor="' + anchor + '" font-family="' + SERIF + '" font-size="' + size + '" font-weight="500" fill="' + fill + '" fill-opacity="0.92">' + ts + '</text>';
   }
   function statTrio(c, fam, y) {
     const vals = [c.abv, c.ibu, c.date];
     const xs = [W * 0.28, W * 0.5, W * 0.72];
     let s = '';
-    xs.forEach((x, i) => { if (vals[i]) s += '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 64*KX + '" letter-spacing="' + 64*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(vals[i]) + '</text>'; });
+    xs.forEach((x, i) => { if (vals[i]) s += '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 64*KX + '" letter-spacing="' + 64*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(vals[i]) + '</text>'; });
     s += '<line x1="' + (W * 0.39) + '" y1="' + (y - 50*KY) + '" x2="' + (W * 0.39) + '" y2="' + (y + 8*KY) + '" stroke="' + fam.ink + '" stroke-opacity="0.32"/>';
     s += '<line x1="' + (W * 0.61) + '" y1="' + (y - 50*KY) + '" x2="' + (W * 0.61) + '" y2="' + (y + 8*KY) + '" stroke="' + fam.ink + '" stroke-opacity="0.32"/>';
     return s;
@@ -549,8 +551,8 @@ function showToast(msg) {
     /* fallback: original gradient placeholder, unchanged */
     return '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + fam.ink + '" stop-opacity="0.92"/><stop offset="1" stop-color="' + fam.accent + '" stop-opacity="0.82"/></linearGradient></defs>' +
       '<rect x="' + r.x + '" y="' + r.y + '" width="' + r.w + '" height="' + r.h + '" fill="url(#' + id + ')"/>' +
-      '<text x="' + (r.x + r.w / 2) + '" y="' + (r.y + r.h / 2) + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 62*KX + '" letter-spacing="' + 62*KX*TRK_SUB + '" fill="' + fam.bg + '" fill-opacity="0.92">HERO IMAGE</text>' +
-      '<text x="' + (r.x + r.w / 2) + '" y="' + (r.y + r.h / 2 + 66*KY) + '" text-anchor="middle" font-family="' + SANS + '" font-size="' + 30*KX + '" letter-spacing="' + 30*KX*TRK_CAP + '" fill="' + fam.bg + '" fill-opacity="0.72">CAN RENDER OR LIFESTYLE PHOTO</text>';
+      '<text x="' + (r.x + r.w / 2) + '" y="' + (r.y + r.h / 2) + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 62*KX + '" letter-spacing="' + 62*KX*TRK_SUB + '" fill="' + fam.bg + '" fill-opacity="0.92">HERO IMAGE</text>' +
+      '<text x="' + (r.x + r.w / 2) + '" y="' + (r.y + r.h / 2 + 66*KY) + '" text-anchor="middle" font-family="' + SANS + '" font-weight="300" font-size="' + 30*KX + '" letter-spacing="' + 30*KX*TRK_CAP + '" fill="' + fam.bg + '" fill-opacity="0.72">CAN RENDER OR LIFESTYLE PHOTO</text>';
   }
   function heroBehind(img, fam, seed, mode) {
     const op = 0.10;
@@ -577,28 +579,28 @@ function showToast(msg) {
       let s = heroBehind(card.img, fam, card.seed);
       s += placeAsset({ key:'lockup', cx: W/2, y: 180*KY, w: 500*KX, color: fam.ink });
       const fs = nameSize(c.beer) * KX;
-      s += '<text x="' + (W/2) + '" y="' + 1150*KY + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" font-weight="400" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
-      if (c.style) s += '<text x="' + (W/2) + '" y="' + 1285*KY + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 86*KX + '" letter-spacing="' + 86*KX*TRK_SUB + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
+      s += '<text x="' + (W/2) + '" y="' + 1150*KY + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" font-weight="600" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
+      if (c.style) s += '<text x="' + (W/2) + '" y="' + 1285*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 86*KX + '" letter-spacing="' + 86*KX*TRK_SUB + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
       s += tagline(c.tagline, W/2, 1480*KY, 62*KX, fam.ink, 'middle');
       s += '<line x1="' + M + '" y1="' + 2000*KY + '" x2="' + (W-M) + '" y2="' + 2000*KY + '" stroke="' + fam.ink + '" stroke-opacity="0.24" stroke-width="2"/>';
       s += statTrio(c, fam, 2120*KY);
-      if (c.cta) s += '<text x="' + (W/2) + '" y="' + 2295*KY + '" text-anchor="middle" font-family="' + SANS + '" font-size="' + 38*KX + '" letter-spacing="' + 38*KX*TRK_CAP + '" fill="' + fam.ink + '" fill-opacity="0.8">' + up(c.cta) + '</text>';
+      if (c.cta) s += '<text x="' + (W/2) + '" y="' + 2295*KY + '" text-anchor="middle" font-family="' + SANS + '" font-weight="300" font-size="' + 38*KX + '" letter-spacing="' + 38*KX*TRK_CAP + '" fill="' + fam.ink + '" fill-opacity="0.8">' + up(c.cta) + '</text>';
       return s;
     },
     anchored: function (c, fam, card) {
       const HH = 250*KY, split = 1500*KY;
       let s = heroBlock(card.img, fam, card.seed, { x: 0, y: HH, w: W, h: split - HH }, card);
       s += placeAsset({ key:'wordmark', x: M, y: 96*KY, w: 470*KX, color: fam.ink });
-      if (c.date) s += '<text x="' + (W-M) + '" y="' + 172*KY + '" text-anchor="end" font-family="' + COND + '" font-size="' + 52*KX + '" letter-spacing="' + 52*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(c.date) + '</text>';
+      if (c.date) s += '<text x="' + (W-M) + '" y="' + 172*KY + '" text-anchor="end" font-family="' + COND + '" font-weight="600" font-size="' + 52*KX + '" letter-spacing="' + 52*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(c.date) + '</text>';
       s += '<line x1="' + M + '" y1="' + (HH - 42*KY) + '" x2="' + (W-M) + '" y2="' + (HH - 42*KY) + '" stroke="' + fam.ink + '" stroke-opacity="0.22" stroke-width="2"/>';
       s += '<line x1="0" y1="' + split + '" x2="' + W + '" y2="' + split + '" stroke="' + fam.ink + '" stroke-opacity="0.2" stroke-width="2"/>';
-      if (c.style) s += '<text x="' + M + '" y="' + (split + 120*KY) + '" font-family="' + COND + '" font-size="' + 78*KX + '" letter-spacing="' + 78*KX*TRK_SUB + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
+      if (c.style) s += '<text x="' + M + '" y="' + (split + 120*KY) + '" font-family="' + COND + '" font-weight="600" font-size="' + 78*KX + '" letter-spacing="' + 78*KX*TRK_SUB + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
       const fs = nameSize(c.beer) * KX;
-      s += '<text x="' + M + '" y="' + (split + 120*KY + fs*0.86) + '" font-family="' + SERIF + '" font-size="' + fs + '" font-weight="400" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
+      s += '<text x="' + M + '" y="' + (split + 120*KY + fs*0.86) + '" font-family="' + SERIF + '" font-size="' + fs + '" font-weight="600" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
       s += tagline(c.tagline, M, split + 120*KY + fs*0.86 + 110*KY, 54*KX, fam.ink, 'start');
-      if (c.abv || c.ibu) s += '<text x="' + M + '" y="' + (H - 130*KY) + '" font-family="' + COND + '" font-size="' + 58*KX + '" letter-spacing="' + 58*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up([c.abv, c.ibu].filter(Boolean).join('   ·   ')) + '</text>';
-      if (c.avail) s += '<text x="' + (W-M) + '" y="' + (H - 130*KY) + '" text-anchor="end" font-family="' + SANS + '" font-size="' + 38*KX + '" letter-spacing="' + 38*KX*TRK_CAP + '" fill="' + fam.ink + '" fill-opacity="0.85">' + up(c.avail) + '</text>';
-      if (c.cta) s += '<text x="' + M + '" y="' + (H - 72*KY) + '" font-family="' + SANS + '" font-size="' + 34*KX + '" letter-spacing="' + 34*KX*TRK_CAP + '" fill="' + fam.ink + '" fill-opacity="0.68">' + up(c.cta) + '</text>';
+      if (c.abv || c.ibu) s += '<text x="' + M + '" y="' + (H - 130*KY) + '" font-family="' + COND + '" font-weight="600" font-size="' + 58*KX + '" letter-spacing="' + 58*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up([c.abv, c.ibu].filter(Boolean).join('   ·   ')) + '</text>';
+      if (c.avail) s += '<text x="' + (W-M) + '" y="' + (H - 130*KY) + '" text-anchor="end" font-family="' + SANS + '" font-weight="300" font-size="' + 38*KX + '" letter-spacing="' + 38*KX*TRK_CAP + '" fill="' + fam.ink + '" fill-opacity="0.85">' + up(c.avail) + '</text>';
+      if (c.cta) s += '<text x="' + M + '" y="' + (H - 72*KY) + '" font-family="' + SANS + '" font-weight="300" font-size="' + 34*KX + '" letter-spacing="' + 34*KX*TRK_CAP + '" fill="' + fam.ink + '" fill-opacity="0.68">' + up(c.cta) + '</text>';
       return s;
     },
     framed: function (c, fam, card) {
@@ -606,21 +608,21 @@ function showToast(msg) {
       let s = heroBehind(card.img, fam, card.seed);
       s += '<rect x="' + fm + '" y="' + fm + '" width="' + (W - 2*fm) + '" height="' + (H - 2*fm) + '" fill="none" stroke="' + fam.ink + '" stroke-width="4"/>';
       s += placeAsset({ key:'wordmark', cx: W/2, y: fm + 80*KY, w: 430*KX, color: fam.ink });
-      s += '<text x="' + (W/2) + '" y="' + (fm + 300*KY) + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 52*KX + '" letter-spacing="' + 52*KX*TRK_SUB + '" fill="' + fam.accent + '">NEW RELEASE</text>';
+      s += '<text x="' + (W/2) + '" y="' + (fm + 300*KY) + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 52*KX + '" letter-spacing="' + 52*KX*TRK_SUB + '" fill="' + fam.accent + '">NEW RELEASE</text>';
       const fs = nameSize(c.beer) * KX;
-      s += '<text x="' + (W/2) + '" y="' + 1090*KY + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" font-weight="400" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
-      if (c.style) s += '<text x="' + (W/2) + '" y="' + 1215*KY + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 74*KX + '" letter-spacing="' + 74*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(c.style) + '</text>';
+      s += '<text x="' + (W/2) + '" y="' + 1090*KY + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" font-weight="600" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
+      if (c.style) s += '<text x="' + (W/2) + '" y="' + 1215*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 74*KX + '" letter-spacing="' + 74*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(c.style) + '</text>';
       s += tagline(c.tagline, W/2, 1420*KY, 58*KX, fam.ink, 'middle');
       s += placeAsset({ key:'crest', cx: W/2, y: 1640*KY, w: 290*KX, color: fam.ink });
       const line = [c.abv, c.ibu, c.date].filter(Boolean).join('    ·    ');
-      if (line) s += '<text x="' + (W/2) + '" y="' + (H - fm - 70*KY) + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 54*KX + '" letter-spacing="' + 54*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(line) + '</text>';
+      if (line) s += '<text x="' + (W/2) + '" y="' + (H - fm - 70*KY) + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 54*KX + '" letter-spacing="' + 54*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(line) + '</text>';
       return s;
     },
     feature: function (c, fam, card) {
       let s = '';
       if (A.laurel) s += patternCover({ x: 0, y: 0, w: W, h: H }, fam, 0.08);
       s += placeAsset({ key: 'wordmark', cx: W/2, y: 150*KY, w: 520*KX, color: fam.ink });
-      if (c.style) s += '<text x="' + (W/2) + '" y="' + 330*KY + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 56*KX + '" letter-spacing="' + 56*KX*TRK_SUB + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
+      if (c.style) s += '<text x="' + (W/2) + '" y="' + 330*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 56*KX + '" letter-spacing="' + 56*KX*TRK_SUB + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
       if (PHOTOS.length) {
         const p = PHOTOS[(card.ph || 0) % PHOTOS.length];
         s += '<image x="' + (W/2 - 520*KX) + '" y="' + 430*KY + '" width="' + 1040*KX + '" height="' + 1200*KY + '" href="assets/photos/' + esc(p.file) + '" preserveAspectRatio="xMidYMid meet"/>';
@@ -628,10 +630,10 @@ function showToast(msg) {
         s += placeAsset({ key: 'crest', cx: W/2, y: 500*KY, w: 900*KX, color: fam.accent, opacity: 0.9 });
       }
       const fs = nameSize(c.beer) * KX;
-      s += '<text x="' + (W/2) + '" y="' + 1860*KY + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" font-weight="400" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
+      s += '<text x="' + (W/2) + '" y="' + 1860*KY + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" font-weight="600" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
       const line = [c.date, c.avail].filter(Boolean).join('   ·   ');
-      if (line) s += '<text x="' + (W/2) + '" y="' + 2010*KY + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 66*KX + '" letter-spacing="' + 66*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(line) + '</text>';
-      if (c.cta) s += '<text x="' + (W/2) + '" y="' + 2290*KY + '" text-anchor="middle" font-family="' + SANS + '" font-size="' + 36*KX + '" letter-spacing="' + 36*KX*TRK_CAP + '" fill="' + fam.ink + '" fill-opacity="0.75">' + up(c.cta) + '</text>';
+      if (line) s += '<text x="' + (W/2) + '" y="' + 2010*KY + '" text-anchor="middle" font-family="' + COND + '" font-weight="600" font-size="' + 66*KX + '" letter-spacing="' + 66*KX*TRK_SUB + '" fill="' + fam.ink + '">' + up(line) + '</text>';
+      if (c.cta) s += '<text x="' + (W/2) + '" y="' + 2290*KY + '" text-anchor="middle" font-family="' + SANS + '" font-weight="300" font-size="' + 36*KX + '" letter-spacing="' + 36*KX*TRK_CAP + '" fill="' + fam.ink + '" fill-opacity="0.75">' + up(c.cta) + '</text>';
       return s;
     }
   };
