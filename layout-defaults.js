@@ -45,15 +45,16 @@ window.PRYES_LAYOUT_DEFAULTS = {
   framed: {
     label: 'Framed',
     elements: {
+      /* Tuned by Ben in concept-editor, 2026-07-31: name leads at the top, wordmark closes the foot */
       frame:    { kind: 'frame', x: 96, y: 96, stroke: 4 },
       hero:     { kind: 'hero', cx: 900, y: 720, w: 1450 },
-      wordmark: { kind: 'asset', asset: 'wordmark', cx: 900, y: 156, w: 860 },
-      eyebrow:  { kind: 'sub', x: 900, y: 536, anchor: 'middle', size: 66, track: 0.05 },
-      name:     { kind: 'name', x: 900, y: 1090, anchor: 'middle', scale: 1, track: 0 },
-      style:    { kind: 'sub', x: 900, y: 1215, anchor: 'middle', size: 92, track: 0.05 },
-      body:     { kind: 'body', x: 900, y: 1420, anchor: 'middle', size: 58, lh: 1.5 },
-      crest:    { kind: 'asset', asset: 'crest', cx: 900, y: 1640, w: 290 },
-      statline: { kind: 'sub', x: 900, y: 2234, anchor: 'middle', size: 54, track: 0.05 }
+      wordmark: { kind: 'asset', asset: 'wordmark', cx: 910, y: 1979, w: 860 },
+      eyebrow:  { kind: 'sub', x: 893, y: 1842, anchor: 'middle', size: 66, track: 0.05 },
+      name:     { kind: 'name', x: 895, y: 550, anchor: 'middle', scale: 1.28, track: 0 },
+      style:    { kind: 'sub', x: 908, y: 1494, anchor: 'middle', size: 137, track: 0.05 },
+      body:     { kind: 'body', x: 921, y: 1590, anchor: 'middle', size: 67, lh: 1.5 },
+      crest:    { kind: 'asset', asset: 'crest', cx: 893, y: 1054, w: 335 },
+      statline: { kind: 'sub', x: 907, y: 1765, anchor: 'middle', size: 54, track: 0.05 }
     }
   },
   feature: {

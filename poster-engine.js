@@ -111,9 +111,16 @@ window.PryesPoster = (function () {
     return placeAsset(o);
   }
   function nameEl(e, txt, fill) {
-    const fs = nameSize(txt) * (e.scale || 1) * KX;
+    const lines = String(txt || '').split(/\r?\n/).filter(l => l.trim().length);
+    /* auto-size keys off the longest line so multi-line headlines stay big */
+    const longest = lines.length ? lines.reduce((a, b) => (b.length > a.length ? b : a)) : (txt || '');
+    const fs = nameSize(longest) * (e.scale || 1) * KX;
     const ls = fs * (e.track || 0);
-    return '<text x="' + e.x * KX + '" y="' + e.y * KY + '" text-anchor="' + (e.anchor || 'middle') + '" font-family="' + SERIF + '" font-size="' + fs + '"' + (ls ? ' letter-spacing="' + ls + '"' : '') + ' font-weight="600" fill="' + fill + '">' + esc(txt) + '</text>';
+    const open = '<text x="' + e.x * KX + '" y="' + e.y * KY + '" text-anchor="' + (e.anchor || 'middle') + '" font-family="' + SERIF + '" font-size="' + fs + '"' + (ls ? ' letter-spacing="' + ls + '"' : '') + ' font-weight="600" fill="' + fill + '">';
+    if (lines.length <= 1) return open + esc(txt) + '</text>';
+    /* guide: headers lead at 100% */
+    const lh = fs * (e.lh != null ? e.lh : 1.0);
+    return open + lines.map((ln, i) => '<tspan x="' + e.x * KX + '" dy="' + (i === 0 ? 0 : lh) + '">' + esc(ln) + '</tspan>').join('') + '</text>';
   }
   function subEl(e, txt, fill) {
     const fs = e.size * KX;
