@@ -55,6 +55,17 @@ Spec sheet block 2 - the recipe: layout name, color family with exact hexes, pri
 
 - ZIP built in-browser with JSZip (CDN). If JSZip fails to load, fall back to downloading the SVG alone.
 
+## 4. Featured can layout (added 2026-07-31 from Ben's references)
+
+Ben supplied the Minna poster references (State Fair poster; "Pragmatic Pils Available Now" feature poster). Beer-release concepts must be able to ground in a featured beer can, not just background imagery.
+
+| Piece | Detail |
+|---|---|
+| New layout | "Featured can", fourth entry in the Layout reel |
+| Composition | Wordmark top, style line under it, can render large and centered (contain-fit, never cropped) over a low-opacity laurel pattern, soft ground shadow, beer name + availability line below, CTA at the foot |
+| Photo source | Uses the photo library (card's photo index); falls back to the crest emblem when no photos exist |
+| Export | Package embeds the can photo for this layout just like the photo well |
+
 ## Out of scope
 - The grayed-out occasions (Taproom Event, Account/Promo, Announcement, Business Cards) stay "soon"
 - No backend, no accounts; password gate stays as is

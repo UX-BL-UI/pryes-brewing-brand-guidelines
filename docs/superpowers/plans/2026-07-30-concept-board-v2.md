@@ -525,7 +525,18 @@ git commit -m "Concept board: concept package ZIP export with spec sheet"
 
 - [ ] **Step 2: Fix anything off, round 2.** Apply fixes, re-screenshot, re-read. Minimum two rounds total per the project rules, more until no visible differences from intent remain.
 
-- [ ] **Step 3: Export regression.** One 11×17 package and one 18×24 package, run the Task 5 Step 4 checks on both.
+- [ ] **Step 3: Export regression, anchored to the real sales request** (Ben, 2026-07-31; BOTM = Beer of the Month). Scenario: content fields Beer name `Main Squeeze`, Style `Lemon-Lime Blonde Ale`; a card on the **Featured can** layout showing the Main Squeeze can; spotlight fields Brand `Custom`, Quantity `4`, Orientation `Portrait`, Laminate `No`, Message `Main Squeeze Now Available on Draft`. Export at 11×17 and verify the spec sheet reproduces the request block exactly:
+
+```
+Brand: Custom
+Sign Type: Standard BOTM Poster 11x17
+Quantity: 4
+Orientation: Portrait
+Laminate: No
+Message: Main Squeeze Now Available on Draft
+```
+
+ZIP name `pryes-main-squeeze-concept.zip`, SVG `pryes-main-squeeze-11x17.svg` with the can embedded as a data URI and the photo file included. Then one 18×24 package as a second regression (Sign Type `Poster 18x24`).
 
 - [ ] **Step 4: Fallback regression.** Manifest renamed away → placeholder gradient, no console errors → manifest restored. `window.JSZip = undefined` → lone SVG download.
 
@@ -537,6 +548,70 @@ git commit -m "Concept board: verification-pass fixes"
 ```
 
 - [ ] **Step 6: Report to Ben** with before/after screenshots, what changed, and the one thing he must do next: drop real photos into `assets/photos/` and replace the sample.
+
+---
+
+### Task 7: Featured can layout (added 2026-07-31; execute BEFORE Task 6)
+
+Ben's design references (Minna poster system): beer-release posters feature the can - wordmark top, can large and centered on a patterned brand background, name and availability below. This task adds that as a fourth layout.
+
+**Files:**
+- Modify: `concept-board.html` (LAYOUTS list, LAY object, opening hand, downloadPackage photo condition)
+
+**Interfaces:**
+- Consumes: `patternCover`, `placeAsset`, `nameSize`, `tagline` helpers; `PHOTOS`, `card.ph`, KX/KY scaling (Tasks 2-3); `downloadPackage` (Task 5).
+- Produces: layout id `feature` labeled `Featured can`.
+
+- [ ] **Step 1: Register the layout.** `LAYOUTS` becomes:
+
+```js
+const LAYOUTS = [ {id:'stacked',label:'Stacked'}, {id:'anchored',label:'Anchored'}, {id:'framed',label:'Framed'}, {id:'feature',label:'Featured can'} ];
+```
+
+- [ ] **Step 2: Add `LAY.feature`** (after `framed` in the LAY object):
+
+```js
+feature: function (c, fam, card) {
+  let s = '';
+  if (A.laurel) s += patternCover({ x: 0, y: 0, w: W, h: H }, fam, 0.08);
+  s += placeAsset({ key: 'wordmark', cx: W/2, y: 150*KY, w: 520*KX, color: fam.ink });
+  if (c.style) s += '<text x="' + (W/2) + '" y="' + 330*KY + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 56*KX + '" letter-spacing="' + 11*KX + '" fill="' + fam.accent + '">' + up(c.style) + '</text>';
+  if (PHOTOS.length) {
+    const p = PHOTOS[(card.ph || 0) % PHOTOS.length];
+    s += '<ellipse cx="' + (W/2) + '" cy="' + 1620*KY + '" rx="' + 330*KX + '" ry="' + 42*KY + '" fill="' + fam.ink + '" fill-opacity="0.16"/>';
+    s += '<image x="' + (W/2 - 520*KX) + '" y="' + 430*KY + '" width="' + 1040*KX + '" height="' + 1200*KY + '" href="assets/photos/' + esc(p.file) + '" preserveAspectRatio="xMidYMid meet"/>';
+  } else {
+    s += placeAsset({ key: 'crest', cx: W/2, y: 500*KY, w: 900*KX, color: fam.accent, opacity: 0.9 });
+  }
+  const fs = nameSize(c.beer) * KX;
+  s += '<text x="' + (W/2) + '" y="' + 1860*KY + '" text-anchor="middle" font-family="' + SERIF + '" font-size="' + fs + '" fill="' + fam.ink + '">' + esc(c.beer) + '</text>';
+  const line = [c.date, c.avail].filter(Boolean).join('   ·   ');
+  if (line) s += '<text x="' + (W/2) + '" y="' + 2010*KY + '" text-anchor="middle" font-family="' + COND + '" font-size="' + 66*KX + '" letter-spacing="' + 8*KX + '" fill="' + fam.ink + '">' + up(line) + '</text>';
+  if (c.cta) s += '<text x="' + (W/2) + '" y="' + 2290*KY + '" text-anchor="middle" font-family="' + SANS + '" font-size="' + 36*KX + '" letter-spacing="' + 5*KX + '" fill="' + fam.ink + '" fill-opacity="0.75">' + up(c.cta) + '</text>';
+  return s;
+}
+```
+
+- [ ] **Step 3: Showcase it in the opening hand.** Concept 1 becomes:
+
+```js
+{ img:'emblem', lay:'feature', fam:'foam', held:false, seed:2, ph:0, lock:{img:false,lay:false,fam:false} },
+```
+
+- [ ] **Step 4: Embed the can on export.** In `downloadPackage`, the photo condition becomes:
+
+```js
+if ((card.img === 'well' || card.lay === 'feature') && PHOTOS.length) photo = await photoData(PHOTOS[card.ph % PHOTOS.length].file);
+```
+
+- [ ] **Step 5: Verify.** Reload localhost (auth line). Concept 1 renders: wordmark top, style line, Main Squeeze can large and un-cropped over the faint laurel pattern with a soft ellipse shadow, name, availability line, CTA. Console error count zero. Check both sizes. Screenshot to "temporary screenshots/screenshot-t7-1.png" (+ -2 for 18×24), read back, analyze. Export the feature-layout concept: ZIP contains the photo file, SVG embeds a data URI, spec sheet Layout row reads "Featured can".
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add concept-board.html
+git commit -m "Concept board: featured can layout grounded in the Minna poster references"
+```
 
 ---
 
