@@ -446,9 +446,12 @@ function showToast(msg) {
   }
   applySize();
   /* Print faces named first so Adobe picks them up; web preview uses the sanctioned substitutes. */
-  const SERIF = "'Superclarendon','Bitter',Georgia,serif";
-  const COND  = "'Alternate Gothic No.2 D','Barlow Condensed','Barlow Semi Condensed',sans-serif";
-  const SANS  = "'Gotham','Poppins',system-ui,sans-serif";
+  /* Preview uses the guide's web faces ONLY - macOS ships Superclarendon, so naming print
+     faces here would make Mac previews render heavier/wider than the guide's specimens.
+     Exports swap in the print faces via toPrintFonts(). */
+  const SERIF = "'Bitter',Georgia,serif";
+  const COND  = "'Barlow Condensed','Barlow Semi Condensed',sans-serif";
+  const SANS  = "'Poppins',system-ui,sans-serif";
   /* Type matches the guide page's own specimen CSS (.s-header/.s-subhead/.s-body/.s-callout):
      web substitutes need adjusted values - subheads 0.05em at 600 (Barlow Condensed is wider than
      Alternate Gothic), headers serif 600, body serif 500, callouts sans 300 at 0.15em. */
@@ -787,6 +790,17 @@ function showToast(msg) {
       '<h2>Request</h2><table>' + req.map(tr).join('') + '</table>' +
       '<h2>Concept recipe</h2><table>' + recipe.map(tr).join('') + '</table></body></html>';
   }
+  /* Export translation: name the print faces first so Adobe connects them, and restore the
+     print-spec weights (Superclarendon Regular headers, Light body) that the web preview
+     renders as Bitter 600/500. */
+  function toPrintFonts(svg) {
+    return svg
+      .split("'Bitter',Georgia,serif").join("'Superclarendon','Bitter',Georgia,serif")
+      .split("'Barlow Condensed','Barlow Semi Condensed',sans-serif").join("'Alternate Gothic No.2 D','Barlow Condensed','Barlow Semi Condensed',sans-serif")
+      .split("'Poppins',system-ui,sans-serif").join("'Gotham','Poppins',system-ui,sans-serif")
+      .replace(/(font-family="'Superclarendon'[^"]*"[^>]*font-weight=")600/g, '$1400')
+      .replace(/(font-family="'Superclarendon'[^"]*"[^>]*font-weight=")500/g, '$1300');
+  }
   async function downloadPackage() {
     const card = cards[selected] || cards[0];
     const c = content(), fam = famById(card.fam);
@@ -795,7 +809,7 @@ function showToast(msg) {
     let photo = null;
     if (photoExpected) photo = await photoData(PHOTOS[card.ph % PHOTOS.length].file);
     const photoMissing = photoExpected && !photo;
-    let svg = '<?xml version="1.0" encoding="UTF-8"?>\n' + buildPosterSVG(card, photo && photo.dataUrl);
+    let svg = '<?xml version="1.0" encoding="UTF-8"?>\n' + toPrintFonts(buildPosterSVG(card, photo && photo.dataUrl));
     if (photoMissing) svg = svg.replace(/<image\b[^>]*href="assets\/photos\/[^"]*"[^>]*\/>/, '');
     const svgName = 'pryes-' + slug + '-' + SIZE.slug + '.svg';
     if (window.JSZip) {
