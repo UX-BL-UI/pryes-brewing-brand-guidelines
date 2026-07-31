@@ -270,7 +270,7 @@ window.PryesPosterV2 = (function () {
     const laurels = A.assets[E.laurels.asset || 'laurels'];
     if (laurels) s += wrap('brandfocus.laurels', placeSVG(laurels, { cx: E.laurels.cx * KX, y: E.laurels.y * KY, w: E.laurels.w * KX, color: paint.wreath, opacity: paint.wreathOp }), tag);
     const pm = A.assets[E.pmark.asset || 'pmark'];
-    if (pm) s += wrap('brandfocus.pmark', placeSVG(pm, { cx: E.pmark.cx * KX, y: E.pmark.y * KY, w: E.pmark.w * KX, color: paint.pmark, opacity: paint.pmarkOp }), tag);
+    if (pm && c.showP !== false) s += wrap('brandfocus.pmark', placeSVG(pm, { cx: E.pmark.cx * KX, y: E.pmark.y * KY, w: E.pmark.w * KX, color: paint.pmark, opacity: paint.pmarkOp }), tag);
     const mark = A.assets[E.wordmark.asset || 'wordmarktag'];
     if (mark) s += wrap('brandfocus.wordmark', placeSVG(mark, { cx: E.wordmark.cx * KX, y: E.wordmark.y * KY, w: E.wordmark.w * KX, color: paint.ink }), tag);
     s += wrap('brandfocus.headline', condText(E.headline, c.headline, paint.ink, { autosize: true, sizeMul: c.h1Mul, trackAdd: c.h1Track }), tag);

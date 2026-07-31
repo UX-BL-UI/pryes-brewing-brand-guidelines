@@ -308,6 +308,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
         </div>
       </div>
       <div class="cb-field" id="cb-beer-field"><label for="cb-beer-select">Beer</label><select id="cb-beer-select"></select></div>
+      <div class="cb-field" id="cb-showp-field" style="display:none"><label for="cb-showp">P watermark</label><select id="cb-showp"><option value="on" selected>Show</option><option value="off">Hide</option></select></div>
       <div class="cb-field cb-wide"><label for="cb-headline">Headline</label><textarea id="cb-headline" data-k="headline" rows="2" autocomplete="off"></textarea></div>
       <div class="cb-field cb-wide"><label for="cb-subheadline">Subheadline</label><textarea id="cb-subheadline" data-k="subheadline" rows="2" autocomplete="off"></textarea></div>
     </div>
@@ -422,6 +423,7 @@ function showToast(msg) {
     return {
       headline: document.getElementById('cb-headline').value.trim(),
       subheadline: document.getElementById('cb-subheadline').value.trim(),
+      showP: document.getElementById('cb-showp').value !== 'off',
       h1Mul: type.h1Mul, h1Track: type.h1Track, h2Mul: type.h2Mul, h2Track: type.h2Track
     };
   }
@@ -570,7 +572,7 @@ function showToast(msg) {
     const rows = [
       ['Poster type', 'Brand focus · ' + P.SIZE.label + ' portrait'],
       ['Colorway', way.name + ' · field ' + bp.bg + ' · ink ' + bp.ink],
-      ['Marks', 'Pryes Brewing wordmark (' + bp.ink + ') · laurel wreath (' + bp.wreath + ' at ' + Math.round(bp.wreathOp * 100) + '%) · P watermark (' + bp.pmark + ' at ' + Math.round(bp.pmarkOp * 100) + '%)'],
+      ['Marks', 'Pryes Brewing wordmark (' + bp.ink + ') · laurel wreath (' + bp.wreath + ' at ' + Math.round(bp.wreathOp * 100) + '%)' + (c.showP !== false ? ' · P watermark (' + bp.pmark + ' at ' + Math.round(bp.pmarkOp * 100) + '%)' : ' · P watermark off')],
       ['Headline', '"' + c.headline + '" · Alternate Gothic No.2 D · ' + h1fs + ' design units · tracking ' + (E.headline.track + c.h1Track).toFixed(2) + 'em'],
       ['Subheadline', '"' + c.subheadline.replace(/\n/g, ' / ') + '" · Superclarendon · ' + Math.round(E.subheadline.size * c.h2Mul) + ' design units'],
       ['Fonts', 'Alternate Gothic No.2 D / Superclarendon / Gotham - SVG text is live and editable'],
@@ -649,6 +651,7 @@ function showToast(msg) {
 
   let t;
   document.querySelectorAll('#cb-form input, #cb-form textarea').forEach(inp => inp.addEventListener('input', () => { clearTimeout(t); t = setTimeout(posterOnlyRefresh, 130); }));
+  document.getElementById('cb-showp').addEventListener('change', posterOnlyRefresh);
 
   /* ---------- type controls ---------- */
   const TYPE_CONTROLS = [
@@ -685,6 +688,7 @@ function showToast(msg) {
     cards = cardsByConcept[concept];
     conceptBox.querySelectorAll('[data-concept]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
     document.getElementById('cb-beer-field').style.display = concept === 'brandfocus' ? 'none' : '';
+    document.getElementById('cb-showp-field').style.display = concept === 'brandfocus' ? '' : 'none';
     document.getElementById('cb-headline').value = contentByConcept[concept].headline;
     document.getElementById('cb-subheadline').value = contentByConcept[concept].subheadline;
     selected = -1; spot.classList.remove('is-open');

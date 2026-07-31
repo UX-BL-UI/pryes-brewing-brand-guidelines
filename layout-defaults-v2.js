@@ -57,9 +57,9 @@ window.PRYES_LAYOUT_DEFAULTS_V2 = {
          stacked wordmark, laurel wreath + P watermark behind the
          condensed headline, serif line at the foot. Colors come
          from the brand colorways, not here. */
-      wordmark:    { kind: 'asset', asset: 'wordmarktag', cx: 900, y: 170, w: 950 },
-      laurels:     { kind: 'asset', asset: 'laurels', cx: 900, y: 560, w: 1576 },
-      pmark:       { kind: 'asset', asset: 'pmark', cx: 900, y: 861, w: 640 },
+      wordmark:    { kind: 'asset', asset: 'wordmarktag', cx: 900, y: 170, w: 963 },
+      laurels:     { kind: 'asset', asset: 'laurels', cx: 900, y: 568, w: 1624 },
+      pmark:       { kind: 'asset', asset: 'pmark', cx: 905, y: 831, w: 751 },
       headline:    { kind: 'headline', x: 900, y: 1065, anchor: 'middle', size: 283, track: 0.01, lh: 0.93 },
       subheadline: { kind: 'serif', x: 898, y: 2043, anchor: 'middle', size: 206, lh: 0.92 }
     }
