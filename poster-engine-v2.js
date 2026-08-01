@@ -282,14 +282,30 @@ window.PryesPosterV2 = (function () {
       }
     } else {
       /* previews paint with an SVG pattern: the browser rasterizes the
-         tile once and repeats it as paint, so laying out thousands of
-         art copies per poster is avoided. overflow visible keeps the
-         tiles interleaving past their stride, like the tile grid. */
-      const symId = sharedPatternId(pat, color);
-      const fillId = 'pryespatfill' + (++patternUid);
-      s = '<pattern id="' + fillId + '" patternUnits="userSpaceOnUse" x="' + x0 + '" y="' + y0 + '" width="' + strideX + '" height="' + strideY + '" overflow="visible">' +
-          '<use href="#' + symId + '" width="' + tw + '" height="' + th + '"/></pattern>' +
-          '<rect x="' + (-pad) + '" y="' + (-pad) + '" width="' + regionW + '" height="' + regionH + '" fill="url(#' + fillId + ')"/>';
+         cell once and repeats it as paint, so laying out thousands of
+         art copies per poster is avoided. Tiles overlap their stride to
+         interleave, and repeated cells clip at their own edges - so each
+         cell draws its 3x3 neighborhood, arriving pre-interleaved and
+         seamless. The art is one flat color, so overlap order is invisible. */
+      /* the pattern def itself is shared and persistent too, keyed by
+         art + color + geometry, so re-renders reuse the browser's
+         cached raster instead of building a fresh one per poster */
+      const defKey = 'def|' + (pat.key || pat.vb) + '|' + color + '|' + cols + '|' + ovX.toFixed(2) + '|' + ovY.toFixed(2) + '|' + W + 'x' + H;
+      if (!patternDefs.seen[defKey]) {
+        const symId = sharedPatternId(pat, color);
+        const fillId = 'pryespatfill' + (++patternUid);
+        let cell = '';
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            cell += '<use href="#' + symId + '" x="' + (dx * strideX) + '" y="' + (dy * strideY) + '" width="' + tw + '" height="' + th + '"/>';
+          }
+        }
+        const holder = document.createElement('div');
+        holder.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0"><defs><pattern id="' + fillId + '" patternUnits="userSpaceOnUse" x="' + x0 + '" y="' + y0 + '" width="' + strideX + '" height="' + strideY + '">' + cell + '</pattern></defs></svg>';
+        patternDefs.host.appendChild(holder.firstChild);
+        patternDefs.seen[defKey] = fillId;
+      }
+      s = '<rect x="' + (-pad) + '" y="' + (-pad) + '" width="' + regionW + '" height="' + regionH + '" fill="url(#' + patternDefs.seen[defKey] + ')"/>';
     }
     return angle ? '<g transform="rotate(' + angle + ' ' + (W / 2) + ' ' + (H / 2) + ')">' + s + '</g>' : s;
   }
