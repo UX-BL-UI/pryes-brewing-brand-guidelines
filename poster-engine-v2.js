@@ -69,9 +69,9 @@ window.PryesPosterV2 = (function () {
      2026-07-31: Loose matches the swatch, Tight is the old Medium,
      Medium sits between. */
   const DENSITIES = [
-    { id:'loose',  name:'Loose',  cols: 1.25 },
-    { id:'medium', name:'Medium', cols: 1.6 },
-    { id:'tight',  name:'Tight',  cols: 2 }
+    { id:'loose',  name:'Loose',  cols: 0.85 },
+    { id:'medium', name:'Medium', cols: 1.35 },
+    { id:'tight',  name:'Tight',  cols: 1.8 }
   ];
 
   /* All BEERFOAM masters - recolored per colorway at render time */
