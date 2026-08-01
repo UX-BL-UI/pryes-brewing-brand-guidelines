@@ -65,7 +65,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 .nav-brand a { text-decoration: none; display: block; }
 .nav-brand img { width: 118px; height: auto; }
 .nav-brand .eyebrow {
-  font-family: var(--condensed); text-transform: uppercase; font-weight: 500;
+  font-family: var(--condensed); text-transform: uppercase; font-weight: 600; line-height: 0.85;
   color: var(--cream-soft); font-size: 0.62rem; letter-spacing: 0.32em; margin-top: 12px;
 }
 .nav-scroll { padding: 14px 0 8px; flex: 1; }
@@ -80,24 +80,25 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
   font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.09em;
   font-weight: 500; font-size: 0.98rem;
 }
+.nav-link .num { font-family: var(--condensed); font-size: 0.72rem; letter-spacing: 0.05em; opacity: 0.7; min-width: 18px; }
+button.nav-link { width: 100%; background: transparent; border: 0; border-left: 2px solid transparent; cursor: pointer; text-align: left; }
+.nav-link[aria-pressed="true"] { color: var(--beer-foam); border-left-color: var(--beige); background: rgba(255,241,228,0.05); }
+.nav-link[disabled] { opacity: 0.45; cursor: not-allowed; }
+.nav-link[disabled] .label::after { content: " · soon"; font-weight: 400; letter-spacing: 0.02em; text-transform: none; opacity: 0.8; }
+.nav-back {
+  display: flex; align-items: center; gap: 10px; padding: 10px 26px; margin-bottom: 8px;
+  text-decoration: none; color: var(--cream-soft); border-left: 2px solid transparent;
+  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.09em; font-weight: 500; font-size: 0.98rem;
+  transition: color .18s, background .18s;
+}
+.nav-back:hover { color: var(--beer-foam); background: rgba(255,241,228,0.04); }
+.nav-back svg { width: 15px; height: 15px; flex: none; }
 .nav-foot {
   padding: 18px 26px 26px; border-top: 1px solid rgba(255,241,228,0.1);
   font-size: 0.7rem; color: var(--cream-soft); line-height: 1.5;
 }
 
-.tool-wrap { max-width: 1120px; margin: 0 auto; padding: 30px clamp(18px, 4vw, 40px) calc(var(--footbar-h) + 40px); }
-
-/* ---------- sorting pills ---------- */
-.cb-occasions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 22px; }
-.cb-occasion {
-  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;
-  font-size: 0.9rem; padding: 9px 18px; border: 1.5px solid var(--line); border-radius: 999px;
-  background: transparent; color: var(--ink-soft); cursor: pointer;
-  transition: background .16s, color .16s, border-color .16s;
-}
-.cb-occasion[aria-pressed="true"] { background: var(--burgundy); color: var(--beer-foam); border-color: var(--burgundy); }
-.cb-occasion[disabled] { opacity: 0.4; cursor: not-allowed; }
-.cb-occasion[disabled]::after { content: " · soon"; font-weight: 400; letter-spacing: 0; text-transform: none; opacity: 0.8; }
+.tool-wrap { max-width: 1120px; margin: 0; padding: 30px clamp(18px, 4vw, 40px) calc(var(--footbar-h) + 40px); }
 
 /* ---------- board ---------- */
 .cb-board { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
@@ -304,9 +305,19 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
     </a>
   </div>
   <div class="nav-scroll">
-    <a class="nav-link" href="pryes-brand-guidelines.html"><span class="label">Brand guide</span></a>
-    <a class="nav-link active" href="concept-board.html"><span class="label">Concept board</span></a>
-    <a class="nav-link" href="concept-editor.html"><span class="label">Concept editor</span></a>
+    <a class="nav-back" href="pryes-brand-guidelines.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      Brand guide
+    </a>
+    <div id="cb-concepts" role="group" aria-label="Poster type">
+      <button class="nav-link" type="button" data-concept="all" aria-pressed="true"><span class="num"></span><span class="label">All</span></button>
+      <button class="nav-link" type="button" data-concept="beerfeature" aria-pressed="false"><span class="num">01</span><span class="label">Beer feature</span></button>
+      <button class="nav-link" type="button" data-concept="brandfocus" aria-pressed="false"><span class="num">02</span><span class="label">Brand focus</span></button>
+      <button class="nav-link" type="button" data-concept="cobrand" aria-pressed="false"><span class="num">03</span><span class="label">Co-branded</span></button>
+      <button class="nav-link" type="button" data-concept="photofocus" aria-pressed="false"><span class="num">04</span><span class="label">Photo focus</span></button>
+      <button class="nav-link" type="button" disabled><span class="num">05</span><span class="label">Event</span></button>
+      <button class="nav-link" type="button" disabled><span class="num">06</span><span class="label">Announcement</span></button>
+    </div>
   </div>
   <div class="nav-foot">
     Pryes Brewing Company<br>
@@ -315,16 +326,6 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 </nav>
 
 <main class="tool-wrap">
-  <div class="cb-occasions" role="group" aria-label="Poster type" id="cb-concepts">
-    <button class="cb-occasion" type="button" data-concept="all" aria-pressed="true">All</button>
-    <button class="cb-occasion" type="button" data-concept="beerfeature" aria-pressed="false">Beer feature</button>
-    <button class="cb-occasion" type="button" data-concept="brandfocus" aria-pressed="false">Brand focus</button>
-    <button class="cb-occasion" type="button" data-concept="cobrand" aria-pressed="false">Co-branded</button>
-    <button class="cb-occasion" type="button" data-concept="photofocus" aria-pressed="false">Photo focus</button>
-    <button class="cb-occasion" type="button" disabled>Event</button>
-    <button class="cb-occasion" type="button" disabled>Announcement</button>
-  </div>
-
   <div class="cb-board" id="cb-board">
     <div class="cb-loading">Loading the brand kit…</div>
   </div>
