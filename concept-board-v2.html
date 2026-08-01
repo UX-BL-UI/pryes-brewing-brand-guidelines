@@ -334,6 +334,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
         <div class="cb-h-field" id="cb-showp-field"><label for="cb-showp">P watermark</label><select id="cb-showp"><option value="on" selected>Show</option><option value="off">Hide</option></select></div>
         <div class="cb-h-field cb-h-wide" id="cb-headline-field"><label for="cb-headline">Headline</label><textarea id="cb-headline" rows="2" autocomplete="off"></textarea></div>
         <div class="cb-h-field cb-h-wide" id="cb-subheadline-field"><label for="cb-subheadline">Subheadline</label><textarea id="cb-subheadline" rows="2" autocomplete="off"></textarea></div>
+        <button class="cb-t-reset" type="button" id="cb-text-reset" style="grid-column:1/-1;justify-self:start">Reset text to defaults</button>
       </div>
 
       <div class="cb-type" aria-label="Type controls">
@@ -475,8 +476,9 @@ function showToast(msg) {
   };
   const CONCEPT_ORDER = ['beerfeature', 'brandfocus', 'cobrand', 'photofocus'];
   let view = 'all';
+  /* All = a sampler, one poster per type; a type pill shows its full hand */
   function visible() {
-    return view === 'all' ? CONCEPT_ORDER.flatMap(k => cardsByConcept[k]) : cardsByConcept[view];
+    return view === 'all' ? CONCEPT_ORDER.map(k => cardsByConcept[k][0]) : cardsByConcept[view];
   }
   let selectedCard = null;
 
@@ -778,6 +780,23 @@ function showToast(msg) {
   document.getElementById('cb-showp').addEventListener('change', () => {
     contentByConcept.brandfocus.showP = document.getElementById('cb-showp').value !== 'off';
     posterOnlyRefresh();
+  });
+  /* the shipped words per poster type; beer feature words follow the beer */
+  function defaultWords(concept) {
+    if (concept === 'beerfeature') { const b = P.beerById(beerId); return { headline: b.headline, subheadline: b.subheadline }; }
+    if (concept === 'brandfocus') return { headline: "It's a\nMidwest\nThing", subheadline: 'Available\nNow', showP: true };
+    if (concept === 'cobrand') return { headline: 'See You\nAt the Game', subheadline: '' };
+    return { headline: 'Trust Your Taste', subheadline: '' };
+  }
+  document.getElementById('cb-text-reset').addEventListener('click', () => {
+    if (!selectedCard) return;
+    const concept = selectedCard.concept;
+    contentByConcept[concept] = defaultWords(concept);
+    document.getElementById('cb-headline').value = contentByConcept[concept].headline;
+    document.getElementById('cb-subheadline').value = contentByConcept[concept].subheadline;
+    document.getElementById('cb-showp').value = contentByConcept[concept].showP === false ? 'off' : 'on';
+    posterOnlyRefresh();
+    showToast('Text back to defaults');
   });
   document.querySelectorAll('.cb-size').forEach(btn => btn.addEventListener('click', () => {
     P.setSize(btn.dataset.size);
