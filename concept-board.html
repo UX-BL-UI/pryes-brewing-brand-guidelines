@@ -140,6 +140,17 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 
 .cb-loading { padding: 40px 0; text-align: center; color: var(--ink-soft); font-size: 0.9rem; grid-column: 1 / -1; }
 
+/* ---------- tucked-away editor link ---------- */
+.cb-editor-link { margin-top: 130px; text-align: center; }
+.cb-editor-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.76rem;
+  padding: 8px 16px; border: 1px solid var(--line); border-radius: 999px;
+  color: var(--ink-soft); text-decoration: none; background: transparent;
+  transition: color .16s, border-color .16s;
+}
+.cb-editor-btn:hover { color: var(--burgundy); border-color: var(--burgundy); }
+
 /* ---------- sticky footer ---------- */
 .cb-footbar {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 60; height: var(--footbar-h);
@@ -293,6 +304,10 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 
   <div class="cb-board" id="cb-board">
     <div class="cb-loading">Loading the brand kit…</div>
+  </div>
+
+  <div class="cb-editor-link">
+    <a class="cb-editor-btn" href="concept-editor.html">Concept editor &rarr;</a>
   </div>
 </main>
 
