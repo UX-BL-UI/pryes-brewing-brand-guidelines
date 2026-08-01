@@ -214,20 +214,43 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
 .cb-h-field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
 .cb-h-field.cb-h-wide { grid-column: 1 / -1; }
 .cb-h-field label { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; font-size: 0.7rem; color: var(--beige); }
-.cb-h-field input, .cb-h-field select, .cb-h-field textarea {
+.cb-h-field input, .cb-h-field select, .cb-h-field textarea, .cb-h-field .csel-trigger {
   font-family: var(--sans); font-size: 0.9rem; padding: 8px 10px; color: var(--beer-foam);
   background: rgba(255,241,228,0.08); border: 1px solid rgba(255,241,228,0.3); border-radius: 3px;
 }
-.cb-h-field select {
+.cb-h-field select, .cb-h-field .csel-trigger {
   -webkit-appearance: none; appearance: none;
-  /* the overlay panel is dark, so its open menus render dark to match */
-  color-scheme: dark;
   padding-right: 34px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23EBCFB8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 12px center; background-size: 13px;
 }
+.cb-h-field .csel { display: block; }
+.cb-h-field .csel-trigger { width: 100%; }
 .cb-h-field textarea { resize: vertical; min-height: 40px; }
-.cb-h-field input:focus, .cb-h-field select:focus, .cb-h-field textarea:focus { outline: none; border-color: var(--beige); }
+.cb-h-field input:focus, .cb-h-field select:focus, .cb-h-field textarea:focus, .cb-h-field .csel-trigger:focus { outline: none; border-color: var(--beige); }
+
+/* ---------- custom dropdown menus (native popups ignore the brand) ---------- */
+.csel { position: relative; display: inline-block; vertical-align: middle; }
+.csel > select { display: none !important; }
+.csel-trigger { text-align: left; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.csel-menu {
+  position: absolute; z-index: 500; top: calc(100% + 5px); left: 0; min-width: 100%;
+  background: #fff8ef; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(16,16,25,0.22);
+  padding: 5px; max-height: 300px; overflow: auto;
+}
+.csel-menu--up { top: auto; bottom: calc(100% + 5px); }
+.csel-opt {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; text-align: left; border: 0; background: transparent; cursor: pointer;
+  font-family: var(--sans); font-size: 0.85rem; color: var(--ink); white-space: nowrap;
+  padding: 8px 11px; border-radius: 6px;
+}
+.csel-opt:hover { background: rgba(62,15,35,0.07); }
+.csel-opt[aria-selected="true"] { font-weight: 500; }
+.csel-opt .csel-check { width: 14px; height: 14px; opacity: 0; flex: none; color: var(--burgundy); }
+.csel-opt[aria-selected="true"] .csel-check { opacity: 1; }
 .cb-sizes { display: flex; gap: 8px; }
 .cb-size { flex: 1; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; font-size: 0.85rem; padding: 8px 0; border: 1.5px solid rgba(255,241,228,0.3); border-radius: 3px; background: transparent; color: var(--cream-soft); cursor: pointer; }
 .cb-size[aria-pressed="true"] { background: var(--beer-foam); color: var(--burgundy); border-color: var(--beer-foam); }
@@ -757,7 +780,7 @@ function showToast(msg) {
     const slug = (c.headline || (beer ? beer.name : 'brand')).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'concept';
     const artPath = beer ? beer.can : card.concept === 'photofocus' ? P.focusPhotoById(card.photo).file : null;
     const art = artPath ? await fileData(artPath) : null;
-    const opts = card.concept === 'photofocus' ? { photoHref: art && art.dataUrl } : { canHref: art && art.dataUrl };
+    const opts = card.concept === 'photofocus' ? { photoHref: art && art.dataUrl, standalone: true } : { canHref: art && art.dataUrl, standalone: true };
     const svg = '<?xml version="1.0" encoding="UTF-8"?>\n' + toPrintFonts(buildPosterSVG(card, opts));
     const svgName = 'pryes-' + slug + '-' + P.SIZE.slug + '.svg';
     if (window.JSZip) {
@@ -908,6 +931,65 @@ function showToast(msg) {
 
   /* ---------- boot ---------- */
   P.load().then(() => renderBoard());
+})();
+</script>
+<script>
+/* Custom dropdowns: the OS paints native select menus and ignores the
+   brand, so each select gets a styled twin. The real select stays in
+   the DOM (all existing logic keeps working); a button + menu render it. */
+(function () {
+  var CHECK = '<svg class="csel-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+  var proto = HTMLSelectElement.prototype;
+  var valueD = Object.getOwnPropertyDescriptor(proto, 'value');
+  var indexD = Object.getOwnPropertyDescriptor(proto, 'selectedIndex');
+  function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+  function enhance(sel) {
+    if (sel.closest('.csel')) return;
+    var wrap = document.createElement('span'); wrap.className = 'csel';
+    sel.parentNode.insertBefore(wrap, sel); wrap.appendChild(sel);
+    var trig = document.createElement('button');
+    trig.type = 'button'; trig.className = 'csel-trigger';
+    trig.setAttribute('aria-haspopup', 'listbox'); trig.setAttribute('aria-expanded', 'false');
+    var menu = document.createElement('div');
+    menu.className = 'csel-menu'; menu.hidden = true; menu.setAttribute('role', 'listbox');
+    wrap.appendChild(trig); wrap.appendChild(menu);
+    function sync() {
+      var o = sel.options[sel.selectedIndex];
+      trig.textContent = o ? o.textContent : '';
+      menu.innerHTML = Array.prototype.map.call(sel.options, function (op, i) {
+        return '<button type="button" class="csel-opt" role="option" data-i="' + i + '" aria-selected="' + (i === sel.selectedIndex) + '"><span>' + esc(op.textContent) + '</span>' + CHECK + '</button>';
+      }).join('');
+    }
+    function close() { menu.hidden = true; trig.setAttribute('aria-expanded', 'false'); menu.classList.remove('csel-menu--up'); }
+    trig.addEventListener('click', function () {
+      if (!menu.hidden) return close();
+      sync(); menu.hidden = false; trig.setAttribute('aria-expanded', 'true');
+      var r = menu.getBoundingClientRect();
+      if (r.bottom > window.innerHeight - 8) menu.classList.add('csel-menu--up');
+    });
+    menu.addEventListener('click', function (e) {
+      var b = e.target.closest('.csel-opt'); if (!b) return;
+      indexD.set.call(sel, +b.dataset.i); sync(); close();
+      sel.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    document.addEventListener('pointerdown', function (e) { if (!wrap.contains(e.target) && !menu.hidden) close(); });
+    trig.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    sel.addEventListener('change', sync);
+    new MutationObserver(sync).observe(sel, { childList: true, subtree: true, attributes: true });
+    Object.defineProperty(sel, 'value', { get: function () { return valueD.get.call(this); }, set: function (v) { valueD.set.call(this, v); sync(); } });
+    Object.defineProperty(sel, 'selectedIndex', { get: function () { return indexD.get.call(this); }, set: function (v) { indexD.set.call(this, v); sync(); } });
+    sync();
+  }
+  document.querySelectorAll('select').forEach(enhance);
+  new MutationObserver(function (muts) {
+    muts.forEach(function (m) {
+      Array.prototype.forEach.call(m.addedNodes, function (n) {
+        if (n.nodeType !== 1) return;
+        if (n.tagName === 'SELECT') enhance(n);
+        else if (n.querySelectorAll) n.querySelectorAll('select').forEach(enhance);
+      });
+    });
+  }).observe(document.body, { childList: true, subtree: true });
 })();
 </script>
 </body>

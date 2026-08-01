@@ -222,7 +222,31 @@ window.PryesPosterV2 = (function () {
   /* Beer pattern tiled edge-to-edge; density sets the column count.
      Tonal per the guide: pattern renders at full strength in the
      colorway's pattern hex. */
-  function patternField(pat, color, cols, pE) {
+  let patternUid = 0; /* unique symbol ids - several posters share one page */
+  /* Pattern art runs 400KB+ per file; parsing it into every poster made
+     pattern-heavy views slow. For on-page previews the artwork lives once
+     in a persistent hidden holder and every poster references it; exports
+     stay standalone and carry their own copy. */
+  const patternDefs = { host: null, seen: {} };
+  function sharedPatternId(pat, color) {
+    if (!patternDefs.host || !document.body.contains(patternDefs.host)) {
+      patternDefs.host = document.createElement('div');
+      patternDefs.host.setAttribute('aria-hidden', 'true');
+      patternDefs.host.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
+      document.body.appendChild(patternDefs.host);
+      patternDefs.seen = {};
+    }
+    const key = (pat.key || pat.vb) + '|' + color;
+    if (!patternDefs.seen[key]) {
+      const id = 'pryespatshared' + (++patternUid);
+      const holder = document.createElement('div');
+      holder.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0"><symbol id="' + id + '" viewBox="' + pat.vb + '" preserveAspectRatio="xMidYMid slice"><g fill="' + color + '">' + pat.body + '</g></symbol></svg>';
+      patternDefs.host.appendChild(holder.firstChild);
+      patternDefs.seen[key] = id;
+    }
+    return patternDefs.seen[key];
+  }
+  function patternField(pat, color, cols, pE, standalone) {
     if (!pat) return '';
     pE = pE || {};
     const p = pat.vb.split(/\s+/).map(Number);
@@ -245,11 +269,27 @@ window.PryesPosterV2 = (function () {
     /* center the grid so leftover margin splits evenly across edges */
     const x0 = (W - ((nCols - 1) * strideX + tw)) / 2;
     const y0 = (H - ((nRows - 1) * strideY + th)) / 2;
-    let s = '';
-    for (let r = 0; r < nRows; r++) {
-      for (let c = 0; c < nCols; c++) {
-        s += '<svg x="' + (x0 + c * strideX) + '" y="' + (y0 + r * strideY) + '" width="' + tw + '" height="' + th + '" viewBox="' + pat.vb + '" preserveAspectRatio="xMidYMid slice"><g fill="' + color + '">' + pat.body + '</g></svg>';
+    let s;
+    if (standalone || typeof document === 'undefined') {
+      /* exports carry their own copy of the art: define it once,
+         stamp a copy per tile */
+      const pid = 'pryespat' + (++patternUid);
+      s = '<symbol id="' + pid + '" viewBox="' + pat.vb + '" preserveAspectRatio="xMidYMid slice"><g fill="' + color + '">' + pat.body + '</g></symbol>';
+      for (let r = 0; r < nRows; r++) {
+        for (let c = 0; c < nCols; c++) {
+          s += '<use href="#' + pid + '" x="' + (x0 + c * strideX) + '" y="' + (y0 + r * strideY) + '" width="' + tw + '" height="' + th + '"/>';
+        }
       }
+    } else {
+      /* previews paint with an SVG pattern: the browser rasterizes the
+         tile once and repeats it as paint, so laying out thousands of
+         art copies per poster is avoided. overflow visible keeps the
+         tiles interleaving past their stride, like the tile grid. */
+      const symId = sharedPatternId(pat, color);
+      const fillId = 'pryespatfill' + (++patternUid);
+      s = '<pattern id="' + fillId + '" patternUnits="userSpaceOnUse" x="' + x0 + '" y="' + y0 + '" width="' + strideX + '" height="' + strideY + '" overflow="visible">' +
+          '<use href="#' + symId + '" width="' + tw + '" height="' + th + '"/></pattern>' +
+          '<rect x="' + (-pad) + '" y="' + (-pad) + '" width="' + regionW + '" height="' + regionH + '" fill="url(#' + fillId + ')"/>';
     }
     return angle ? '<g transform="rotate(' + angle + ' ' + (W / 2) + ' ' + (H / 2) + ')">' + s + '</g>' : s;
   }
@@ -408,7 +448,7 @@ window.PryesPosterV2 = (function () {
     const tag = !!opts.tag;
 
     let s = '<rect width="' + W + '" height="' + H + '" fill="' + paint.bg + '"/>';
-    s += wrap('beerfeature.pattern', patternField(A.patterns[beer.id], paint.pattern, density.cols, E.pattern), tag);
+    s += wrap('beerfeature.pattern', patternField(A.patterns[beer.id], paint.pattern, density.cols, E.pattern, opts.standalone), tag);
 
     /* shape + band sit under the can so the can fronts the divider
        notch, exactly as in the reference poster */
@@ -465,7 +505,7 @@ window.PryesPosterV2 = (function () {
   async function load() {
     await Promise.all(Object.keys(ASSET_URLS).map(async k => { A.assets[k] = await loadOne(ASSET_URLS[k]); }));
     A.shapes = await Promise.all(Array.from({ length: SHAPE_COUNT }, (_, i) => loadOne(shapeUrl(i + 1))));
-    await Promise.all(BEERS.map(async b => { A.patterns[b.id] = await loadOne(b.pattern); }));
+    await Promise.all(BEERS.map(async b => { A.patterns[b.id] = await loadOne(b.pattern); if (A.patterns[b.id]) A.patterns[b.id].key = b.id; }));
     await Promise.all(PARTNERS.map(async p => { A.partners[p.id] = await loadOne(p.file); }));
     measureShapes();
   }
