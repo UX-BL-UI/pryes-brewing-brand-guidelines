@@ -34,7 +34,7 @@
   --sans:      'Poppins', system-ui, -apple-system, sans-serif;
   --condensed: 'Barlow Condensed', 'Barlow Semi Condensed', system-ui, sans-serif;
 
-  --topbar-h: 58px;
+  --nav-w: 268px;
   --footbar-h: 72px;
 }
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -42,6 +42,7 @@ html { scroll-behavior: smooth; font-size: 16px; -webkit-text-size-adjust: 100%;
 body {
   font-family: var(--sans); font-weight: 400; color: var(--ink);
   background: var(--beer-foam); line-height: 1.65;
+  padding-left: var(--nav-w);
   -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
 }
 ::selection { background: var(--burgundy); color: var(--beer-foam); }
@@ -50,29 +51,41 @@ a { color: inherit; }
 a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
 
-/* ---------- tool shell ---------- */
-.tool-bar {
-  height: var(--topbar-h);
-  background: var(--burgundy); color: var(--beer-foam);
-  display: flex; align-items: center; gap: 14px;
-  padding: 0 clamp(18px, 4vw, 40px);
-  border-bottom: 1px solid rgba(255,241,228,0.12);
+/* ---------- side nav (same rail as the brand guide) ---------- */
+.nav {
+  position: fixed; top: 0; left: 0; width: var(--nav-w); height: 100vh;
+  background: var(--burgundy); color: var(--beer-foam); z-index: 90;
+  display: flex; flex-direction: column; overflow-y: auto;
+  scrollbar-width: thin; scrollbar-color: rgba(255,241,228,0.25) transparent;
+  border-right: 1px solid rgba(255,241,228,0.08);
 }
-.tool-bar .tb-mark { height: 26px; width: auto; }
-.tool-bar .tb-title { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.14em; font-weight: 600; font-size: 1rem; }
-.tool-bar .tb-badge {
-  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.14em; font-weight: 600;
-  font-size: 0.64rem; padding: 3px 9px; border: 1px solid var(--beige); color: var(--beige); border-radius: 999px;
+.nav::-webkit-scrollbar { width: 6px; }
+.nav::-webkit-scrollbar-thumb { background: rgba(255,241,228,0.2); border-radius: 3px; }
+.nav-brand { padding: 30px 26px 22px; border-bottom: 1px solid rgba(255,241,228,0.1); }
+.nav-brand a { text-decoration: none; display: block; }
+.nav-brand img { width: 118px; height: auto; }
+.nav-brand .eyebrow {
+  font-family: var(--condensed); text-transform: uppercase; font-weight: 500;
+  color: var(--cream-soft); font-size: 0.62rem; letter-spacing: 0.32em; margin-top: 12px;
 }
-.tool-bar .tb-spacer { flex: 1; }
-.tool-bar .tb-back {
-  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.8rem;
-  color: var(--cream-soft); text-decoration: none; display: inline-flex; gap: 8px; align-items: center;
+.nav-scroll { padding: 14px 0 8px; flex: 1; }
+.nav-link {
+  display: flex; align-items: baseline; gap: 12px; padding: 9px 26px;
+  text-decoration: none; color: var(--cream-soft); border-left: 2px solid transparent;
+  transition: color .18s, border-color .18s, background .18s;
 }
-.tool-bar .tb-back:hover { color: var(--beer-foam); }
-.tool-bar .tb-back svg { width: 15px; height: 15px; }
+.nav-link:hover { color: var(--beer-foam); background: rgba(255,241,228,0.04); }
+.nav-link.active { color: var(--beer-foam); border-left-color: var(--beige); background: rgba(255,241,228,0.05); }
+.nav-link .label {
+  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.09em;
+  font-weight: 500; font-size: 0.98rem;
+}
+.nav-foot {
+  padding: 18px 26px 26px; border-top: 1px solid rgba(255,241,228,0.1);
+  font-size: 0.7rem; color: var(--cream-soft); line-height: 1.5;
+}
 
-.tool-wrap { max-width: 1120px; margin: 0 auto; padding: 22px clamp(18px, 4vw, 40px) calc(var(--footbar-h) + 40px); }
+.tool-wrap { max-width: 1120px; margin: 0 auto; padding: 30px clamp(18px, 4vw, 40px) calc(var(--footbar-h) + 40px); }
 
 /* ---------- sorting pills ---------- */
 .cb-occasions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 22px; }
@@ -153,7 +166,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 
 /* ---------- sticky footer ---------- */
 .cb-footbar {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 60; height: var(--footbar-h);
+  position: fixed; bottom: 0; left: var(--nav-w); right: 0; z-index: 60; height: var(--footbar-h);
   background: var(--burgundy); color: var(--beer-foam);
   display: flex; align-items: center; gap: 14px;
   padding: 0 clamp(18px, 4vw, 40px);
@@ -256,12 +269,14 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 .password-error.show { opacity: 1; }
 
 @media (max-width: 940px) {
+  .nav { display: none; }
+  body { padding-left: 0; }
+  .cb-footbar { left: 0; }
   .cb-board { grid-template-columns: 1fr 1fr; }
   .cb-overlay-in { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) {
   .cb-board { grid-template-columns: 1fr; }
-  .tool-bar .tb-title { display: none; }
   .cb-ov-form, .cb-type { grid-template-columns: 1fr; }
 }
 </style>
@@ -280,16 +295,24 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
   </div>
 </div>
 
-<!-- ===================== TOOL BAR ===================== -->
-<div class="tool-bar">
-  <img class="tb-mark" src="assets/logos/svg/BEERFOAM/PRYES-P-WATERMARK-BEERFOAM.svg" alt="Pryes">
-  <span class="tb-title">Concept Board</span>
-  <span class="tb-spacer"></span>
-  <a class="tb-back" href="pryes-brand-guidelines.html#top">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-    Brand guide
-  </a>
-</div>
+<!-- ===================== SIDE NAV ===================== -->
+<nav class="nav">
+  <div class="nav-brand">
+    <a href="pryes-brand-guidelines.html#top">
+      <img src="assets/logos/svg/BEERFOAM/PRYES-WORDMARK-BEERFOAM.svg" alt="Pryes Brewing">
+      <div class="eyebrow">Concept Board</div>
+    </a>
+  </div>
+  <div class="nav-scroll">
+    <a class="nav-link" href="pryes-brand-guidelines.html"><span class="label">Brand guide</span></a>
+    <a class="nav-link active" href="concept-board.html"><span class="label">Concept board</span></a>
+    <a class="nav-link" href="concept-editor.html"><span class="label">Concept editor</span></a>
+  </div>
+  <div class="nav-foot">
+    Pryes Brewing Company<br>
+    1401 West River Road N, Minneapolis
+  </div>
+</nav>
 
 <main class="tool-wrap">
   <div class="cb-occasions" role="group" aria-label="Poster type" id="cb-concepts">

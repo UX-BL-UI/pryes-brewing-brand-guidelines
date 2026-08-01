@@ -16,21 +16,47 @@
   --ink: #3e0f23; --ink-soft: #6b4351; --line: rgba(62,15,35,0.14);
   --serif: 'Bitter','Georgia',serif; --sans: 'Poppins',system-ui,-apple-system,sans-serif;
   --condensed: 'Barlow Condensed','Barlow Semi Condensed',system-ui,sans-serif;
-  --topbar-h: 58px; --poster-ar: 11 / 17;
+  --nav-w: 268px; --poster-ar: 11 / 17;
+  --cream-soft: rgba(255,241,228,0.62);
 }
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { font-size: 16px; color-scheme: light; }
-body { font-family: var(--sans); color: var(--ink); background: var(--beer-foam); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+body { font-family: var(--sans); color: var(--ink); background: var(--beer-foam); line-height: 1.5; padding-left: var(--nav-w); -webkit-font-smoothing: antialiased; }
 a { color: inherit; }
 a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
-.tool-bar { position: sticky; top: 0; z-index: 50; height: var(--topbar-h); background: var(--burgundy); color: var(--beer-foam);
-  display: flex; align-items: center; gap: 14px; padding: 0 clamp(18px, 3vw, 32px); border-bottom: 1px solid rgba(255,241,228,0.12); }
-.tool-bar img { height: 26px; }
-.tb-title { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.14em; font-weight: 600; font-size: 1rem; }
-.tb-badge { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.14em; font-weight: 600; font-size: 0.64rem; padding: 3px 9px; border: 1px solid var(--beige); color: var(--beige); border-radius: 999px; }
-.tb-spacer { flex: 1; }
-.tb-back { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.8rem; color: rgba(255,241,228,0.62); text-decoration: none; }
-.tb-back:hover { color: var(--beer-foam); }
+/* ---------- side nav (same rail as the brand guide) ---------- */
+.nav {
+  position: fixed; top: 0; left: 0; width: var(--nav-w); height: 100vh;
+  background: var(--burgundy); color: var(--beer-foam); z-index: 90;
+  display: flex; flex-direction: column; overflow-y: auto;
+  scrollbar-width: thin; scrollbar-color: rgba(255,241,228,0.25) transparent;
+  border-right: 1px solid rgba(255,241,228,0.08);
+}
+.nav::-webkit-scrollbar { width: 6px; }
+.nav::-webkit-scrollbar-thumb { background: rgba(255,241,228,0.2); border-radius: 3px; }
+.nav-brand { padding: 30px 26px 22px; border-bottom: 1px solid rgba(255,241,228,0.1); }
+.nav-brand a { text-decoration: none; display: block; }
+.nav-brand img { width: 118px; height: auto; }
+.nav-brand .eyebrow {
+  font-family: var(--condensed); text-transform: uppercase; font-weight: 500;
+  color: var(--cream-soft); font-size: 0.62rem; letter-spacing: 0.32em; margin-top: 12px;
+}
+.nav-scroll { padding: 14px 0 8px; flex: 1; }
+.nav-link {
+  display: flex; align-items: baseline; gap: 12px; padding: 9px 26px;
+  text-decoration: none; color: var(--cream-soft); border-left: 2px solid transparent;
+  transition: color .18s, border-color .18s, background .18s;
+}
+.nav-link:hover { color: var(--beer-foam); background: rgba(255,241,228,0.04); }
+.nav-link.active { color: var(--beer-foam); border-left-color: var(--beige); background: rgba(255,241,228,0.05); }
+.nav-link .label {
+  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.09em;
+  font-weight: 500; font-size: 0.98rem;
+}
+.nav-foot {
+  padding: 18px 26px 26px; border-top: 1px solid rgba(255,241,228,0.1);
+  font-size: 0.7rem; color: var(--cream-soft); line-height: 1.5;
+}
 
 .ed-wrap { max-width: 1500px; margin: 0 auto; padding: 22px clamp(16px, 2.5vw, 32px) 60px; }
 .ed-controls { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin-bottom: 16px; }
@@ -55,7 +81,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .ed-poster [data-el] { cursor: grab; }
 .ed-poster [data-el]:hover { opacity: 0.88; }
 
-.ed-panel { border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,0.6); padding: 18px; position: sticky; top: calc(var(--topbar-h) + 14px); display: flex; flex-direction: column; gap: 16px; max-height: calc(100vh - var(--topbar-h) - 30px); overflow: auto; }
+.ed-panel { border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,0.6); padding: 18px; position: sticky; top: 14px; display: flex; flex-direction: column; gap: 16px; max-height: calc(100vh - 30px); overflow: auto; }
 .ed-h { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.14em; font-weight: 600; font-size: 0.85rem; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
 .ed-selname { font-family: var(--serif); font-weight: 600; font-size: 1.1rem; }
 .ed-hint { font-size: 0.78rem; color: var(--ink-soft); line-height: 1.55; }
@@ -89,7 +115,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .password-button { width: 100%; margin-top: 14px; padding: 14px; border: none; border-radius: 3px; background: var(--beer-foam); color: var(--burgundy); cursor: pointer; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; font-size: 0.95rem; }
 .password-error { color: var(--orange); font-size: 0.85rem; margin-top: 16px; min-height: 1.2em; opacity: 0; transition: opacity .2s; }
 .password-error.show { opacity: 1; }
-@media (max-width: 1000px) { .ed-main { grid-template-columns: 1fr; } .ed-panel { position: static; max-height: none; } .ed-poster { height: auto; width: 100%; } }
+@media (max-width: 1000px) { .nav { display: none; } body { padding-left: 0; } .ed-main { grid-template-columns: 1fr; } .ed-panel { position: static; max-height: none; } .ed-poster { height: auto; width: 100%; } }
 </style>
 </head>
 <body>
@@ -105,13 +131,23 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   </div>
 </div>
 
-<div class="tool-bar">
-  <img src="assets/logos/svg/BEERFOAM/PRYES-P-WATERMARK-BEERFOAM.svg" alt="Pryes">
-  <span class="tb-title">Concept Editor</span>
-  <span class="tb-badge">Internal</span>
-  <span class="tb-spacer"></span>
-  <a class="tb-back" href="concept-board.html">← Concept board</a>
-</div>
+<nav class="nav">
+  <div class="nav-brand">
+    <a href="pryes-brand-guidelines.html#top">
+      <img src="assets/logos/svg/BEERFOAM/PRYES-WORDMARK-BEERFOAM.svg" alt="Pryes Brewing">
+      <div class="eyebrow">Concept Editor</div>
+    </a>
+  </div>
+  <div class="nav-scroll">
+    <a class="nav-link" href="pryes-brand-guidelines.html"><span class="label">Brand guide</span></a>
+    <a class="nav-link" href="concept-board.html"><span class="label">Concept board</span></a>
+    <a class="nav-link active" href="concept-editor.html"><span class="label">Concept editor</span></a>
+  </div>
+  <div class="nav-foot">
+    Pryes Brewing Company<br>
+    1401 West River Road N, Minneapolis
+  </div>
+</nav>
 
 <main class="ed-wrap">
   <div id="ed-restore" class="ed-restore" style="display:none">
