@@ -105,11 +105,6 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 }
 .cb-held-badge svg { width: 12px; height: 12px; }
 .cb-card.is-held .cb-held-badge { display: inline-flex; }
-.cb-type-tag {
-  position: absolute; top: 12px; right: 12px; z-index: 3;
-  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; font-size: 0.66rem;
-  background: rgba(255,241,228,0.92); color: var(--ink-soft); padding: 4px 10px; border-radius: 999px;
-}
 
 .cb-card-foot { padding: 12px 14px 14px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
 .cb-card-top { display: flex; align-items: center; gap: 10px; }
@@ -532,10 +527,9 @@ function showToast(msg) {
     return '<div class="cb-card' + (card.held ? ' is-held' : '') + '" data-i="' + i + '">' +
       '<div class="cb-poster" data-role="poster" data-i="' + i + '" title="Open this concept">' +
         '<span class="cb-held-badge">' + ICON_PIN + ' Pinned</span>' +
-        '<span class="cb-type-tag">' + CONCEPT_LABEL[card.concept] + '</span>' +
         buildPosterSVG(card) + '</div>' +
       '<div class="cb-card-foot">' +
-        '<div class="cb-card-top"><span class="cb-card-idx">Concept ' + (i + 1) + '</span>' +
+        '<div class="cb-card-top"><span class="cb-card-idx">' + CONCEPT_LABEL[card.concept] + ' · Concept ' + (i + 1) + '</span>' +
           '<div class="cb-card-actions">' +
             '<button class="cb-mini" type="button" data-act="hold" data-i="' + i + '" aria-pressed="' + card.held + '" title="Keep this whole card when you shuffle">' + ICON_PIN + (card.held ? ' Pinned' : ' Pin') + '</button>' +
             '<button class="cb-mini cb-mini--keep" type="button" data-act="keep" data-i="' + i + '" title="Open this concept and get the package">Customize →</button>' +
@@ -556,8 +550,8 @@ function showToast(msg) {
     vis.forEach((card, i) => {
       const p = board.querySelector('.cb-card[data-i="' + i + '"] .cb-poster');
       if (p) {
-        const badge = p.querySelector('.cb-held-badge'), tag = p.querySelector('.cb-type-tag');
-        p.innerHTML = (badge ? badge.outerHTML : '') + (tag ? tag.outerHTML : '') + buildPosterSVG(card);
+        const badge = p.querySelector('.cb-held-badge');
+        p.innerHTML = (badge ? badge.outerHTML : '') + buildPosterSVG(card);
       }
     });
     if (selectedCard) renderOverlayPoster();
