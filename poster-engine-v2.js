@@ -64,12 +64,14 @@ window.PryesPosterV2 = (function () {
     { id:'foam',     name:'Beer Foam',       weight:1, paint: b => ({ bg:BRAND.foam, pattern:BRAND.beige, wordmark:BRAND.burgundy, band:b.colors.bg, bandText:b.colors.accent }) }
   ];
 
-  /* cols = poster widths per tile; Loose stays fractional so even
-     the biggest tiles interleave instead of sitting as one copy */
+  /* cols = poster widths per tile; fractional cols keep even the
+     biggest tiles interleaving. Rescaled to Ben's reference swatch
+     2026-07-31: Loose matches the swatch, Tight is the old Medium,
+     Medium sits between. */
   const DENSITIES = [
-    { id:'loose',  name:'Loose',  cols: 1.5 },
-    { id:'medium', name:'Medium', cols: 2 },
-    { id:'tight',  name:'Tight',  cols: 3 }
+    { id:'loose',  name:'Loose',  cols: 1.25 },
+    { id:'medium', name:'Medium', cols: 1.6 },
+    { id:'tight',  name:'Tight',  cols: 2 }
   ];
 
   /* All BEERFOAM masters - recolored per colorway at render time */
@@ -231,19 +233,25 @@ window.PryesPosterV2 = (function () {
        come from the layout defaults (editable in the editor) */
     const ovX = tw * Math.min(90, Math.max(0, pE.ovX != null ? pE.ovX : 18)) / 100;
     const ovY = th * Math.min(90, Math.max(0, pE.ovY != null ? pE.ovY : 0)) / 100;
-    /* center the tile grid so any leftover margin splits evenly
-       across both edges instead of collecting on one side */
     const strideX = tw - ovX, strideY = th - ovY;
-    const nCols = Math.max(1, Math.ceil((W - tw) / strideX) + 1);
-    const nRows = Math.max(1, Math.ceil((H - th) / strideY) + 1);
+    /* the field can rotate (the brand laurels run at an angle);
+       tile a padded region around the poster so the rotated grid
+       still covers every corner */
+    const angle = pE.angle || 0;
+    const pad = angle ? Math.max(W, H) * 0.55 : 0;
+    const regionW = W + 2 * pad, regionH = H + 2 * pad;
+    const nCols = Math.max(1, Math.ceil((regionW - tw) / strideX) + 1);
+    const nRows = Math.max(1, Math.ceil((regionH - th) / strideY) + 1);
+    /* center the grid so leftover margin splits evenly across edges */
     const x0 = (W - ((nCols - 1) * strideX + tw)) / 2;
+    const y0 = (H - ((nRows - 1) * strideY + th)) / 2;
     let s = '';
     for (let r = 0; r < nRows; r++) {
       for (let c = 0; c < nCols; c++) {
-        s += '<svg x="' + (x0 + c * strideX) + '" y="' + (r * strideY) + '" width="' + tw + '" height="' + th + '" viewBox="' + pat.vb + '" preserveAspectRatio="xMidYMid slice"><g fill="' + color + '">' + pat.body + '</g></svg>';
+        s += '<svg x="' + (x0 + c * strideX) + '" y="' + (y0 + r * strideY) + '" width="' + tw + '" height="' + th + '" viewBox="' + pat.vb + '" preserveAspectRatio="xMidYMid slice"><g fill="' + color + '">' + pat.body + '</g></svg>';
       }
     }
-    return s;
+    return angle ? '<g transform="rotate(' + angle + ' ' + (W / 2) + ' ' + (H / 2) + ')">' + s + '</g>' : s;
   }
 
   /* Brand shape recolored to the band color so its decorative top

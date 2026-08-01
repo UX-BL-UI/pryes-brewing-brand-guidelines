@@ -20,8 +20,9 @@ window.PRYES_LAYOUT_DEFAULTS_V2 = {
       can:         { kind: 'photo', cx: 906, y: 370, h: 1458 },
       band:        { kind: 'band', y: 1960 },
       /* Tile overlap as a percent of tile size, so it holds at any
-         pattern density. ovX pulls columns together; ovY pulls rows. */
-      pattern:     { kind: 'pattern', ovX: 6, ovY: 0 },
+         pattern density. ovX pulls columns together; ovY pulls rows.
+         angle tilts the whole field - the brand laurels run diagonal. */
+      pattern:     { kind: 'pattern', ovX: 6, ovY: 0, angle: -27 },
       /* Each of the 15 brand shapes keeps its own placement here,
          keyed by shape number: { cx, y, w, h }. A shape without an
          entry gets an automatic placement against the band line.
@@ -72,7 +73,7 @@ window.PRYES_LAYOUT_DEFAULTS_V2 = {
          partner logo right at the foot. Partner colors live in the
          engine's partner list, not here. */
       wordmark:    { kind: 'asset', asset: 'wordmark', cx: 900, y: 90, w: 1529 },
-      can:         { kind: 'photo', cx: 885, y: 481, h: 1368 },
+      can:         { kind: 'photo', cx: 899, y: 481, h: 1368 },
       /* plaque placements per shape number, same system as the beer
          poster's divider - hand-place each shape once.
          Shapes 8-15 placed by Ben 2026-07-31; 1-7 still on the

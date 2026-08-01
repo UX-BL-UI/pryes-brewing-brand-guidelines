@@ -20,9 +20,7 @@
 }
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { font-size: 16px; }
-body { font-family: var(--sans); color: var(--ink); background: var(--beer-foam); line-height: 1.5;
-  background-image: linear-gradient(rgba(62,15,35,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(62,15,35,0.035) 1px, transparent 1px);
-  background-size: 26px 26px; -webkit-font-smoothing: antialiased; }
+body { font-family: var(--sans); color: var(--ink); background: var(--beer-foam); line-height: 1.5; -webkit-font-smoothing: antialiased; }
 a { color: inherit; }
 a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
 .tool-bar { position: sticky; top: 0; z-index: 50; height: var(--topbar-h); background: var(--burgundy); color: var(--beer-foam);
@@ -41,6 +39,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .ed-chip[aria-pressed="true"] { background: var(--burgundy); color: var(--beer-foam); border-color: var(--burgundy); }
 .ed-ctl { display: flex; align-items: center; gap: 7px; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.74rem; color: var(--ink-soft); }
 .ed-ctl select { font-family: var(--sans); font-size: 0.85rem; padding: 7px 9px; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--ink); }
+.ed-ctl select, .ed-prop select {
+  -webkit-appearance: none; appearance: none;
+  padding-right: 30px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B4351' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center; background-size: 12px;
+}
 .ed-count { margin-left: auto; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.82rem; color: var(--ink-soft); }
 .ed-count b { color: var(--orange-shade); }
 
@@ -206,8 +210,8 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
 (function () {
   const P = window.PryesPosterV2;
   const STORE_KEY = 'pryes_editor_v2_spec_v1';
-  const PROP_LABELS = { x: 'X', cx: 'Center X', y: 'Y', cy: 'Center Y', w: 'Width', h: 'Height', size: 'Font size', track: 'Tracking (em)', lh: 'Line height', s: 'Size', ovX: 'Overlap X (%)', ovY: 'Overlap Y (%)' };
-  const EDITABLE = ['x', 'cx', 'y', 'cy', 'w', 'h', 'size', 'track', 'lh', 's', 'ovX', 'ovY'];
+  const PROP_LABELS = { x: 'X', cx: 'Center X', y: 'Y', cy: 'Center Y', w: 'Width', h: 'Height', size: 'Font size', track: 'Tracking (em)', lh: 'Line height', s: 'Size', ovX: 'Overlap X (%)', ovY: 'Overlap Y (%)', angle: 'Angle (deg)' };
+  const EDITABLE = ['x', 'cx', 'y', 'cy', 'w', 'h', 'size', 'track', 'lh', 's', 'ovX', 'ovY', 'angle'];
 
   const PRISTINE = JSON.parse(JSON.stringify(window.PRYES_LAYOUT_DEFAULTS_V2));
   let spec = JSON.parse(JSON.stringify(window.PRYES_LAYOUT_DEFAULTS_V2));
