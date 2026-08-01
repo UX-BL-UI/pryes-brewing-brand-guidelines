@@ -124,6 +124,8 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 .cb-mini svg { width: 12px; height: 12px; }
 .cb-mini--keep { border-color: var(--burgundy); color: var(--burgundy); }
 .cb-mini--keep:hover { background: var(--burgundy); color: var(--beer-foam); }
+/* hovering the poster itself lights up Customize - both paths open the overlay */
+.cb-card:has(> .cb-poster:hover) .cb-mini--keep { background: var(--burgundy); color: var(--beer-foam); }
 
 .cb-reels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .cb-reels.cb-reels-1 { grid-template-columns: 1fr; }
@@ -747,6 +749,8 @@ function showToast(msg) {
     const reel = e.target.closest('.cb-reel');
     if (reel) {
       const i = +reel.dataset.i;
+      /* a locked reel stays put until its lock is clicked open */
+      if (vis[i].lock[reel.dataset.reel]) { showToast('Locked - click the lock to unlock'); return; }
       /* tapping Pattern steps through the sizes in order; other reels roll */
       if (reel.dataset.reel === 'density') vis[i].density = densityIds[(densityIds.indexOf(vis[i].density) + 1) % densityIds.length];
       else rerollReel(vis[i], reel.dataset.reel);
