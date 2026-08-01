@@ -1,6 +1,6 @@
 /* ============================================================
    PRYES POSTER ENGINE - V2
-   Renderer for the V2 concepts (concept-board-v2.html).
+   Renderer for the V2 concepts (concept-board.html + concept-editor.html).
    V1 (poster-engine.js) stays untouched; this engine owns the
    designer-facing concepts, starting with the Beer feature
    poster. Geometry comes from layout-defaults-v2.js.

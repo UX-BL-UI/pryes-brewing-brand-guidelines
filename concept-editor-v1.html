@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pryes Concept Editor V2 - Internal</title>
-<meta name="description" content="Internal editor for tuning the default V2 concept layouts.">
+<title>Pryes Concept Editor - Internal</title>
+<meta name="description" content="Internal editor for tuning the default Pryes concept layouts.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,8 +19,10 @@
   --topbar-h: 58px; --poster-ar: 11 / 17;
 }
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { font-size: 16px; color-scheme: light; }
-body { font-family: var(--sans); color: var(--ink); background: var(--beer-foam); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+html { font-size: 16px; }
+body { font-family: var(--sans); color: var(--ink); background: var(--beer-foam); line-height: 1.5;
+  background-image: linear-gradient(rgba(62,15,35,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(62,15,35,0.035) 1px, transparent 1px);
+  background-size: 26px 26px; -webkit-font-smoothing: antialiased; }
 a { color: inherit; }
 a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
 .tool-bar { position: sticky; top: 0; z-index: 50; height: var(--topbar-h); background: var(--burgundy); color: var(--beer-foam);
@@ -39,19 +41,13 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .ed-chip[aria-pressed="true"] { background: var(--burgundy); color: var(--beer-foam); border-color: var(--burgundy); }
 .ed-ctl { display: flex; align-items: center; gap: 7px; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.74rem; color: var(--ink-soft); }
 .ed-ctl select { font-family: var(--sans); font-size: 0.85rem; padding: 7px 9px; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--ink); }
-.ed-ctl select, .ed-prop select {
-  -webkit-appearance: none; appearance: none;
-  padding-right: 30px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B4351' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 10px center; background-size: 12px;
-}
 .ed-count { margin-left: auto; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.82rem; color: var(--ink-soft); }
 .ed-count b { color: var(--orange-shade); }
 
 .ed-main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; align-items: start; }
 .ed-stagebox { border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,0.55); padding: 20px; display: flex; justify-content: center; }
 .ed-poster { height: min(78vh, 900px); aspect-ratio: var(--poster-ar); box-shadow: 0 14px 40px rgba(16,16,25,0.18); border-radius: 2px; overflow: hidden; touch-action: none; }
-.ed-poster > svg { width: 100% !important; height: 100% !important; display: block; }
+.ed-poster svg { width: 100% !important; height: 100% !important; display: block; }
 .ed-poster [data-el] { cursor: grab; }
 .ed-poster [data-el]:hover { opacity: 0.88; }
 
@@ -61,7 +57,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .ed-hint { font-size: 0.78rem; color: var(--ink-soft); line-height: 1.55; }
 .ed-props { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
 .ed-prop label { display: block; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.68rem; color: var(--ink-soft); margin-bottom: 3px; }
-.ed-prop input, .ed-prop select { width: 100%; font-family: var(--sans); font-size: 0.88rem; padding: 7px 9px; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--ink); }
+.ed-prop input { width: 100%; font-family: var(--sans); font-size: 0.88rem; padding: 7px 9px; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: var(--ink); }
 .ed-btn { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.85rem;
   padding: 10px 16px; border-radius: 2px; border: 1.5px solid var(--burgundy); color: var(--burgundy); background: transparent; cursor: pointer; }
 .ed-btn:hover { background: var(--burgundy); color: var(--beer-foam); }
@@ -98,7 +94,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   <div class="password-box">
     <img src="assets/logos/svg/BEERFOAM/PRYES-CREST+WORDMARK+TAGLINE-BEERFOAM.svg" alt="Pryes Brewing">
     <div class="password-eyebrow">Internal Tool</div>
-    <div class="password-title">Concept Editor V2</div>
+    <div class="password-title">Concept Editor</div>
     <input type="password" id="password-input" class="password-input" placeholder="Enter password" autocomplete="off">
     <button class="password-button" onclick="checkPassword()">Enter</button>
     <div id="password-error" class="password-error">Incorrect password. Please try again.</div>
@@ -108,9 +104,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 <div class="tool-bar">
   <img src="assets/logos/svg/BEERFOAM/PRYES-P-WATERMARK-BEERFOAM.svg" alt="Pryes">
   <span class="tb-title">Concept Editor</span>
-  <span class="tb-badge">V2</span>
+  <span class="tb-badge">Internal</span>
   <span class="tb-spacer"></span>
-  <a class="tb-back" href="concept-board-v2.html">← Concept board V2</a>
+  <a class="tb-back" href="concept-board-v1.html">← Concept board</a>
 </div>
 
 <main class="ed-wrap">
@@ -119,25 +115,15 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     <button class="ed-btn" id="ed-discard-restore" type="button">Discard them</button>
   </div>
 
-  <div class="ed-controls" id="ed-concepts" role="group" aria-label="Poster type"></div>
+  <div class="ed-controls" id="ed-layouts" role="group" aria-label="Layout"></div>
 
   <div class="ed-controls">
     <span class="ed-ctl">Size
       <select id="ed-size"><option value="s1117" selected>11 × 17</option><option value="s1824">18 × 24</option></select></span>
-    <span class="ed-ctl" id="ed-beer-ctl">Beer
-      <select id="ed-beer"></select></span>
     <span class="ed-ctl">Color
-      <select id="ed-colorway"></select></span>
-    <span class="ed-ctl" id="ed-shape-ctl">Shape
-      <select id="ed-shape"></select></span>
-    <span class="ed-ctl" id="ed-density-ctl">Pattern
-      <select id="ed-density"></select></span>
-    <span class="ed-ctl" id="ed-showp-ctl" style="display:none">P watermark
-      <select id="ed-showp"><option value="on" selected>Show</option><option value="off">Hide</option></select></span>
-    <span class="ed-ctl" id="ed-partner-ctl" style="display:none">Partner
-      <select id="ed-partner"></select></span>
-    <span class="ed-ctl" id="ed-photo-ctl" style="display:none">Photo
-      <select id="ed-photo"></select></span>
+      <select id="ed-fam"></select></span>
+    <span class="ed-ctl" id="ed-img-ctl">Image
+      <select id="ed-img"></select></span>
     <span class="ed-count" id="ed-count">No changes yet</span>
   </div>
 
@@ -163,15 +149,15 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
         <button class="ed-btn" id="ed-copy" type="button">Copy change summary</button>
         <button class="ed-btn" id="ed-reset-all" type="button">Reset everything</button>
       </div>
-      <p class="ed-hint">Downloading gives you a new <b>layout-defaults-v2.js</b>. Hand it to Claude (or replace the file in the repo) and your tuning becomes the default for every V2 concept.</p>
+      <p class="ed-hint">Downloading gives you a new <b>layout-defaults.js</b>. Hand it to Claude (or replace the file in the repo) and your tuning becomes the default for every concept.</p>
     </aside>
   </div>
 </main>
 
 <div class="toast" id="toast">Saved</div>
 
-<script src="layout-defaults-v2.js"></script>
-<script src="poster-engine-v2.js"></script>
+<script src="layout-defaults.js"></script>
+<script src="poster-engine.js"></script>
 <script>
 /* ---------- password (shares the guide's session key) ---------- */
 const CORRECT_PASSWORD = 'pryes2026';
@@ -202,42 +188,30 @@ let toastTimer;
 function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 1600); }
 
 /* ============================================================
-   CONCEPT EDITOR V2
-   Edits window.PRYES_LAYOUT_DEFAULTS_V2 geometry live and exports
-   a replacement layout-defaults-v2.js. All edits happen in the
-   1800x2400 design space regardless of the preview size.
+   CONCEPT EDITOR
+   Edits window.PRYES_LAYOUT_DEFAULTS geometry live and exports a
+   replacement layout-defaults.js. All edits happen in the 1800x2400
+   design space regardless of the preview size.
    ============================================================ */
 (function () {
-  const P = window.PryesPosterV2;
-  const STORE_KEY = 'pryes_editor_v2_spec_v1';
-  const PROP_LABELS = { x: 'X', cx: 'Center X', y: 'Y', cy: 'Center Y', w: 'Width', h: 'Height', size: 'Font size', track: 'Tracking (em)', lh: 'Line height', s: 'Size', ovX: 'Overlap X (%)', ovY: 'Overlap Y (%)', angle: 'Angle (deg)' };
-  const EDITABLE = ['x', 'cx', 'y', 'cy', 'w', 'h', 'size', 'track', 'lh', 's', 'ovX', 'ovY', 'angle'];
+  const P = window.PryesPoster;
+  const STORE_KEY = 'pryes_editor_spec_v1';
+  const EDITOR_CONTENT = { beer: 'Miraculum', style: 'Midwest IPA', abv: '6.4% ABV', ibu: '75 IBU', date: 'On tap now',
+    tagline: 'Bold enough for IPA fans, smooth enough for everyone else.', avail: 'Draft · 4-packs to-go', cta: 'Pryes Taproom · North Loop, Mpls' };
+  const DEFAULT_IMG = { stacked: 'emblem', anchored: 'well', framed: 'laurel', feature: 'emblem' };
+  const PROP_LABELS = { x: 'X', cx: 'Center X', y: 'Y', w: 'Width', h: 'Height', size: 'Font size', scale: 'Size ×', track: 'Tracking (em)', lh: 'Line height', x1: 'X start', x2: 'X end', stroke: 'Stroke' };
+  const EDITABLE = ['x', 'cx', 'y', 'w', 'h', 'size', 'scale', 'track', 'lh', 'x1', 'x2', 'stroke'];
 
-  const PRISTINE = JSON.parse(JSON.stringify(window.PRYES_LAYOUT_DEFAULTS_V2));
-  let spec = JSON.parse(JSON.stringify(window.PRYES_LAYOUT_DEFAULTS_V2));
+  const PRISTINE = JSON.parse(JSON.stringify(window.PRYES_LAYOUT_DEFAULTS));
+  let spec = JSON.parse(JSON.stringify(window.PRYES_LAYOUT_DEFAULTS));
 
-  /* restore unsaved work - migrated forward so saved edits from an
-     older schema pick up new elements and properties from the
-     current defaults instead of diffing as phantom changes */
-  function migrate(saved) {
-    Object.keys(PRISTINE).forEach(l => {
-      if (!saved[l]) { saved[l] = JSON.parse(JSON.stringify(PRISTINE[l])); return; }
-      const out = {};
-      Object.keys(PRISTINE[l].elements).forEach(k => {
-        out[k] = saved[l].elements[k] || JSON.parse(JSON.stringify(PRISTINE[l].elements[k]));
-        Object.keys(PRISTINE[l].elements[k]).forEach(p => { if (out[k][p] == null) out[k][p] = PRISTINE[l].elements[k][p]; });
-      });
-      saved[l].elements = out;
-      saved[l].label = PRISTINE[l].label;
-    });
-    return saved;
-  }
+  /* restore unsaved work */
   let restored = false;
   try {
     const saved = localStorage.getItem(STORE_KEY);
     if (saved) {
-      const parsed = migrate(JSON.parse(saved));
-      if (parsed && parsed.beerfeature && JSON.stringify(parsed) !== JSON.stringify(PRISTINE)) { spec = parsed; restored = true; }
+      const parsed = JSON.parse(saved);
+      if (parsed && parsed.stacked && JSON.stringify(parsed) !== JSON.stringify(PRISTINE)) { spec = parsed; restored = true; }
     }
   } catch (e) {}
   P.setSpec(spec);
@@ -250,65 +224,31 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   });
 
   const stage = document.getElementById('ed-poster');
-  let card = { concept: 'beerfeature', beer: P.BEERS[0].id, partner: P.PARTNERS[0].id, photo: P.FOCUS_PHOTOS[0].id, colorway: 'beer', shape: 5, density: 'medium' };
-  let selectedEl = null;   /* "<concept>.element" */
-
-  function content() {
-    if (card.concept === 'brandfocus') return { headline: "It's a\nMidwest\nThing", subheadline: 'Available\nNow', showP: document.getElementById('ed-showp').value !== 'off', h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
-    if (card.concept === 'cobrand') return { headline: 'See You\nAt the Game', subheadline: '', h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
-    if (card.concept === 'photofocus') return { headline: 'Trust Your Taste', subheadline: '', h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
-    const b = P.beerById(card.beer);
-    return { headline: b.headline, subheadline: b.subheadline, h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
-  }
+  let card = { lay: 'stacked', img: DEFAULT_IMG.stacked, fam: 'foam', seed: 2, ph: 0 };
+  let selectedEl = null;   /* "layout.element" */
 
   /* ---------- controls ---------- */
-  const conceptBox = document.getElementById('ed-concepts');
-  conceptBox.innerHTML = P.CONCEPTS.map(cn => '<button class="ed-chip" type="button" data-concept="' + cn.id + '" aria-pressed="' + (cn.id === card.concept) + '">' + cn.label + '</button>').join('');
-  function syncColorwayOptions() {
-    const ways = (card.concept === 'brandfocus' || card.concept === 'photofocus') ? P.BRAND_COLORWAYS : card.concept === 'cobrand' ? P.COBRAND_WAYS : P.COLORWAYS;
-    waySel.innerHTML = ways.map(w => '<option value="' + w.id + '"' + (w.id === card.colorway ? ' selected' : '') + '>' + w.name + '</option>').join('');
-  }
-  conceptBox.addEventListener('click', e => {
-    const b = e.target.closest('[data-concept]'); if (!b || b.dataset.concept === card.concept) return;
-    card.concept = b.dataset.concept;
-    card.colorway = card.concept === 'beerfeature' ? 'beer' : 'foam';
-    conceptBox.querySelectorAll('.ed-chip').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
-    const isBrand = card.concept === 'brandfocus';
-    const isCobrand = card.concept === 'cobrand';
-    const isPhoto = card.concept === 'photofocus';
-    document.getElementById('ed-beer-ctl').style.display = (isBrand || isPhoto) ? 'none' : '';
-    document.getElementById('ed-shape-ctl').style.display = (isBrand || isPhoto) ? 'none' : '';
-    document.getElementById('ed-density-ctl').style.display = card.concept === 'beerfeature' ? '' : 'none';
-    document.getElementById('ed-showp-ctl').style.display = isBrand ? '' : 'none';
-    document.getElementById('ed-partner-ctl').style.display = isCobrand ? '' : 'none';
-    document.getElementById('ed-photo-ctl').style.display = isPhoto ? '' : 'none';
-    syncColorwayOptions();
-    selectedEl = null; render(); syncPanel(); syncChanges();
+  const layBox = document.getElementById('ed-layouts');
+  layBox.innerHTML = P.LAYOUTS.map(l => '<button class="ed-chip" type="button" data-lay="' + l.id + '" aria-pressed="' + (l.id === card.lay) + '">' + l.label + '</button>').join('');
+  layBox.addEventListener('click', e => {
+    const b = e.target.closest('[data-lay]'); if (!b) return;
+    card.lay = b.dataset.lay; card.img = DEFAULT_IMG[card.lay];
+    document.getElementById('ed-img').value = card.img;
+    layBox.querySelectorAll('.ed-chip').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    document.getElementById('ed-img-ctl').style.display = card.lay === 'feature' ? 'none' : '';
+    selectedEl = null; render(); syncPanel();
   });
-  document.getElementById('ed-showp').addEventListener('change', () => render());
-  const partnerSel = document.getElementById('ed-partner');
-  partnerSel.innerHTML = P.PARTNERS.map(p => '<option value="' + p.id + '">' + p.name + '</option>').join('');
-  partnerSel.addEventListener('change', () => { card.partner = partnerSel.value; render(); });
-  const photoSel = document.getElementById('ed-photo');
-  photoSel.innerHTML = P.FOCUS_PHOTOS.map(p => '<option value="' + p.id + '">' + p.name + '</option>').join('');
-  photoSel.addEventListener('change', () => { card.photo = photoSel.value; render(); });
-  const beerSel = document.getElementById('ed-beer');
-  beerSel.innerHTML = P.BEERS.map(b => '<option value="' + b.id + '">' + b.name + '</option>').join('');
-  beerSel.addEventListener('change', () => { card.beer = beerSel.value; render(); });
-  const waySel = document.getElementById('ed-colorway');
-  waySel.innerHTML = P.COLORWAYS.map(w => '<option value="' + w.id + '"' + (w.id === card.colorway ? ' selected' : '') + '>' + w.name + '</option>').join('');
-  waySel.addEventListener('change', () => { card.colorway = waySel.value; render(); });
-  const shapeSel = document.getElementById('ed-shape');
-  shapeSel.innerHTML = Array.from({ length: P.SHAPE_COUNT }, (_, i) => '<option value="' + (i + 1) + '"' + (i + 1 === card.shape ? ' selected' : '') + '>Shape ' + String(i + 1).padStart(2, '0') + '</option>').join('');
-  shapeSel.addEventListener('change', () => { card.shape = +shapeSel.value; render(); syncPanel(); syncChanges(); });
-  const denSel = document.getElementById('ed-density');
-  denSel.innerHTML = P.DENSITIES.map(d => '<option value="' + d.id + '"' + (d.id === card.density ? ' selected' : '') + '>' + d.name + '</option>').join('');
-  denSel.addEventListener('change', () => { card.density = denSel.value; render(); });
+  const famSel = document.getElementById('ed-fam');
+  famSel.innerHTML = P.FAMILIES.map(f => '<option value="' + f.id + '"' + (f.id === card.fam ? ' selected' : '') + '>' + f.name + '</option>').join('');
+  famSel.addEventListener('change', () => { card.fam = famSel.value; render(); });
+  const imgSel = document.getElementById('ed-img');
+  imgSel.innerHTML = P.IMAGES.map(i => '<option value="' + i.id + '"' + (i.id === card.img ? ' selected' : '') + '>' + i.label + '</option>').join('');
+  imgSel.addEventListener('change', () => { card.img = imgSel.value; render(); });
   document.getElementById('ed-size').addEventListener('change', e => { P.setSize(e.target.value); render(); });
 
   /* ---------- rendering + selection overlay ---------- */
   function render() {
-    stage.innerHTML = P.buildPosterSVG(card, content(), { tag: true });
+    stage.innerHTML = P.buildPosterSVG(card, EDITOR_CONTENT, { tag: true });
     drawOverlay();
   }
   function svgRoot() { return stage.querySelector('svg'); }
@@ -335,31 +275,18 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
     const pt = new DOMPoint(evt.clientX, evt.clientY).matrixTransform(svg.getScreenCTM().inverse());
     return pt;
   }
-  function elSpec(id) {
-    if (!id) return null;
-    const [l, k] = id.split('.');
-    const e = spec[l] && spec[l].elements[k];
-    /* the divider shape stores one placement per shape number - the
-       editor always works on the placement of the shape on screen */
-    if (e && e.kind === 'shape') {
-      if (!e.perShape) e.perShape = {};
-      if (!e.perShape[card.shape]) e.perShape[card.shape] = JSON.parse(JSON.stringify(P.resolveShapeFor(l, card.shape)));
-      return e.perShape[card.shape];
-    }
-    return e;
-  }
+  function elSpec(id) { if (!id) return null; const [l, k] = id.split('.'); return spec[l] && spec[l].elements[k]; }
   let drag = null, raf = false;
   stage.addEventListener('pointerdown', evt => {
     const svg = svgRoot(); if (!svg) return;
     const handle = evt.target.closest('#ed-handle');
     const g = evt.target.closest('[data-el]');
-    if (g && !handle && !elSpec(g.getAttribute('data-el'))) { selectedEl = null; drawOverlay(); syncPanel(); return; }
     if (!handle && !g) { selectedEl = null; drawOverlay(); syncPanel(); return; }
     if (g && !handle) { selectedEl = g.getAttribute('data-el'); drawOverlay(); syncPanel(); }
     const e = elSpec(selectedEl); if (!e) return;
     const pt = toViewBox(evt);
     drag = { mode: handle ? 'resize' : 'move', start: pt, orig: JSON.parse(JSON.stringify(e)) };
-    try { stage.setPointerCapture(evt.pointerId); } catch (err) {}
+    stage.setPointerCapture(evt.pointerId);
     evt.preventDefault();
   });
   stage.addEventListener('pointermove', evt => {
@@ -373,14 +300,15 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
     if (drag.mode === 'move') {
       if (o.x != null) e.x = Math.round(o.x + dx);
       if (o.cx != null) e.cx = Math.round(o.cx + dx);
+      if (o.x1 != null) { e.x1 = Math.round(o.x1 + dx); e.x2 = Math.round(o.x2 + dx); }
       if (o.y != null) e.y = Math.round(o.y + dy);
-      if (o.cy != null) e.cy = Math.round(o.cy + dy);
     } else {
-      if (e.kind === 'photo') e.h = Math.max(300, Math.round(o.h + dy));
-      else if (e.kind === 'photoblock') { e.w = Math.max(300, Math.round(o.w + dx)); e.h = Math.max(300, Math.round(o.h + dy)); }
-      else if (e.kind === 'asset' || e.kind === 'partner') e.w = Math.max(80, Math.round(o.w + dx));
-      else if (e.kind === 'shape') { e.w = Math.max(200, Math.round(o.w + dx)); e.h = Math.max(60, Math.round(o.h + dy)); }
-      else if (e.kind === 'diamond') e.s = Math.max(6, Math.round(o.s + dx / 4));
+      if (e.kind === 'photo') { e.w = Math.max(120, Math.round(o.w + dx)); e.h = Math.max(120, Math.round(o.h + dy)); }
+      else if (e.kind === 'asset' || e.kind === 'hero') e.w = Math.max(80, Math.round(o.w + dx));
+      else if (e.kind === 'name') e.scale = Math.max(0.2, Math.round((o.scale + dx / 800) * 100) / 100);
+      else if (e.kind === 'rule') e.x2 = Math.round(o.x2 + dx);
+      else if (e.kind === 'band') e.h = Math.max(200, Math.round(o.h + dy));
+      else if (e.kind === 'frame') { e.x = Math.max(20, Math.round(o.x - dx / 2)); e.y = Math.max(20, Math.round(o.y - dy / 2)); }
       else if (o.size != null) e.size = Math.max(14, Math.round(o.size + dx / 5));
     }
     if (!raf) { raf = true; requestAnimationFrame(() => { raf = false; render(); syncPanel(); }); }
@@ -394,10 +322,10 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
     const e = elSpec(selectedEl); if (!e) return;
     const step = evt.shiftKey ? 20 : 2;
     let hit = true;
-    if (evt.key === 'ArrowLeft') { if (e.x != null) e.x -= step; else if (e.cx != null) e.cx -= step; }
-    else if (evt.key === 'ArrowRight') { if (e.x != null) e.x += step; else if (e.cx != null) e.cx += step; }
-    else if (evt.key === 'ArrowUp') { if (e.y != null) e.y -= step; else if (e.cy != null) e.cy -= step; }
-    else if (evt.key === 'ArrowDown') { if (e.y != null) e.y += step; else if (e.cy != null) e.cy += step; }
+    if (evt.key === 'ArrowLeft') { if (e.x != null) e.x -= step; else if (e.cx != null) e.cx -= step; else if (e.x1 != null) { e.x1 -= step; e.x2 -= step; } }
+    else if (evt.key === 'ArrowRight') { if (e.x != null) e.x += step; else if (e.cx != null) e.cx += step; else if (e.x1 != null) { e.x1 += step; e.x2 += step; } }
+    else if (evt.key === 'ArrowUp') { if (e.y != null) e.y -= step; }
+    else if (evt.key === 'ArrowDown') { if (e.y != null) e.y += step; }
     else if (evt.key === 'Escape') { selectedEl = null; drawOverlay(); syncPanel(); return; }
     else hit = false;
     if (hit) { evt.preventDefault(); render(); syncPanel(); persist(); syncChanges(); }
@@ -412,11 +340,11 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
     if (!e) { propsBox.innerHTML = ''; return; }
     const assetPicker = e.kind === 'asset'
       ? '<div class="ed-prop" style="grid-column:1/-1"><label for="edp-asset">Mark</label><select id="edp-asset">' +
-        P.ASSET_OPTIONS.map(o => '<option value="' + o.id + '"' + (o.id === (e.asset || 'wordmarktag') ? ' selected' : '') + '>' + o.label + '</option>').join('') +
+        P.ASSET_OPTIONS.map(o => '<option value="' + o.id + '"' + (o.id === e.asset ? ' selected' : '') + '>' + o.label + '</option>').join('') +
         '</select></div>'
       : '';
     propsBox.innerHTML = assetPicker + EDITABLE.filter(k => e[k] != null).map(k =>
-      '<div class="ed-prop"><label for="edp-' + k + '">' + (PROP_LABELS[k] || k) + '</label><input id="edp-' + k + '" data-k="' + k + '" type="number" step="' + (k === 'track' || k === 'lh' ? '0.01' : '1') + '" value="' + e[k] + '"></div>').join('');
+      '<div class="ed-prop"><label for="edp-' + k + '">' + (PROP_LABELS[k] || k) + '</label><input id="edp-' + k + '" data-k="' + k + '" type="number" step="' + (k === 'track' || k === 'lh' || k === 'scale' ? '0.01' : '1') + '" value="' + e[k] + '"></div>').join('');
     propsBox.querySelectorAll('input').forEach(inp => inp.addEventListener('input', () => {
       const v = parseFloat(inp.value); if (isNaN(v)) return;
       elSpec(selectedEl)[inp.dataset.k] = v;
@@ -431,12 +359,10 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   document.getElementById('ed-reset-el').addEventListener('click', () => {
     if (!selectedEl) return;
     const [l, k] = selectedEl.split('.');
-    if (spec[l].elements[k].kind === 'shape') delete spec[l].elements[k].perShape[card.shape];
-    else spec[l].elements[k] = JSON.parse(JSON.stringify(PRISTINE[l].elements[k]));
+    spec[l].elements[k] = JSON.parse(JSON.stringify(PRISTINE[l].elements[k]));
     render(); syncPanel(); persist(); syncChanges();
   });
   document.getElementById('ed-reset-all').addEventListener('click', () => {
-    if (!window.confirm('Reset everything? This throws away all unsaved tuning and goes back to the current defaults.')) return;
     spec = JSON.parse(JSON.stringify(PRISTINE)); P.setSpec(spec);
     try { localStorage.removeItem(STORE_KEY); } catch (e) {}
     selectedEl = null; render(); syncPanel(); syncChanges();
@@ -450,20 +376,6 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
       const a = PRISTINE[l].elements[k], b = spec[l].elements[k];
       Object.keys(a).forEach(p => { if ((typeof a[p] === 'number' || typeof a[p] === 'string') && a[p] !== b[p]) out.push({ el: l + '.' + k, prop: p, from: a[p], to: b[p] }); });
     }));
-    /* per-shape placements: each shape number diffs against its own
-       baseline (a shipped entry, or the automatic placement), for
-       every concept that carries a shape element */
-    Object.keys(PRISTINE).forEach(l => {
-      if (!PRISTINE[l].elements.shape) return;
-      const cur = (spec[l].elements.shape && spec[l].elements.shape.perShape) || {};
-      const pris = PRISTINE[l].elements.shape.perShape || {};
-      Object.keys(cur).forEach(n => {
-        const base = pris[n] || P.shapeFallbackFor(l, +n, PRISTINE);
-        ['cx', 'y', 'w', 'h'].forEach(p => {
-          if (cur[n][p] != null && base[p] != null && cur[n][p] !== base[p]) out.push({ el: l + '.shape.' + String(n).padStart(2, '0'), prop: p, from: base[p], to: cur[n][p] });
-        });
-      });
-    });
     return out;
   }
   function syncChanges() {
@@ -488,16 +400,16 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
     const d = diff();
     const stamp = new Date().toISOString().slice(0, 10);
     const header = '/* ============================================================\n' +
-      '   PRYES CONCEPT LAYOUT DEFAULTS - V2\n' +
-      '   Exported from concept-editor-v2.html on ' + stamp + '\n' +
+      '   PRYES CONCEPT LAYOUT DEFAULTS\n' +
+      '   Exported from concept-editor-v1.html on ' + stamp + '\n' +
       (d.length ? '   Changes in this export:\n' + d.map(c => '   - ' + c.el + ' ' + c.prop + ': ' + c.from + ' -> ' + c.to).join('\n') + '\n' : '   No changes vs the previous defaults.\n') +
-      '   Design space 1800 x 2400. Replace layout-defaults-v2.js with\n   this file to make these positions the default for every V2 concept.\n' +
+      '   Design space 1800 x 2400. See the original file header for the\n   unit reference. Replace layout-defaults.js with this file to make\n   these positions the default for every concept.\n' +
       '   ============================================================ */\n';
-    const body = 'window.PRYES_LAYOUT_DEFAULTS_V2 = ' + JSON.stringify(spec, null, 2) + ';\n';
+    const body = 'window.PRYES_LAYOUT_DEFAULTS = ' + JSON.stringify(spec, null, 2) + ';\n';
     const blob = new Blob([header + body], { type: 'text/javascript' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = 'layout-defaults-v2.js';
+    a.href = url; a.download = 'layout-defaults.js';
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1500);
     showToast(d.length ? 'New defaults downloaded' : 'Downloaded (no changes yet)');

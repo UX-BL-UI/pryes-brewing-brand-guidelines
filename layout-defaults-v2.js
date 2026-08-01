@@ -1,8 +1,8 @@
 /* ============================================================
    PRYES CONCEPT LAYOUT DEFAULTS - V2
    Geometry for the V2 concepts, one poster type at a time.
-   Shared by concept-board-v2.html (rendering) and, later, the
-   editor loop that lets Ben re-tune these defaults.
+   Shared by concept-board.html (rendering) and
+   concept-editor.html loop that lets Ben re-tune these defaults.
    All values live in the 1800 x 2400 design space; the engine
    scales x/w/size by KX and y/h by KY for the chosen print size.
    Structure is fixed per concept - the shuffle only varies the

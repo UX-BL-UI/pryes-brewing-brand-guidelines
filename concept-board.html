@@ -3,27 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pryes Concept Board - Prototype</title>
-<meta name="description" content="Internal sandbox for generating on-brand Pryes poster concepts. Experimental.">
+<title>Pryes Concept Board</title>
+<meta name="description" content="Designer tool for generating on-brand Pryes poster concepts, one poster type at a time.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Barlow+Condensed:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@500;600&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   PRYES CONCEPT BOARD — prototype tool
-   Standalone lab. Shares the 2026 brand tokens with the guide,
-   but framed as a workspace, not a finished chapter.
+   PRYES CONCEPT BOARD V2 — designer tool
+   Poster wall first: sorting pills up top, every concept's cards
+   on the board, shuffle in a sticky footer, and the content lives
+   in an overlay that opens when a poster is picked.
    ============================================================ */
 :root {
   --burgundy:        #3e0f23;
   --burgundy-deep:   #320c1c;
-  --burgundy-black:  #101019;
   --beer-foam:       #fff1e4;
   --beer-foam-2:     #fbe7d6;
   --beige:           #ebcfb8;
-  --miraculum:       #213b1e;
-  --miraculum-black: #121a12;
   --orange:          #e3884d;
   --orange-shade:    #be442a;
 
@@ -37,19 +35,14 @@
   --condensed: 'Barlow Condensed', 'Barlow Semi Condensed', system-ui, sans-serif;
 
   --topbar-h: 58px;
+  --footbar-h: 72px;
 }
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; font-size: 16px; -webkit-text-size-adjust: 100%; }
+html { scroll-behavior: smooth; font-size: 16px; -webkit-text-size-adjust: 100%; color-scheme: light; }
 body {
   font-family: var(--sans); font-weight: 400; color: var(--ink);
   background: var(--beer-foam); line-height: 1.65;
   -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
-  /* faint grid to read as a working canvas, not a finished page */
-  background-image:
-    linear-gradient(rgba(62,15,35,0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(62,15,35,0.035) 1px, transparent 1px);
-  background-size: 26px 26px;
-  background-position: 0 var(--topbar-h);
 }
 ::selection { background: var(--burgundy); color: var(--beer-foam); }
 img { max-width: 100%; display: block; }
@@ -59,7 +52,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 
 /* ---------- tool shell ---------- */
 .tool-bar {
-  position: sticky; top: 0; z-index: 50; height: var(--topbar-h);
+  height: var(--topbar-h);
   background: var(--burgundy); color: var(--beer-foam);
   display: flex; align-items: center; gap: 14px;
   padding: 0 clamp(18px, 4vw, 40px);
@@ -79,27 +72,10 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 .tool-bar .tb-back:hover { color: var(--beer-foam); }
 .tool-bar .tb-back svg { width: 15px; height: 15px; }
 
-.tool-wrap { max-width: 1120px; margin: 0 auto; padding: clamp(28px, 4vw, 48px) clamp(18px, 4vw, 40px) 90px; }
-.tool-lede { max-width: 72ch; margin-bottom: 24px; }
-.tool-lede .kick { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.22em; font-weight: 600; font-size: 0.72rem; color: var(--ink-soft); margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
-.tool-lede .kick .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--orange-shade); }
-.tool-lede h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(2rem, 4.4vw, 3.1rem); line-height: 1.02; letter-spacing: -0.015em; }
-.tool-lede p { font-family: var(--serif); color: var(--ink-soft); font-size: 1.02rem; line-height: 1.55; margin-top: 16px; }
-.tool-foot { max-width: 1120px; margin: 0 auto; padding: 26px clamp(18px, 4vw, 40px) 80px; }
-.tool-foot .tf-in { border-top: 1px solid var(--line); padding-top: 20px; color: var(--ink-soft); font-size: 0.82rem; line-height: 1.7; }
-.tool-foot b { color: var(--ink); font-weight: 600; }
+.tool-wrap { max-width: 1120px; margin: 0 auto; padding: 22px clamp(18px, 4vw, 40px) calc(var(--footbar-h) + 40px); }
 
-.cb-note { font-size: 0.9rem; color: var(--ink-soft); max-width: 78ch; margin-top: 14px; line-height: 1.65; }
-.cb-note b { color: var(--ink); font-weight: 600; }
-
-.cb-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px 26px; list-style: none; margin: 0 0 28px; padding: 16px 20px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,0.5); }
-.cb-steps li { display: flex; align-items: center; gap: 10px; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.85rem; color: var(--ink); }
-.cb-step-n { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: var(--burgundy); color: var(--beer-foam); font-size: 0.78rem; flex: none; }
-
-/* ============================================================
-   CONCEPT BOARD  (generative poster tool)
-   ============================================================ */
-.cb-occasions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
+/* ---------- sorting pills ---------- */
+.cb-occasions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 22px; }
 .cb-occasion {
   font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;
   font-size: 0.9rem; padding: 9px 18px; border: 1.5px solid var(--line); border-radius: 999px;
@@ -110,62 +86,16 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 .cb-occasion[disabled] { opacity: 0.4; cursor: not-allowed; }
 .cb-occasion[disabled]::after { content: " · soon"; font-weight: 400; letter-spacing: 0; text-transform: none; opacity: 0.8; }
 
-.cb-sizes { display: flex; gap: 8px; }
-.cb-size { flex: 1; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; font-size: 0.88rem; padding: 9px 0; border: 1.5px solid var(--line); border-radius: 3px; background: var(--beer-foam); color: var(--ink-soft); cursor: pointer; }
-.cb-size[aria-pressed="true"] { background: var(--burgundy); color: var(--beer-foam); border-color: var(--burgundy); }
-
-.cb-panel { border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,0.5); padding: 26px 26px 28px; }
-.cb-panel-head {
-  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.14em; font-weight: 600;
-  font-size: 0.92rem; color: var(--ink); padding-bottom: 12px; margin-bottom: 20px;
-  border-bottom: 1px solid var(--line); display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
-}
-.cb-panel-head .cb-sub { font-family: var(--sans); text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 0.8rem; color: var(--ink-soft); }
-
-.cb-form { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px 20px; }
-.cb-field.cb-half { grid-column: span 3; }
-.cb-field.cb-third { grid-column: span 2; }
-@media (max-width: 700px) { .cb-form { grid-template-columns: 1fr; } .cb-form .cb-field { grid-column: 1 / -1; } }
-.cb-field { display: flex; flex-direction: column; gap: 6px; }
-.cb-field.cb-wide { grid-column: 1 / -1; }
-.cb-field label { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; font-size: 0.74rem; color: var(--ink-soft); }
-.cb-field textarea { resize: vertical; min-height: 42px; }
-.cb-field input, .cb-field select, .cb-field textarea {
-  font-family: var(--sans); font-size: 0.95rem; padding: 10px 13px; color: var(--ink);
-  border: 1px solid var(--line); border-radius: 3px; background: var(--beer-foam);
-}
-.cb-field input:focus, .cb-field select:focus, .cb-field textarea:focus { outline: none; border-color: var(--burgundy); box-shadow: 0 0 0 2px rgba(62,15,35,0.12); }
-.cb-field.cb-hidden { display: none; }
-
-.cb-toolbar {
-  position: sticky; top: var(--topbar-h); z-index: 20;
-  display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
-  padding: 16px 0; margin: 30px 0 4px; background: var(--beer-foam); border-bottom: 1px solid var(--line);
-}
-.cb-toolbar .cb-count { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.82rem; color: var(--ink-soft); }
-.cb-toolbar .cb-spacer { flex: 1; }
-.cb-btn {
-  display: inline-flex; align-items: center; gap: 9px; cursor: pointer;
-  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.88rem;
-  padding: 11px 20px; border-radius: 2px; border: 1.5px solid var(--burgundy); color: var(--burgundy); background: transparent;
-  transition: background .18s, color .18s, transform .12s;
-}
-.cb-btn:hover { background: var(--burgundy); color: var(--beer-foam); }
-.cb-btn--solid { background: var(--burgundy); color: var(--beer-foam); }
-.cb-btn--solid:hover { background: var(--burgundy-deep); }
-.cb-btn:active { transform: translateY(1px); }
-.cb-btn svg { width: 15px; height: 15px; }
-.cb-btn[disabled] { opacity: 0.45; cursor: not-allowed; transform: none; }
-
-.cb-board { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin-top: 26px; }
+/* ---------- board ---------- */
+.cb-board { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
 .cb-card {
   border: 1px solid var(--line); border-radius: 7px; overflow: hidden; background: #fff;
   display: flex; flex-direction: column; transition: box-shadow .18s, border-color .18s;
 }
 .cb-card.is-held { border-color: var(--burgundy); box-shadow: 0 0 0 2px var(--burgundy); }
-.cb-poster { position: relative; width: 100%; aspect-ratio: var(--poster-ar, 11 / 17); background: var(--beer-foam-2); overflow: hidden; }
-.cb-poster svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.cb-poster.is-rolling svg { animation: cbRoll .42s ease; }
+.cb-poster { position: relative; width: 100%; aspect-ratio: var(--poster-ar, 11 / 17); background: var(--beer-foam-2); overflow: hidden; cursor: pointer; }
+.cb-poster > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.cb-poster.is-rolling > svg { animation: cbRoll .42s ease; }
 @keyframes cbRoll { 0% { opacity: 0.15; transform: translateY(-8px); } 100% { opacity: 1; transform: none; } }
 .cb-held-badge {
   position: absolute; top: 12px; left: 12px; z-index: 3;
@@ -173,6 +103,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
   background: var(--burgundy); color: var(--beer-foam); padding: 5px 11px; border-radius: 999px;
   display: none; align-items: center; gap: 6px;
 }
+.cb-held-badge svg { width: 12px; height: 12px; }
 .cb-card.is-held .cb-held-badge { display: inline-flex; }
 
 .cb-card-foot { padding: 12px 14px 14px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
@@ -185,12 +116,15 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
   display: inline-flex; align-items: center; gap: 6px; transition: background .16s, color .16s, border-color .16s;
 }
 .cb-mini:hover { border-color: var(--burgundy); }
-.cb-mini[aria-pressed="true"] { background: var(--burgundy); color: var(--beer-foam); border-color: var(--burgundy); }
 .cb-mini svg { width: 12px; height: 12px; }
 .cb-mini--keep { border-color: var(--burgundy); color: var(--burgundy); }
 .cb-mini--keep:hover { background: var(--burgundy); color: var(--beer-foam); }
+/* hovering the poster itself lights up Customize - both paths open the overlay */
+.cb-card:has(> .cb-poster:hover) .cb-mini--keep { background: var(--burgundy); color: var(--beer-foam); }
 
 .cb-reels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.cb-reels.cb-reels-1 { grid-template-columns: 1fr; }
+.cb-reels.cb-reels-2 { grid-template-columns: 1fr 1fr; }
 .cb-reel {
   border: 1px solid var(--line); border-radius: 5px; padding: 8px 9px 9px; background: var(--beer-foam);
   display: flex; flex-direction: column; gap: 3px; text-align: left; cursor: pointer;
@@ -204,39 +138,92 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 .cb-reel.is-locked .cb-lock { color: var(--burgundy); }
 .cb-reel .cb-lock svg { width: 100%; height: 100%; }
 
-/* Spotlight — narrowed-to-one */
-.cb-spotlight { margin-top: 34px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--burgundy); color: var(--beer-foam); display: none; scroll-margin-top: calc(var(--topbar-h) + 78px); }
-.cb-spotlight.is-open { display: grid; grid-template-columns: minmax(0, 420px) 1fr; }
-.cb-spot-poster { background: var(--beer-foam-2); padding: 30px; display: flex; align-items: center; justify-content: center; }
-.cb-spot-poster .cb-poster { width: 100%; max-width: 360px; box-shadow: 0 20px 50px rgba(16,16,25,0.4); border-radius: 3px; }
-.cb-spot-side { padding: 34px 36px 38px; display: flex; flex-direction: column; }
-.cb-spot-side .cb-eye { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.24em; font-weight: 600; font-size: 0.72rem; color: var(--beige); }
-.cb-spot-side h2 { font-family: var(--serif); font-weight: 600; font-size: 2rem; line-height: 1.05; margin: 12px 0 6px; }
-.cb-spot-side .cb-recipe { font-size: 0.9rem; color: rgba(255,241,228,0.78); line-height: 1.7; margin-top: 14px; }
-.cb-spot-side .cb-recipe b { color: var(--beige); font-weight: 600; }
-.cb-spot-side .cb-spot-cta { margin-top: auto; padding-top: 24px; display: flex; flex-wrap: wrap; gap: 12px; }
-.cb-spot-side .cb-btn { border-color: var(--beer-foam); color: var(--beer-foam); }
-.cb-spot-side .cb-btn:hover { background: var(--beer-foam); color: var(--burgundy); }
-.cb-spot-side .cb-btn--solid { background: var(--beer-foam); color: var(--burgundy); }
-.cb-spot-side .cb-btn--solid:hover { background: var(--beige); }
-.cb-spot-note { font-size: 0.78rem; color: rgba(255,241,228,0.6); margin-top: 16px; line-height: 1.6; }
+.cb-loading { padding: 40px 0; text-align: center; color: var(--ink-soft); font-size: 0.9rem; grid-column: 1 / -1; }
 
-.cb-handoff { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 14px; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,241,228,0.2); }
-.cb-h-field { display: flex; flex-direction: column; gap: 5px; }
+/* ---------- sticky footer ---------- */
+.cb-footbar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 60; height: var(--footbar-h);
+  background: var(--burgundy); color: var(--beer-foam);
+  display: flex; align-items: center; gap: 14px;
+  padding: 0 clamp(18px, 4vw, 40px);
+  border-top: 1px solid rgba(255,241,228,0.14);
+  box-shadow: 0 -8px 24px rgba(16,16,25,0.18);
+}
+.cb-footbar .cb-count { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.82rem; color: var(--cream-soft); }
+.cb-footbar .cb-spacer { flex: 1; }
+.cb-btn {
+  display: inline-flex; align-items: center; gap: 9px; cursor: pointer;
+  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.88rem;
+  padding: 11px 20px; border-radius: 2px; border: 1.5px solid var(--beer-foam); color: var(--beer-foam); background: transparent;
+  transition: background .18s, color .18s, transform .12s;
+}
+.cb-btn:hover { background: var(--beer-foam); color: var(--burgundy); }
+.cb-btn--solid { background: var(--beer-foam); color: var(--burgundy); }
+.cb-btn--solid:hover { background: var(--beige); }
+.cb-btn:active { transform: translateY(1px); }
+.cb-btn svg { width: 15px; height: 15px; }
+
+/* ---------- overlay (pick a poster -> content lives here) ---------- */
+.cb-overlay { position: fixed; inset: 0; z-index: 200; display: none; background: rgba(16,16,25,0.6); overflow: auto; padding: 4vh clamp(12px, 3vw, 40px); }
+.cb-overlay.is-open { display: block; }
+.cb-overlay-in {
+  max-width: 1060px; margin: 0 auto; background: var(--burgundy); color: var(--beer-foam);
+  border-radius: 10px; overflow: hidden; box-shadow: 0 30px 80px rgba(16,16,25,0.5);
+  display: grid; grid-template-columns: minmax(0, 420px) 1fr;
+}
+.cb-ov-poster { background: var(--beer-foam-2); padding: 30px; display: flex; align-items: flex-start; justify-content: center; }
+.cb-ov-poster .cb-poster { width: 100%; max-width: 380px; box-shadow: 0 20px 50px rgba(16,16,25,0.4); border-radius: 3px; cursor: default; }
+.cb-ov-side { padding: 30px 34px 36px; display: flex; flex-direction: column; min-width: 0; }
+.cb-ov-head { display: flex; align-items: baseline; gap: 12px; }
+.cb-ov-head .cb-eye { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.24em; font-weight: 600; font-size: 0.72rem; color: var(--beige); }
+.cb-ov-close {
+  margin-left: auto; background: none; border: none; color: var(--cream-soft); cursor: pointer;
+  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.8rem;
+}
+.cb-ov-close:hover { color: var(--beer-foam); }
+.cb-ov-side h2 { font-family: var(--serif); font-weight: 600; font-size: 1.7rem; line-height: 1.05; margin: 10px 0 4px; }
+.cb-recipe { font-size: 0.88rem; color: rgba(255,241,228,0.78); line-height: 1.7; margin-top: 10px; }
+.cb-recipe b { color: var(--beige); font-weight: 600; }
+
+.cb-ov-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; margin-top: 18px; padding-top: 18px; border-top: 1px solid rgba(255,241,228,0.2); }
+.cb-h-field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
 .cb-h-field.cb-h-wide { grid-column: 1 / -1; }
 .cb-h-field label { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; font-size: 0.7rem; color: var(--beige); }
-.cb-h-field input, .cb-h-field select { font-family: var(--sans); font-size: 0.9rem; padding: 8px 10px; color: var(--beer-foam); background: rgba(255,241,228,0.08); border: 1px solid rgba(255,241,228,0.3); border-radius: 3px; }
-.cb-h-field input:focus, .cb-h-field select:focus { outline: none; border-color: var(--beige); }
-.cb-h-field select option { color: var(--ink); }
+.cb-h-field input, .cb-h-field select, .cb-h-field textarea {
+  font-family: var(--sans); font-size: 0.9rem; padding: 8px 10px; color: var(--beer-foam);
+  background: rgba(255,241,228,0.08); border: 1px solid rgba(255,241,228,0.3); border-radius: 3px;
+}
+.cb-h-field select {
+  -webkit-appearance: none; appearance: none;
+  /* the overlay panel is dark, so its open menus render dark to match */
+  color-scheme: dark;
+  padding-right: 34px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23EBCFB8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center; background-size: 13px;
+}
+.cb-h-field textarea { resize: vertical; min-height: 40px; }
+.cb-h-field input:focus, .cb-h-field select:focus, .cb-h-field textarea:focus { outline: none; border-color: var(--beige); }
+.cb-sizes { display: flex; gap: 8px; }
+.cb-size { flex: 1; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; font-size: 0.85rem; padding: 8px 0; border: 1.5px solid rgba(255,241,228,0.3); border-radius: 3px; background: transparent; color: var(--cream-soft); cursor: pointer; }
+.cb-size[aria-pressed="true"] { background: var(--beer-foam); color: var(--burgundy); border-color: var(--beer-foam); }
 
-.cb-loading { padding: 40px 0; text-align: center; color: var(--ink-soft); font-size: 0.9rem; }
+.cb-type { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 22px; margin-top: 18px; padding-top: 18px; border-top: 1px solid rgba(255,241,228,0.2); }
+.cb-t-field { display: flex; flex-direction: column; gap: 4px; }
+.cb-t-field label { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; font-size: 0.7rem; color: var(--beige); display: flex; justify-content: space-between; }
+.cb-t-field label output { color: var(--beer-foam); font-family: var(--sans); font-weight: 400; letter-spacing: 0; text-transform: none; }
+.cb-t-field input[type="range"] { width: 100%; accent-color: var(--beige); }
+.cb-t-reset { justify-self: start; grid-column: 1 / -1; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.72rem; color: var(--cream-soft); background: none; border: none; cursor: pointer; padding: 0; text-decoration: underline; text-underline-offset: 3px; }
+.cb-t-reset:hover { color: var(--beer-foam); }
+
+.cb-ov-cta { margin-top: 22px; padding-top: 20px; border-top: 1px solid rgba(255,241,228,0.2); display: flex; flex-wrap: wrap; gap: 12px; }
+.cb-ov-note { font-size: 0.78rem; color: rgba(255,241,228,0.6); margin-top: 14px; line-height: 1.6; }
 
 /* ---------- toast ---------- */
 .toast {
-  position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(20px);
+  position: fixed; bottom: calc(var(--footbar-h) + 18px); left: 50%; transform: translateX(-50%) translateY(20px);
   background: var(--burgundy); color: var(--beer-foam);
   font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;
-  font-size: 0.85rem; padding: 12px 22px; border-radius: 999px; z-index: 200;
+  font-size: 0.85rem; padding: 12px 22px; border-radius: 999px; z-index: 400;
   opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
   box-shadow: 0 8px 24px rgba(0,0,0,0.25);
 }
@@ -259,11 +246,12 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 
 @media (max-width: 940px) {
   .cb-board { grid-template-columns: 1fr 1fr; }
-  .cb-spotlight.is-open { grid-template-columns: 1fr; }
+  .cb-overlay-in { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) {
   .cb-board { grid-template-columns: 1fr; }
   .tool-bar .tb-title { display: none; }
+  .cb-ov-form, .cb-type { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -273,7 +261,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 <div id="password-overlay">
   <div class="password-box">
     <img src="assets/logos/svg/BEERFOAM/PRYES-CREST+WORDMARK+TAGLINE-BEERFOAM.svg" alt="Pryes Brewing">
-    <div class="password-eyebrow">Internal Prototype</div>
+    <div class="password-eyebrow">Internal Tool</div>
     <div class="password-title">Concept Board</div>
     <input type="password" id="password-input" class="password-input" placeholder="Enter password" autocomplete="off">
     <button class="password-button" onclick="checkPassword()">Enter</button>
@@ -285,7 +273,6 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 <div class="tool-bar">
   <img class="tb-mark" src="assets/logos/svg/BEERFOAM/PRYES-P-WATERMARK-BEERFOAM.svg" alt="Pryes">
   <span class="tb-title">Concept Board</span>
-  <span class="tb-badge">Prototype</span>
   <span class="tb-spacer"></span>
   <a class="tb-back" href="pryes-brand-guidelines.html#top">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
@@ -294,98 +281,88 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--orange); outlin
 </div>
 
 <main class="tool-wrap">
-  <div class="tool-lede">
-    <div class="kick"><span class="dot"></span> Work in progress</div>
-    <h1>Generate ideas, fast.</h1>
-    <p>Fill in the details and generate ideas built from the brand kit.</p>
-  </div>
-
-  <ol class="cb-steps" aria-label="How this works">
-    <li><span class="cb-step-n">1</span> Fill in the details</li>
-    <li><span class="cb-step-n">2</span> Shuffle until something clicks</li>
-    <li><span class="cb-step-n">3</span> Download the winner as a package</li>
-  </ol>
-
-  <div class="cb-occasions" role="group" aria-label="Occasion">
-    <button class="cb-occasion" type="button" data-occasion="release" aria-pressed="true">Posters</button>
-    <button class="cb-occasion" type="button" disabled>Taproom Event</button>
-    <button class="cb-occasion" type="button" disabled>Account / Promo</button>
+  <div class="cb-occasions" role="group" aria-label="Poster type" id="cb-concepts">
+    <button class="cb-occasion" type="button" data-concept="all" aria-pressed="true">All</button>
+    <button class="cb-occasion" type="button" data-concept="beerfeature" aria-pressed="false">Beer feature</button>
+    <button class="cb-occasion" type="button" data-concept="brandfocus" aria-pressed="false">Brand focus</button>
+    <button class="cb-occasion" type="button" data-concept="cobrand" aria-pressed="false">Co-branded</button>
+    <button class="cb-occasion" type="button" data-concept="photofocus" aria-pressed="false">Photo focus</button>
+    <button class="cb-occasion" type="button" disabled>Event</button>
     <button class="cb-occasion" type="button" disabled>Announcement</button>
-    <button class="cb-occasion" type="button" disabled>Business Cards</button>
-  </div>
-
-  <div class="cb-panel">
-    <div class="cb-panel-head">Content <span class="cb-sub">Fill once. Every concept updates live, nothing is locked.</span></div>
-    <div class="cb-form" id="cb-form">
-      <div class="cb-field cb-half"><label id="cb-size-label">Size</label>
-        <div class="cb-sizes" role="group" aria-labelledby="cb-size-label">
-          <button class="cb-size" type="button" data-size="s1117" aria-pressed="true">11 × 17</button>
-          <button class="cb-size" type="button" data-size="s1824" aria-pressed="false">18 × 24</button>
-        </div>
-      </div>
-      <div class="cb-field cb-half"><label for="cb-beer-select">Beer</label><select id="cb-beer-select">
-        <option value="miraculum" selected>Miraculum</option>
-        <option value="main-squeeze">Main Squeeze</option>
-        <option value="custom">Custom</option>
-      </select></div>
-      <div class="cb-field cb-third cb-hidden"><label for="cb-style">Style</label><textarea id="cb-style" data-k="style" rows="2" autocomplete="off">Midwest IPA</textarea></div>
-      <div class="cb-field cb-third cb-hidden"><label for="cb-abv">ABV</label><input id="cb-abv" data-k="abv" type="text" value="6.4% ABV" autocomplete="off"></div>
-      <div class="cb-field cb-third cb-hidden"><label for="cb-ibu">IBU / stat</label><input id="cb-ibu" data-k="ibu" type="text" value="75 IBU" autocomplete="off"></div>
-      <div class="cb-field cb-wide"><label for="cb-beer">Headline</label><textarea id="cb-beer" data-k="beer" rows="2" autocomplete="off">Miraculum</textarea></div>
-      <div class="cb-field cb-wide"><label for="cb-date">Subheadline</label><input id="cb-date" data-k="date" type="text" value="On tap now" autocomplete="off"></div>
-      <div class="cb-field cb-wide"><label for="cb-tagline">Body</label><input id="cb-tagline" data-k="tagline" type="text" value="Bold enough for IPA fans, smooth enough for everyone else." autocomplete="off"></div>
-      <div class="cb-field cb-half"><label for="cb-avail">Callout 1</label><input id="cb-avail" data-k="avail" type="text" value="Draft · 4-packs to-go" autocomplete="off"></div>
-      <div class="cb-field cb-half"><label for="cb-cta">Callout 2</label><input id="cb-cta" data-k="cta" type="text" value="Pryes Taproom · North Loop, Mpls" autocomplete="off"></div>
-    </div>
-  </div>
-
-  <div class="cb-toolbar">
-    <span class="cb-count" id="cb-count">4 concepts</span>
-    <span class="cb-spacer"></span>
-    <button class="cb-btn" type="button" id="cb-release-holds">Unpin everything</button>
-    <button class="cb-btn cb-btn--solid" type="button" id="cb-deal">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.3L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.3L3 16"/><path d="M3 21v-5h5"/></svg>
-      Shuffle
-    </button>
   </div>
 
   <div class="cb-board" id="cb-board">
     <div class="cb-loading">Loading the brand kit…</div>
   </div>
+</main>
 
-  <div class="cb-spotlight" id="cb-spotlight" aria-live="polite">
-    <div class="cb-spot-poster"><div class="cb-poster" id="cb-spot-poster"></div></div>
-    <div class="cb-spot-side">
-      <div class="cb-eye">Selected concept</div>
-      <h2 id="cb-spot-title">Concept</h2>
-      <div class="cb-recipe" id="cb-spot-recipe"></div>
-      <div class="cb-handoff">
-        <div class="cb-h-field"><label for="cb-brand">Brand</label><input id="cb-brand" type="text" value="Pryes" autocomplete="off"></div>
-        <div class="cb-h-field"><label for="cb-qty">Quantity</label><input id="cb-qty" type="number" value="4" min="1" max="99"></div>
-        <div class="cb-h-field"><label for="cb-orient">Orientation</label>
-          <select id="cb-orient"><option>Portrait</option><option>Landscape</option></select></div>
-        <div class="cb-h-field"><label for="cb-lam">Laminate</label>
-          <select id="cb-lam"><option>No</option><option>Yes</option></select></div>
-        <div class="cb-h-field cb-h-wide"><label for="cb-msg">Message</label><input id="cb-msg" type="text" autocomplete="off"></div>
+<!-- ===================== STICKY FOOTER ===================== -->
+<div class="cb-footbar">
+  <span class="cb-count" id="cb-count">Loading…</span>
+  <span class="cb-spacer"></span>
+  <button class="cb-btn" type="button" id="cb-release-holds">Unpin everything</button>
+  <button class="cb-btn cb-btn--solid" type="button" id="cb-deal">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.3L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.3L3 16"/><path d="M3 21v-5h5"/></svg>
+    Shuffle
+  </button>
+</div>
+
+<!-- ===================== OVERLAY ===================== -->
+<div class="cb-overlay" id="cb-overlay" aria-modal="true" role="dialog">
+  <div class="cb-overlay-in">
+    <div class="cb-ov-poster"><div class="cb-poster" id="cb-ov-poster"></div></div>
+    <div class="cb-ov-side">
+      <div class="cb-ov-head">
+        <span class="cb-eye" id="cb-ov-type">Selected concept</span>
+        <button class="cb-ov-close" type="button" id="cb-ov-close">✕ Close</button>
       </div>
-      <p class="cb-spot-note">Brand is whose sign this is - Pryes, or a partner account like a bar, restaurant, or the Twins. Orientation and laminate ride along on the request sheet; the poster itself is composed portrait.</p>
-      <div class="cb-spot-cta">
+      <h2 id="cb-ov-title">Concept</h2>
+      <div class="cb-recipe" id="cb-ov-recipe"></div>
+
+      <div class="cb-ov-form" id="cb-ov-form">
+        <div class="cb-h-field"><label id="cb-size-label">Size</label>
+          <div class="cb-sizes" role="group" aria-labelledby="cb-size-label">
+            <button class="cb-size" type="button" data-size="s1117" aria-pressed="true">11 × 17</button>
+            <button class="cb-size" type="button" data-size="s1824" aria-pressed="false">18 × 24</button>
+          </div>
+        </div>
+        <div class="cb-h-field" id="cb-beer-field"><label for="cb-beer-select">Beer</label><select id="cb-beer-select"></select></div>
+        <div class="cb-h-field" id="cb-partner-field"><label for="cb-partner-select">Partner</label><select id="cb-partner-select"></select></div>
+        <div class="cb-h-field" id="cb-photo-field"><label for="cb-photo-select">Photo</label><select id="cb-photo-select"></select></div>
+        <div class="cb-h-field" id="cb-showp-field"><label for="cb-showp">P watermark</label><select id="cb-showp"><option value="on" selected>Show</option><option value="off">Hide</option></select></div>
+        <div class="cb-h-field cb-h-wide" id="cb-headline-field"><label for="cb-headline">Headline</label><textarea id="cb-headline" rows="2" autocomplete="off"></textarea></div>
+        <div class="cb-h-field cb-h-wide" id="cb-subheadline-field"><label for="cb-subheadline">Subheadline</label><textarea id="cb-subheadline" rows="2" autocomplete="off"></textarea></div>
+        <button class="cb-t-reset" type="button" id="cb-text-reset" style="grid-column:1/-1;justify-self:start">Reset text to defaults</button>
+      </div>
+
+      <div class="cb-type" aria-label="Type controls">
+        <div class="cb-t-field"><label for="cb-h1-size">Headline size <output id="cb-h1-size-out">100%</output></label>
+          <input type="range" id="cb-h1-size" min="60" max="150" value="100" step="2"></div>
+        <div class="cb-t-field"><label for="cb-h1-track">Headline tracking <output id="cb-h1-track-out">+0.00</output></label>
+          <input type="range" id="cb-h1-track" min="-4" max="20" value="0" step="1"></div>
+        <div class="cb-t-field"><label for="cb-h2-size">Subheadline size <output id="cb-h2-size-out">100%</output></label>
+          <input type="range" id="cb-h2-size" min="60" max="150" value="100" step="2"></div>
+        <div class="cb-t-field"><label for="cb-h2-track">Subheadline tracking <output id="cb-h2-track-out">+0.00</output></label>
+          <input type="range" id="cb-h2-track" min="-4" max="20" value="0" step="1"></div>
+        <button class="cb-t-reset" type="button" id="cb-type-reset">Reset type to defaults</button>
+      </div>
+
+      <div class="cb-ov-cta">
         <button class="cb-btn cb-btn--solid" type="button" id="cb-export">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
           Download package
         </button>
-        <button class="cb-btn" type="button" id="cb-spot-close">Back to board</button>
+        <button class="cb-btn" type="button" id="cb-ov-back">Back to board</button>
       </div>
-      <p class="cb-spot-note">The SVG exports at the chosen print size with live, editable text and intact vectors. Font names call the print faces (Superclarendon · Gotham · Alternate Gothic) so Adobe picks them up; this preview uses the sanctioned web substitutes.</p>
+      <p class="cb-ov-note">The package holds the SVG at print size with live, editable text, the featured image, and a build recipe listing every ingredient. Font names call the print faces; this preview uses the sanctioned web substitutes.</p>
     </div>
   </div>
-</main>
-
+</div>
 
 <div class="toast" id="toast">Copied</div>
 
-<script src="layout-defaults.js"></script>
-<script src="poster-engine.js"></script>
+<script src="layout-defaults-v2.js"></script>
+<script src="poster-engine-v2.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
 /* ---------- Password (shares the guide's session key) ---------- */
@@ -427,54 +404,98 @@ function showToast(msg) {
 }
 
 /* ============================================================
-   CONCEPT BOARD — generative poster tool
-   Renders posters at the chosen print size as live SVG built
-   from the real brand kit. Reels: image -> layout -> color.
-   Export = serialize SVG.
+   CONCEPT BOARD V2 — poster wall
+   All poster types on one board, sorting pills filter, shuffle
+   in the sticky footer, and content edits happen in the overlay
+   after picking a poster.
    ============================================================ */
 (function () {
   const board = document.getElementById('cb-board');
   if (!board) return;
 
-  /* Rendering lives in poster-engine.js; geometry in layout-defaults.js. */
-  const P = window.PryesPoster;
-  const SIZES = P.SIZES, FAMILIES = P.FAMILIES, IMAGES = P.IMAGES, LAYOUTS = P.LAYOUTS, PHOTOS = P.PHOTOS;
-  const famById = P.famById, esc = P.esc, toPrintFonts = P.toPrintFonts;
+  const P = window.PryesPosterV2;
+  const BEERS = P.BEERS, SHAPE_COUNT = P.SHAPE_COUNT;
+  const esc = P.esc, toPrintFonts = P.toPrintFonts;
   const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const CONCEPT_LABEL = { beerfeature: 'Beer feature', brandfocus: 'Brand focus', cobrand: 'Co-branded', photofocus: 'Photo focus' };
 
-  function content() { const o = {}; document.querySelectorAll('#cb-form input, #cb-form textarea').forEach(i => o[i.dataset.k] = i.value.trim()); return o; }
-  function buildPosterSVG(card, photoHref) { return P.buildPosterSVG(card, content(), { photoHref: photoHref }); }
+  /* ---------- content + type state ---------- */
+  const type = { h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
+  let beerId = BEERS[0].id;
+  /* each poster type keeps its own words; the overlay edits them */
+  const contentByConcept = {
+    beerfeature: { headline: BEERS[0].headline, subheadline: BEERS[0].subheadline },
+    brandfocus:  { headline: "It's a\nMidwest\nThing", subheadline: 'Available\nNow', showP: true },
+    cobrand:     { headline: 'See You\nAt the Game', subheadline: '' },
+    photofocus:  { headline: 'Trust Your Taste', subheadline: '' }
+  };
+  function contentFor(card) {
+    const cc = contentByConcept[card.concept];
+    return { headline: (cc.headline || '').trim(), subheadline: (cc.subheadline || '').trim(), showP: cc.showP !== false,
+      h1Mul: type.h1Mul, h1Track: type.h1Track, h2Mul: type.h2Mul, h2Track: type.h2Track };
+  }
+  function buildPosterSVG(card, opts) { return P.buildPosterSVG(card, contentFor(card), opts || {}); }
 
-  /* ---------- state ---------- */
-  const weightedFams = FAMILIES.reduce((a, f) => a.concat(Array(f.weight).fill(f.id)), []);
+  /* ---------- cards ---------- */
+  const weightedWays = P.COLORWAYS.reduce((a, f) => a.concat(Array(f.weight).fill(f.id)), []);
+  const weightedBrandWays = P.BRAND_COLORWAYS.reduce((a, w) => a.concat(Array(w.weight).fill(w.id)), []);
+  const weightedCobrandWays = P.COBRAND_WAYS.reduce((a, w) => a.concat(Array(w.weight).fill(w.id)), []);
+  const densityIds = P.DENSITIES.map(d => d.id);
   function rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
   function rndDiff(arr, cur) { if (arr.length < 2) return arr[0]; let v; do { v = rnd(arr); } while (v === cur); return v; }
-  const imgIds = IMAGES.map(i => i.id), layIds = LAYOUTS.map(l => l.id);
+  function rndShape(cur) { let v; do { v = 1 + Math.floor(Math.random() * SHAPE_COUNT); } while (v === cur); return v; }
 
-  /* Curated opening hand so the first paint looks intentional. */
-  let cards = [
-    { img:'emblem', lay:'feature',  fam:'foam',      held:false, seed:2, ph:0, lock:{img:false,lay:false,fam:false} },
-    { img:'well',   lay:'anchored', fam:'foam',      held:false, seed:4, ph:0, lock:{img:false,lay:false,fam:false} },
-    { img:'laurel', lay:'framed',   fam:'miraculum', held:false, seed:1, ph:0, lock:{img:false,lay:false,fam:false} },
-    { img:'shapes', lay:'anchored', fam:'beige',     held:false, seed:3, ph:0, lock:{img:false,lay:false,fam:false} }
-  ];
-  let selected = -1;
+  /* Curated opening hands per poster type so the first paint looks intentional. */
+  const cardsByConcept = {
+    beerfeature: [
+      { concept: 'beerfeature', beer: beerId, shape: 1,  colorway: 'beer',      density: 'medium', held: false, lock: { shape: false, colorway: false, density: false } },
+      { concept: 'beerfeature', beer: beerId, shape: 5,  colorway: 'beer',      density: 'loose',  held: false, lock: { shape: false, colorway: false, density: false } },
+      { concept: 'beerfeature', beer: beerId, shape: 9,  colorway: 'burgundy',  density: 'medium', held: false, lock: { shape: false, colorway: false, density: false } },
+      { concept: 'beerfeature', beer: beerId, shape: 13, colorway: 'foam',      density: 'tight',  held: false, lock: { shape: false, colorway: false, density: false } }
+    ],
+    brandfocus: [
+      { concept: 'brandfocus', colorway: 'foam',     held: false, lock: { colorway: false } },
+      { concept: 'brandfocus', colorway: 'burgundy', held: false, lock: { colorway: false } },
+      { concept: 'brandfocus', colorway: 'beige',    held: false, lock: { colorway: false } },
+      { concept: 'brandfocus', colorway: 'offblack', held: false, lock: { colorway: false } }
+    ],
+    cobrand: [
+      { concept: 'cobrand', beer: beerId, partner: 'twins', shape: 3,  colorway: 'foam',       held: false, lock: { shape: false, colorway: false } },
+      { concept: 'cobrand', beer: beerId, partner: 'twins', shape: 5,  colorway: 'beerplaque', held: false, lock: { shape: false, colorway: false } },
+      { concept: 'cobrand', beer: beerId, partner: 'twins', shape: 11, colorway: 'beige',      held: false, lock: { shape: false, colorway: false } },
+      { concept: 'cobrand', beer: beerId, partner: 'twins', shape: 8,  colorway: 'burgundy',   held: false, lock: { shape: false, colorway: false } }
+    ],
+    photofocus: [
+      { concept: 'photofocus', photo: 'miraculum-cooler', colorway: 'foam',     held: false, lock: { colorway: false } },
+      { concept: 'photofocus', photo: 'miraculum-cooler', colorway: 'beige',    held: false, lock: { colorway: false } },
+      { concept: 'photofocus', photo: 'miraculum-cooler', colorway: 'burgundy', held: false, lock: { colorway: false } },
+      { concept: 'photofocus', photo: 'miraculum-cooler', colorway: 'offblack', held: false, lock: { colorway: false } }
+    ]
+  };
+  const CONCEPT_ORDER = ['beerfeature', 'brandfocus', 'cobrand', 'photofocus'];
+  let view = 'all';
+  /* All = a sampler, one poster per type; a type pill shows its full hand */
+  function visible() {
+    return view === 'all' ? CONCEPT_ORDER.map(k => cardsByConcept[k][0]) : cardsByConcept[view];
+  }
+  let selectedCard = null;
 
+  const REEL_KEYS = { beerfeature: ['shape', 'colorway', 'density'], brandfocus: ['colorway'], cobrand: ['shape', 'colorway'], photofocus: ['colorway'] };
   function rerollReel(card, key) {
-    if (key === 'img') {
-      card.img = rndDiff(imgIds, card.img);
-      card.seed = (card.seed + 1 + Math.floor(Math.random() * 5)) % 997;
-      if ((card.img === 'well' || card.lay === 'feature') && PHOTOS.length) {
-        card.ph = rndDiff(Array.from({ length: PHOTOS.length }, (_, idx) => idx), card.ph);
-      }
+    if (card.concept === 'brandfocus' || card.concept === 'photofocus') { card.colorway = rndDiff(weightedBrandWays, card.colorway); return; }
+    if (card.concept === 'cobrand') {
+      if (key === 'shape') card.shape = rndShape(card.shape);
+      else card.colorway = rndDiff(weightedCobrandWays, card.colorway);
+      return;
     }
-    else if (key === 'lay') card.lay = rndDiff(layIds, card.lay);
-    else card.fam = rndDiff(weightedFams, card.fam);
+    if (key === 'shape') card.shape = rndShape(card.shape);
+    else if (key === 'colorway') card.colorway = rndDiff(weightedWays, card.colorway);
+    else card.density = rndDiff(densityIds, card.density);
   }
   function dealUnheld() {
-    cards.forEach(card => {
+    visible().forEach(card => {
       if (card.held) return;
-      ['img', 'lay', 'fam'].forEach(key => { if (!card.lock[key]) rerollReel(card, key); });
+      REEL_KEYS[card.concept].forEach(key => { if (!card.lock[key]) rerollReel(card, key); });
     });
   }
 
@@ -484,68 +505,132 @@ function showToast(msg) {
   const ICON_PIN = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 3l7 7-3 1-4 4-1 6-3-3-4 4-1-1 4-4-3-3 6-1 4-4z"/></svg>';
 
   /* ---------- render ---------- */
-  const REELS = { img: { label: 'Image', opts: IMAGES }, lay: { label: 'Layout', opts: LAYOUTS } };
+  const REEL_LABELS = { shape: 'Shape', colorway: 'Color', density: 'Pattern' };
   function reelValueLabel(card, key) {
-    if (key === 'fam') return famById(card.fam).name;
-    if (key === 'img' && (card.img === 'well' || card.lay === 'feature') && PHOTOS.length) {
-      const p = PHOTOS[card.ph % PHOTOS.length];
-      return 'Photo · ' + (p.label || p.file);
+    if (key === 'shape') return 'Shape ' + String(card.shape).padStart(2, '0');
+    if (key === 'colorway') {
+      if (card.concept === 'brandfocus' || card.concept === 'photofocus') return P.brandColorwayById(card.colorway).name;
+      if (card.concept === 'cobrand') return P.cobrandWayById(card.colorway).name;
+      return P.colorwayById(card.colorway).name;
     }
-    return REELS[key].opts.find(o => o.id === card[key]).label;
+    return P.densityById(card.density).name;
   }
   function reelHTML(i, key, card) {
     const locked = card.lock[key];
-    const label = key === 'fam' ? 'Color' : REELS[key].label;
+    const label = REEL_LABELS[key];
     return '<button class="cb-reel' + (locked ? ' is-locked' : '') + '" type="button" data-i="' + i + '" data-reel="' + key + '" title="Tap to swap ' + label + '">' +
       '<span class="cb-reel-k">' + label + '<span class="cb-lock" data-lock="' + key + '" role="button" aria-label="' + (locked ? 'Unlock' : 'Lock') + ' ' + label + '" aria-pressed="' + locked + '">' + (locked ? ICON_LOCK : ICON_UNLOCK) + '</span></span>' +
       '<span class="cb-reel-v">' + reelValueLabel(card, key) + '</span></button>';
   }
   function cardHTML(card, i) {
+    const keys = REEL_KEYS[card.concept];
     return '<div class="cb-card' + (card.held ? ' is-held' : '') + '" data-i="' + i + '">' +
-      '<div class="cb-poster" data-role="poster"><span class="cb-held-badge">' + ICON_PIN + ' Pinned</span>' + buildPosterSVG(card) + '</div>' +
+      '<div class="cb-poster" data-role="poster" data-i="' + i + '" title="Open this concept">' +
+        '<span class="cb-held-badge">' + ICON_PIN + ' Pinned</span>' +
+        buildPosterSVG(card) + '</div>' +
       '<div class="cb-card-foot">' +
-        '<div class="cb-card-top"><span class="cb-card-idx">Concept ' + (i + 1) + '</span>' +
+        '<div class="cb-card-top"><span class="cb-card-idx">' + CONCEPT_LABEL[card.concept] + ' · Concept ' + (i + 1) + '</span>' +
           '<div class="cb-card-actions">' +
             '<button class="cb-mini" type="button" data-act="hold" data-i="' + i + '" aria-pressed="' + card.held + '" title="Keep this whole card when you shuffle">' + ICON_PIN + (card.held ? ' Pinned' : ' Pin') + '</button>' +
-            '<button class="cb-mini cb-mini--keep" type="button" data-act="keep" data-i="' + i + '" title="Choose this concept and get the finalize-ready package">Pick this one →</button>' +
+            '<button class="cb-mini cb-mini--keep" type="button" data-act="keep" data-i="' + i + '" title="Open this concept and get the package">Customize →</button>' +
           '</div></div>' +
-        '<div class="cb-reels">' + reelHTML(i, 'img', card) + reelHTML(i, 'lay', card) + reelHTML(i, 'fam', card) + '</div>' +
+        '<div class="cb-reels cb-reels-' + keys.length + '">' + keys.map(k => reelHTML(i, k, card)).join('') + '</div>' +
       '</div></div>';
   }
   function renderBoard(bumpSet) {
-    board.innerHTML = cards.map(cardHTML).join('');
-    document.getElementById('cb-count').textContent = cards.filter(c => c.held).length + ' pinned · ' + cards.length + ' concepts';
+    const vis = visible();
+    board.innerHTML = vis.map(cardHTML).join('');
+    const pinned = vis.filter(c => c.held).length;
+    document.getElementById('cb-count').textContent = pinned + ' pinned · ' + vis.length + ' concepts' + (view === 'all' ? '' : ' · ' + CONCEPT_LABEL[view]);
     if (!reduce && bumpSet) bumpSet.forEach(i => { const p = board.querySelector('.cb-card[data-i="' + i + '"] .cb-poster'); if (p) { void p.offsetWidth; p.classList.add('is-rolling'); } });
-    if (selected >= 0) renderSpotlight();
+    if (selectedCard) renderOverlayPoster();
   }
   function posterOnlyRefresh() {
-    cards.forEach((card, i) => { const p = board.querySelector('.cb-card[data-i="' + i + '"] .cb-poster'); if (p) { const b = p.querySelector('.cb-held-badge'); p.innerHTML = (b ? b.outerHTML : '') + buildPosterSVG(card); } });
-    if (selected >= 0) renderSpotlight();
+    const vis = visible();
+    vis.forEach((card, i) => {
+      const p = board.querySelector('.cb-card[data-i="' + i + '"] .cb-poster');
+      if (p) {
+        const badge = p.querySelector('.cb-held-badge');
+        p.innerHTML = (badge ? badge.outerHTML : '') + buildPosterSVG(card);
+      }
+    });
+    if (selectedCard) renderOverlayPoster();
   }
 
-  /* ---------- spotlight ---------- */
-  const spot = document.getElementById('cb-spotlight');
-  function renderSpotlight() {
-    const card = cards[selected]; if (!card) return;
-    const c = content();
-    document.getElementById('cb-spot-poster').innerHTML = buildPosterSVG(card);
-    document.getElementById('cb-spot-title').textContent = (c.beer || 'Concept') + ' · Concept ' + (selected + 1);
-    document.getElementById('cb-spot-recipe').innerHTML =
-      '<b>Image</b> ' + (((card.lay === 'feature' || card.img === 'well') && PHOTOS.length) ? 'Photo · ' + esc(PHOTOS[card.ph % PHOTOS.length].label || PHOTOS[card.ph % PHOTOS.length].file) : IMAGES.find(o => o.id === card.img).label) + '<br>' +
-      '<b>Layout</b> ' + LAYOUTS.find(o => o.id === card.lay).label + '<br>' +
-      '<b>Color</b> ' + famById(card.fam).name + '<br><b>Size</b> ' + P.SIZE.label;
+  /* ---------- overlay ---------- */
+  const overlay = document.getElementById('cb-overlay');
+  function fieldVisibility(concept) {
+    document.getElementById('cb-beer-field').style.display = (concept === 'beerfeature' || concept === 'cobrand') ? '' : 'none';
+    document.getElementById('cb-partner-field').style.display = concept === 'cobrand' ? '' : 'none';
+    document.getElementById('cb-photo-field').style.display = concept === 'photofocus' ? '' : 'none';
+    document.getElementById('cb-showp-field').style.display = concept === 'brandfocus' ? '' : 'none';
+    document.getElementById('cb-subheadline-field').style.display = (concept === 'cobrand' || concept === 'photofocus') ? 'none' : '';
   }
-  function openSpotlight(i) {
-    selected = i; spot.classList.add('is-open'); renderSpotlight();
-    const msg = document.getElementById('cb-msg');
-    if (!msg.value.trim()) {
-      const c = content();
-      msg.value = (c.beer || 'New beer') + ' Now Available on Draft';
+  function renderOverlayPoster() {
+    document.getElementById('cb-ov-poster').innerHTML = buildPosterSVG(selectedCard);
+    renderRecipe();
+  }
+  function renderRecipe() {
+    const card = selectedCard;
+    const c = contentFor(card);
+    document.getElementById('cb-ov-type').textContent = CONCEPT_LABEL[card.concept];
+    document.getElementById('cb-ov-title').textContent = (c.headline || 'Concept').replace(/\n/g, ' ');
+    let html = '';
+    if (card.concept === 'brandfocus') {
+      const bp = P.brandColorwayById(card.colorway).paint;
+      html = '<b>Color</b> ' + P.brandColorwayById(card.colorway).name + ' · field ' + bp.bg + ' · ink ' + bp.ink + '<br>' +
+        '<b>Marks</b> Pryes Brewing wordmark · laurel wreath' + (c.showP !== false ? ' · P watermark' : ' · P watermark off') + '<br>' +
+        '<b>Size</b> ' + P.SIZE.label;
+    } else if (card.concept === 'photofocus') {
+      const bp = P.brandColorwayById(card.colorway).paint;
+      html = '<b>Photo</b> ' + esc(P.focusPhotoById(card.photo).name) + '<br>' +
+        '<b>Color</b> ' + P.brandColorwayById(card.colorway).name + ' · field ' + bp.bg + ' · ink ' + bp.ink + '<br>' +
+        '<b>Size</b> ' + P.SIZE.label;
+    } else if (card.concept === 'cobrand') {
+      const beer = P.beerById(card.beer);
+      const partner = P.partnerById(card.partner);
+      const cp = P.cobrandWayById(card.colorway).paint(beer);
+      html = '<b>Beer</b> ' + esc(beer.name) + '<br>' +
+        '<b>Partner</b> ' + esc(partner.name) + ' · logo in ' + (cp.dark ? partner.onDark : partner.color) + '<br>' +
+        '<b>Plaque</b> Shape ' + String(card.shape).padStart(2, '0') + ' · ' + cp.plaque + '<br>' +
+        '<b>Color</b> ' + P.cobrandWayById(card.colorway).name + ' · field ' + cp.bg + '<br>' +
+        '<b>Size</b> ' + P.SIZE.label;
+    } else {
+      const beer = P.beerById(card.beer);
+      const paint = P.colorwayById(card.colorway).paint(beer);
+      html = '<b>Beer</b> ' + esc(beer.name) + ' (can + ' + esc(beer.patternName) + ' pattern)<br>' +
+        '<b>Shape</b> ' + String(card.shape).padStart(2, '0') + ' of ' + SHAPE_COUNT + '<br>' +
+        '<b>Color</b> ' + P.colorwayById(card.colorway).name + ' · field ' + paint.bg + ' · band ' + paint.band + '<br>' +
+        '<b>Pattern</b> ' + P.densityById(card.density).name + '<br>' +
+        '<b>Size</b> ' + P.SIZE.label;
     }
-    spot.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+    document.getElementById('cb-ov-recipe').innerHTML = html;
   }
-  function closeSpotlight() { selected = -1; spot.classList.remove('is-open'); }
+  function openOverlay(card) {
+    selectedCard = card;
+    fieldVisibility(card.concept);
+    const cc = contentByConcept[card.concept];
+    document.getElementById('cb-headline').value = cc.headline;
+    document.getElementById('cb-subheadline').value = cc.subheadline;
+    document.getElementById('cb-showp').value = cc.showP === false ? 'off' : 'on';
+    if (card.beer) document.getElementById('cb-beer-select').value = card.beer;
+    if (card.partner) document.getElementById('cb-partner-select').value = card.partner;
+    if (card.photo) document.getElementById('cb-photo-select').value = card.photo;
+    renderOverlayPoster();
+    overlay.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeOverlay() {
+    selectedCard = null;
+    overlay.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('cb-ov-close').addEventListener('click', closeOverlay);
+  document.getElementById('cb-ov-back').addEventListener('click', closeOverlay);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeOverlay(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('is-open')) closeOverlay(); });
 
+  /* ---------- export ---------- */
   function downloadBlob(blob, name) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -553,104 +638,234 @@ function showToast(msg) {
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1500);
   }
-  async function photoData(file) {
-    const r = await fetch('assets/photos/' + file);
+  async function fileData(path) {
+    const r = await fetch(path);
     if (!r.ok) return null;
     const blob = await r.blob();
     const dataUrl = await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); });
-    return { name: file, blob: blob, dataUrl: dataUrl };
+    return { name: path.split('/').pop(), blob: blob, dataUrl: dataUrl };
   }
-  function specSheetHTML(c, card, fam, photo) {
-    const req = [
-      ['Brand', document.getElementById('cb-brand').value || 'Pryes'],
-      ['Sign Type', P.SIZE.signType],
-      ['Quantity', document.getElementById('cb-qty').value || '4'],
-      ['Orientation', document.getElementById('cb-orient').value],
-      ['Laminate', document.getElementById('cb-lam').value],
-      ['Message', document.getElementById('cb-msg').value]
-    ];
-    const recipe = [
-      ['Layout', LAYOUTS.find(l => l.id === card.lay).label],
-      ['Color family', fam.name + ' / background ' + fam.bg + ' / ink ' + fam.ink + ' / accent ' + fam.accent],
-      ['Print fonts', 'Superclarendon / Gotham / Alternate Gothic No.2 D (SVG text is live and editable)'],
-      ['Photo', photo ? photo.name + ' (full-resolution copy in this package)' : 'None - brand art only'],
-      ['Final size', P.SIZE.label + ', portrait']
-    ];
+  const SHEET_CSS = '<style>body{font-family:Georgia,serif;max-width:640px;margin:40px auto;padding:0 20px;color:#3e0f23;line-height:1.5}h1{font-size:24px;margin-bottom:4px}p.sub{margin:0 0 24px;color:#6b4351;font-size:14px}table{border-collapse:collapse;width:100%}th{text-align:left;padding:7px 16px 7px 0;white-space:nowrap;vertical-align:top;font-size:14px}td{padding:7px 0;font-size:14px}tr{border-bottom:1px solid #eee}@media print{body{margin:0}}</style>';
+  function sheet(title, rows) {
     const tr = r => '<tr><th>' + r[0] + '</th><td>' + esc(String(r[1])) + '</td></tr>';
-    return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>' + esc(c.beer || 'Concept') + ' - Pryes poster spec</title>' +
-      '<style>body{font-family:Georgia,serif;max-width:640px;margin:40px auto;padding:0 20px;color:#3e0f23;line-height:1.5}h1{font-size:24px;margin-bottom:4px}p.sub{margin:0 0 24px;color:#6b4351;font-size:14px}h2{font-size:13px;text-transform:uppercase;letter-spacing:.12em;margin:28px 0 8px}table{border-collapse:collapse;width:100%}th{text-align:left;padding:7px 16px 7px 0;white-space:nowrap;vertical-align:top;font-size:14px}td{padding:7px 0;font-size:14px}tr{border-bottom:1px solid #eee}@media print{body{margin:0}}</style></head><body>' +
-      '<h1>' + esc(c.beer || 'Concept') + ' - poster concept</h1><p class="sub">From the Pryes Concept Board. The SVG in this package is the concept to finalize; everything in it is editable.</p>' +
-      '<h2>Request</h2><table>' + req.map(tr).join('') + '</table>' +
-      '<h2>Concept recipe</h2><table>' + recipe.map(tr).join('') + '</table></body></html>';
+    return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>' + esc(title) + ' - Pryes build recipe</title>' + SHEET_CSS + '</head><body>' +
+      '<h1>' + esc(title) + ' - build recipe</h1><p class="sub">From the Pryes Concept Board. Every ingredient below rebuilds this concept exactly; the SVG in this package is the concept itself, fully editable.</p>' +
+      '<table>' + rows.map(tr).join('') + '</table></body></html>';
+  }
+  function recipeRows(c, card) {
+    const FONTS = ['Fonts', 'Alternate Gothic No.2 D / Gotham / Superclarendon - SVG text is live and editable'];
+    const SPACE = ['Design space', '1800 × 2400 units; the SVG opens at true print size in Illustrator'];
+    if (card.concept === 'brandfocus') {
+      const way = P.brandColorwayById(card.colorway), bp = way.paint;
+      const E = P.SPEC.brandfocus.elements;
+      return [
+        ['Poster type', 'Brand focus · ' + P.SIZE.label + ' portrait'],
+        ['Colorway', way.name + ' · field ' + bp.bg + ' · ink ' + bp.ink],
+        ['Marks', 'Pryes Brewing wordmark (' + bp.ink + ') · laurel wreath (' + bp.wreath + ' at ' + Math.round(bp.wreathOp * 100) + '%)' + (c.showP !== false ? ' · P watermark (' + bp.pmark + ' at ' + Math.round(bp.pmarkOp * 100) + '%)' : ' · P watermark off')],
+        ['Headline', '"' + c.headline.replace(/\n/g, ' / ') + '" · Alternate Gothic No.2 D · tracking ' + (E.headline.track + c.h1Track).toFixed(2) + 'em'],
+        ['Subheadline', '"' + c.subheadline.replace(/\n/g, ' / ') + '" · Superclarendon · ' + Math.round(E.subheadline.size * c.h2Mul) + ' design units'],
+        FONTS, SPACE
+      ];
+    }
+    if (card.concept === 'photofocus') {
+      const way = P.brandColorwayById(card.colorway), bp = way.paint;
+      const photo = P.focusPhotoById(card.photo);
+      const E = P.SPEC.photofocus.elements;
+      return [
+        ['Poster type', 'Photo focus · ' + P.SIZE.label + ' portrait'],
+        ['Photo', photo.name + ' · ' + photo.file.split('/').pop() + ' (full-resolution copy in this package)'],
+        ['Colorway', way.name + ' · field ' + bp.bg + ' · ink ' + bp.ink],
+        ['Headline', '"' + c.headline + '" · Alternate Gothic No.2 D · ' + Math.round(E.headline.size * c.h1Mul) + ' design units · tracking ' + (E.headline.track + c.h1Track).toFixed(2) + 'em'],
+        FONTS, SPACE
+      ];
+    }
+    if (card.concept === 'cobrand') {
+      const beer = P.beerById(card.beer);
+      const partner = P.partnerById(card.partner);
+      const way = P.cobrandWayById(card.colorway), cp = way.paint(beer);
+      const E = P.SPEC.cobrand.elements;
+      return [
+        ['Poster type', 'Co-branded · ' + P.SIZE.label + ' portrait'],
+        ['Beer', beer.name + ' · ' + beer.can.split('/').pop() + ' (full-resolution copy in this package)'],
+        ['Partner', partner.name + ' · ' + partner.file.split('/').pop() + ' · printed in ' + (cp.dark ? partner.onDark : partner.color)],
+        ['Plaque', 'Brand shape ' + String(card.shape).padStart(2, '0') + ' · printed in ' + cp.plaque],
+        ['Colors', way.name + ' · field ' + cp.bg + ' · plaque ' + cp.plaque + ' · ink ' + cp.ink],
+        ['Headline', '"' + c.headline.replace(/\n/g, ' / ') + '" · Alternate Gothic No.2 D · ' + Math.round(E.headline.size * c.h1Mul) + ' design units · tracking ' + (E.headline.track + c.h1Track).toFixed(2) + 'em'],
+        FONTS, SPACE
+      ];
+    }
+    const beer = P.beerById(card.beer);
+    const paint = P.colorwayById(card.colorway).paint(beer);
+    const E = P.SPEC.beerfeature.elements;
+    const h1fs = Math.round(E.headline.size * (c.headline.length <= 10 ? 1 : c.headline.length <= 14 ? 0.86 : c.headline.length <= 18 ? 0.72 : c.headline.length <= 24 ? 0.58 : 0.48) * c.h1Mul);
+    return [
+      ['Poster type', 'Beer feature · ' + P.SIZE.label + ' portrait'],
+      ['Beer', beer.name],
+      ['Can render', beer.can.split('/').pop() + ' (full-resolution copy in this package)'],
+      ['Pattern', beer.patternName + ' · ' + beer.pattern.split('/').pop() + ' · printed in ' + paint.pattern],
+      ['Shape', 'Brand shape ' + String(card.shape).padStart(2, '0') + ' · ' + P.shapeUrl(card.shape).split('/').pop() + ' · printed in ' + paint.band],
+      ['Colors', 'Field ' + paint.bg + ' · pattern ' + paint.pattern + ' · wordmark ' + paint.wordmark + ' · band ' + paint.band + ' · band text ' + paint.bandText],
+      ['Headline', '"' + c.headline.replace(/\n/g, ' / ') + '" · Alternate Gothic No.2 D · ' + h1fs + ' design units · tracking ' + (E.headline.track + c.h1Track).toFixed(2) + 'em'],
+      ['Subheadline', '"' + c.subheadline.replace(/\n/g, ' / ') + '" · Alternate Gothic No.2 D · ' + Math.round(E.subheadline.size * c.h2Mul) + ' design units · tracking ' + (E.subheadline.track + c.h2Track).toFixed(2) + 'em'],
+      FONTS, SPACE
+    ];
   }
   async function downloadPackage() {
-    const card = cards[selected] || cards[0];
-    const c = content(), fam = famById(card.fam);
-    const slug = (c.beer || 'concept').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'concept';
-    const photoExpected = (card.img === 'well' || card.lay === 'feature') && PHOTOS.length;
-    let photo = null;
-    if (photoExpected) photo = await photoData(PHOTOS[card.ph % PHOTOS.length].file);
-    const photoMissing = photoExpected && !photo;
-    let svg = '<?xml version="1.0" encoding="UTF-8"?>\n' + toPrintFonts(buildPosterSVG(card, photo && photo.dataUrl));
-    if (photoMissing) svg = svg.replace(/<image\b[^>]*href="assets\/photos\/[^"]*"[^>]*\/>/, '');
+    const card = selectedCard || visible()[0];
+    const c = contentFor(card);
+    const usesBeer = card.concept === 'beerfeature' || card.concept === 'cobrand';
+    const beer = usesBeer ? P.beerById(card.beer) : null;
+    const slug = (c.headline || (beer ? beer.name : 'brand')).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'concept';
+    const artPath = beer ? beer.can : card.concept === 'photofocus' ? P.focusPhotoById(card.photo).file : null;
+    const art = artPath ? await fileData(artPath) : null;
+    const opts = card.concept === 'photofocus' ? { photoHref: art && art.dataUrl } : { canHref: art && art.dataUrl };
+    const svg = '<?xml version="1.0" encoding="UTF-8"?>\n' + toPrintFonts(buildPosterSVG(card, opts));
     const svgName = 'pryes-' + slug + '-' + P.SIZE.slug + '.svg';
     if (window.JSZip) {
       const zip = new JSZip();
       zip.file(svgName, svg);
-      zip.file('spec-sheet.html', specSheetHTML(c, card, fam, photo));
-      if (photo) zip.file(photo.name, photo.blob);
+      zip.file('build-recipe.html', sheet((c.headline || 'Concept').replace(/\n/g, ' '), recipeRows(c, card)));
+      if (art) zip.file(art.name, art.blob);
       const blob = await zip.generateAsync({ type: 'blob' });
       downloadBlob(blob, 'pryes-' + slug + '-concept.zip');
-      showToast(photoMissing ? 'Photo file missing, exported without it' : 'Concept package downloaded');
+      showToast(!artPath || art ? 'Concept package downloaded' : 'Image file missing, exported without it');
     } else {
       downloadBlob(new Blob([svg], { type: 'image/svg+xml' }), svgName);
       showToast('ZIP unavailable, SVG downloaded');
     }
   }
 
-  /* ---------- events ---------- */
+  /* ---------- events: board ---------- */
   board.addEventListener('click', e => {
+    const vis = visible();
     const lock = e.target.closest('.cb-lock');
-    if (lock) { e.stopPropagation(); const reel = lock.closest('.cb-reel'); const i = +reel.dataset.i; cards[i].lock[lock.dataset.lock] = !cards[i].lock[lock.dataset.lock]; renderBoard(); return; }
+    if (lock) { e.stopPropagation(); const reel = lock.closest('.cb-reel'); const i = +reel.dataset.i; vis[i].lock[lock.dataset.lock] = !vis[i].lock[lock.dataset.lock]; renderBoard(); return; }
     const reel = e.target.closest('.cb-reel');
-    if (reel) { const i = +reel.dataset.i; rerollReel(cards[i], reel.dataset.reel); renderBoard(new Set([i])); return; }
+    if (reel) {
+      const i = +reel.dataset.i;
+      /* a locked reel stays put until its lock is clicked open */
+      if (vis[i].lock[reel.dataset.reel]) { showToast('Locked - click the lock to unlock'); return; }
+      /* tapping Pattern steps through the sizes in order; other reels roll */
+      if (reel.dataset.reel === 'density') vis[i].density = densityIds[(densityIds.indexOf(vis[i].density) + 1) % densityIds.length];
+      else rerollReel(vis[i], reel.dataset.reel);
+      renderBoard(new Set([i])); return;
+    }
     const mini = e.target.closest('.cb-mini');
-    if (mini) { const i = +mini.dataset.i; if (mini.dataset.act === 'hold') { cards[i].held = !cards[i].held; renderBoard(); } else openSpotlight(i); }
+    if (mini) { const i = +mini.dataset.i; if (mini.dataset.act === 'hold') { vis[i].held = !vis[i].held; renderBoard(); } else openOverlay(vis[i]); return; }
+    const poster = e.target.closest('.cb-poster');
+    if (poster) { openOverlay(vis[+poster.dataset.i]); }
   });
-  document.getElementById('cb-deal').addEventListener('click', () => { dealUnheld(); renderBoard(new Set(cards.map((c, i) => c.held ? -1 : i).filter(i => i >= 0))); });
-  document.getElementById('cb-release-holds').addEventListener('click', () => { cards.forEach(c => { c.held = false; c.lock = { img: false, lay: false, fam: false }; }); renderBoard(); });
-  document.getElementById('cb-export').addEventListener('click', downloadPackage);
-  document.getElementById('cb-spot-close').addEventListener('click', closeSpotlight);
+  document.getElementById('cb-deal').addEventListener('click', () => {
+    dealUnheld();
+    renderBoard(new Set(visible().map((c, i) => c.held ? -1 : i).filter(i => i >= 0)));
+  });
+  document.getElementById('cb-release-holds').addEventListener('click', () => {
+    visible().forEach(c => { c.held = false; Object.keys(c.lock).forEach(k => c.lock[k] = false); });
+    renderBoard();
+  });
+
+  /* ---------- events: sorting pills ---------- */
+  document.getElementById('cb-concepts').addEventListener('click', e => {
+    const b = e.target.closest('[data-concept]'); if (!b || b.dataset.concept === view) return;
+    view = b.dataset.concept;
+    document.querySelectorAll('#cb-concepts [data-concept]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    renderBoard();
+    window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+  });
+
+  /* ---------- events: overlay content ---------- */
+  let t;
+  function liveRefresh() { clearTimeout(t); t = setTimeout(posterOnlyRefresh, 130); }
+  document.getElementById('cb-headline').addEventListener('input', () => {
+    if (selectedCard) { contentByConcept[selectedCard.concept].headline = document.getElementById('cb-headline').value; liveRefresh(); }
+  });
+  document.getElementById('cb-subheadline').addEventListener('input', () => {
+    if (selectedCard) { contentByConcept[selectedCard.concept].subheadline = document.getElementById('cb-subheadline').value; liveRefresh(); }
+  });
+  document.getElementById('cb-showp').addEventListener('change', () => {
+    contentByConcept.brandfocus.showP = document.getElementById('cb-showp').value !== 'off';
+    posterOnlyRefresh();
+  });
+  /* the shipped words per poster type; beer feature words follow the beer */
+  function defaultWords(concept) {
+    if (concept === 'beerfeature') { const b = P.beerById(beerId); return { headline: b.headline, subheadline: b.subheadline }; }
+    if (concept === 'brandfocus') return { headline: "It's a\nMidwest\nThing", subheadline: 'Available\nNow', showP: true };
+    if (concept === 'cobrand') return { headline: 'See You\nAt the Game', subheadline: '' };
+    return { headline: 'Trust Your Taste', subheadline: '' };
+  }
+  document.getElementById('cb-text-reset').addEventListener('click', () => {
+    if (!selectedCard) return;
+    const concept = selectedCard.concept;
+    contentByConcept[concept] = defaultWords(concept);
+    document.getElementById('cb-headline').value = contentByConcept[concept].headline;
+    document.getElementById('cb-subheadline').value = contentByConcept[concept].subheadline;
+    document.getElementById('cb-showp').value = contentByConcept[concept].showP === false ? 'off' : 'on';
+    posterOnlyRefresh();
+    showToast('Text back to defaults');
+  });
   document.querySelectorAll('.cb-size').forEach(btn => btn.addEventListener('click', () => {
     P.setSize(btn.dataset.size);
     document.querySelectorAll('.cb-size').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
     renderBoard();
   }));
 
-  let t;
-  document.querySelectorAll('#cb-form input, #cb-form textarea').forEach(inp => inp.addEventListener('input', () => { clearTimeout(t); t = setTimeout(posterOnlyRefresh, 130); }));
-
-  /* ---------- beer presets ---------- */
-  const BEERS = {
-    'miraculum':    { beer: 'Miraculum',    style: 'Midwest IPA',       abv: '6.4% ABV', ibu: '75 IBU' },
-    'main-squeeze': { beer: 'Main Squeeze', style: 'Lemon Lime Blonde', abv: '4.6% ABV', ibu: '22 IBU' }
-  };
-  const BEER_FIELDS = [['beer','cb-beer'],['style','cb-style'],['abv','cb-abv'],['ibu','cb-ibu']];
+  /* beer select drives every beer-using card; its words only drive the beer feature poster */
   const beerSelect = document.getElementById('cb-beer-select');
-  /* Style / ABV / IBU only show for Custom; a selected beer carries its own data */
-  function syncBeerFields() {
-    const isCustom = !BEERS[beerSelect.value];
-    ['cb-style', 'cb-abv', 'cb-ibu'].forEach(id => document.getElementById(id).closest('.cb-field').classList.toggle('cb-hidden', !isCustom));
-  }
+  beerSelect.innerHTML = BEERS.map(b => '<option value="' + b.id + '">' + esc(b.name) + '</option>').join('');
   beerSelect.addEventListener('change', () => {
-    const b = BEERS[beerSelect.value];
-    if (b) {
-      BEER_FIELDS.forEach(([k, id]) => { document.getElementById(id).value = b[k]; });
-      posterOnlyRefresh();
+    beerId = beerSelect.value;
+    const b = P.beerById(beerId);
+    cardsByConcept.beerfeature.forEach(card => { card.beer = beerId; });
+    cardsByConcept.cobrand.forEach(card => { card.beer = beerId; });
+    contentByConcept.beerfeature.headline = b.headline;
+    contentByConcept.beerfeature.subheadline = b.subheadline;
+    if (selectedCard && selectedCard.concept === 'beerfeature') {
+      document.getElementById('cb-headline').value = b.headline;
+      document.getElementById('cb-subheadline').value = b.subheadline;
     }
-    syncBeerFields();
+    renderBoard();
   });
-  syncBeerFields();
+
+  const partnerSelect = document.getElementById('cb-partner-select');
+  partnerSelect.innerHTML = P.PARTNERS.map(p => '<option value="' + p.id + '">' + esc(p.name) + '</option>').join('');
+  partnerSelect.addEventListener('change', () => {
+    cardsByConcept.cobrand.forEach(card => { card.partner = partnerSelect.value; });
+    renderBoard();
+  });
+
+  const photoSelect = document.getElementById('cb-photo-select');
+  photoSelect.innerHTML = P.FOCUS_PHOTOS.map(p => '<option value="' + p.id + '">' + esc(p.name) + '</option>').join('');
+  photoSelect.addEventListener('change', () => {
+    cardsByConcept.photofocus.forEach(card => { card.photo = photoSelect.value; });
+    renderBoard();
+  });
+
+  /* ---------- type controls ---------- */
+  const TYPE_CONTROLS = [
+    { input: 'cb-h1-size',  out: 'cb-h1-size-out',  key: 'h1Mul',   fmt: v => v + '%',                map: v => v / 100, reset: 100 },
+    { input: 'cb-h1-track', out: 'cb-h1-track-out', key: 'h1Track', fmt: v => (v >= 0 ? '+' : '') + (v / 100).toFixed(2), map: v => v / 100, reset: 0 },
+    { input: 'cb-h2-size',  out: 'cb-h2-size-out',  key: 'h2Mul',   fmt: v => v + '%',                map: v => v / 100, reset: 100 },
+    { input: 'cb-h2-track', out: 'cb-h2-track-out', key: 'h2Track', fmt: v => (v >= 0 ? '+' : '') + (v / 100).toFixed(2), map: v => v / 100, reset: 0 }
+  ];
+  TYPE_CONTROLS.forEach(tc => {
+    const el = document.getElementById(tc.input);
+    el.addEventListener('input', () => {
+      type[tc.key] = tc.map(+el.value);
+      document.getElementById(tc.out).textContent = tc.fmt(+el.value);
+      clearTimeout(t); t = setTimeout(posterOnlyRefresh, 80);
+    });
+  });
+  document.getElementById('cb-type-reset').addEventListener('click', () => {
+    TYPE_CONTROLS.forEach(tc => {
+      const el = document.getElementById(tc.input);
+      el.value = tc.reset;
+      type[tc.key] = tc.map(tc.reset);
+      document.getElementById(tc.out).textContent = tc.fmt(tc.reset);
+    });
+    posterOnlyRefresh();
+  });
+
+  document.getElementById('cb-export').addEventListener('click', downloadPackage);
 
   /* ---------- boot ---------- */
   P.load().then(() => renderBoard());
