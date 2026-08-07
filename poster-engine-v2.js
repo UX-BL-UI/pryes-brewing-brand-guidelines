@@ -136,7 +136,7 @@ window.PryesPosterV2 = (function () {
       canAspect: 1500 / 2000,
       pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
       patternName: 'Laurels',
-      colors: { bg: '#C85870', deep: '#A84158', accent: '#7E2B3D' }
+      colors: { bg: '#C87040', deep: '#A0522A', accent: '#B02820' }
     },
     {
       id: 'royal-pineapple',
