@@ -17,7 +17,7 @@ window.PRYES_LAYOUT_DEFAULTS_V2 = {
          band, larger band type. Diamonds normalized to matching
          size, inset, and line. */
       wordmark:    { kind: 'asset', asset: 'wordmarktag', cx: 907, y: -5, w: 1504 },
-      can:         { kind: 'photo', cx: 906, y: 370, h: 1458 },
+      can:         { kind: 'photo', cx: 906, y: 420, h: 1458 },
       band:        { kind: 'band', y: 1960 },
       /* Tile overlap as a percent of tile size, so it holds at any
          pattern density. ovX pulls columns together; ovY pulls rows.
