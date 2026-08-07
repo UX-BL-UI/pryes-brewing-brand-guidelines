@@ -235,9 +235,13 @@ window.PryesPosterV2 = (function () {
 
   /* Co-branded colorways: brand palette plus the featured beer's
      own colors; dark = use the partner's onDark ink. */
+  function isDarkField(hex) {
+    const n = parseInt(hex.slice(1), 16);
+    return (0.2126 * ((n >> 16) & 255) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255)) / 255 < 0.5;
+  }
   const COBRAND_WAYS = [
     { id:'foam',      name:'Beer Foam',       weight:2, paint: b => ({ bg:BRAND.foam, plaque:BRAND.beige, ink:BRAND.burgundy, dark:false }) },
-    { id:'beerfield', name:'Beer color',      weight:1, paint: b => ({ bg:b.colors.bg, plaque:BRAND.foam, ink:b.colors.accent, dark:false }) },
+    { id:'beerfield', name:'Beer color',      weight:1, paint: b => { const dark = isDarkField(b.colors.bg); return { bg:b.colors.bg, plaque:BRAND.foam, ink: dark ? BRAND.foam : b.colors.accent, dark: dark }; } },
     { id:'beerplaque',name:'Beer plaque',     weight:1, paint: b => ({ bg:BRAND.foam, plaque:b.colors.bg, ink:BRAND.burgundy, dark:false }) },
     { id:'beige',     name:'Beige',           weight:1, paint: b => ({ bg:BRAND.beige, plaque:BRAND.foam, ink:BRAND.burgundy, dark:false }) },
     { id:'burgundy',  name:'Regal Burgundy',  weight:1, paint: b => ({ bg:BRAND.burgundy, plaque:BRAND.burgundyDeep, ink:BRAND.foam, dark:true }) },
