@@ -165,10 +165,20 @@ window.PryesPosterV2 = (function () {
   /* ---------- colorways ----------
      Beer-driven: the featured beer supplies its own colors and the
      brand palette fills in the rest. paint(beer) resolves the
-     concrete hexes for one card. */
+     concrete hexes for one card. Dark beers can have accent ~= bg;
+     lum/toneUp keep patterns and partner marks legible there. */
+  function lum(hex) {
+    const n = parseInt(hex.slice(1), 16);
+    return (0.2126 * ((n >> 16) & 255) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255)) / 255;
+  }
+  function toneUp(hex, t) {
+    const n = parseInt(hex.slice(1), 16), F = [255, 241, 228];
+    return '#' + [(n >> 16) & 255, (n >> 8) & 255, n & 255]
+      .map((v, i) => Math.round(v + (F[i] - v) * t).toString(16).padStart(2, '0')).join('').toUpperCase();
+  }
   const COLORWAYS = [
     { id:'beer',     name:'Beer color',      weight:3, paint: b => ({ bg:b.colors.bg, pattern:b.colors.deep, wordmark:BRAND.foam, band:BRAND.foam, bandText:b.colors.accent }) },
-    { id:'accent',   name:'Beer accent',     weight:1, paint: b => ({ bg:b.colors.accent, pattern:b.colors.bg, wordmark:BRAND.foam, band:BRAND.foam, bandText:b.colors.accent }) },
+    { id:'accent',   name:'Beer accent',     weight:1, paint: b => { const pat = Math.abs(lum(b.colors.accent) - lum(b.colors.bg)) < 0.12 ? toneUp(b.colors.accent, 0.16) : b.colors.bg; return { bg:b.colors.accent, pattern:pat, wordmark:BRAND.foam, band:BRAND.foam, bandText:b.colors.accent }; } },
     { id:'burgundy', name:'Regal Burgundy',  weight:1, paint: b => ({ bg:BRAND.burgundy, pattern:BRAND.burgundyDeep, wordmark:BRAND.foam, band:BRAND.foam, bandText:BRAND.burgundy }) },
     { id:'offblack', name:'Off-Black',       weight:1, paint: b => ({ bg:BRAND.offblack, pattern:BRAND.burgundy, wordmark:BRAND.foam, band:BRAND.foam, bandText:BRAND.offblack }) },
     { id:'foam',     name:'Beer Foam',       weight:1, paint: b => ({ bg:BRAND.foam, pattern:BRAND.beige, wordmark:BRAND.burgundy, band:b.colors.bg, bandText:b.colors.accent }) }
@@ -235,10 +245,7 @@ window.PryesPosterV2 = (function () {
 
   /* Co-branded colorways: brand palette plus the featured beer's
      own colors; dark = use the partner's onDark ink. */
-  function isDarkField(hex) {
-    const n = parseInt(hex.slice(1), 16);
-    return (0.2126 * ((n >> 16) & 255) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255)) / 255 < 0.5;
-  }
+  function isDarkField(hex) { return lum(hex) < 0.5; }
   const COBRAND_WAYS = [
     { id:'foam',      name:'Beer Foam',       weight:2, paint: b => ({ bg:BRAND.foam, plaque:BRAND.beige, ink:BRAND.burgundy, dark:false }) },
     { id:'beerfield', name:'Beer color',      weight:1, paint: b => { const dark = isDarkField(b.colors.bg); return { bg:b.colors.bg, plaque:BRAND.foam, ink: dark ? BRAND.foam : b.colors.accent, dark: dark }; } },
