@@ -110,6 +110,15 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
 .cb-poster { position: relative; width: 100%; aspect-ratio: var(--poster-ar, 11 / 17); background: var(--beer-foam-2); overflow: hidden; cursor: pointer; }
 .cb-poster > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .cb-poster.is-rolling > svg { animation: cbRoll .42s ease; }
+.cb-card .cb-poster::after {
+  content: 'Customize this concept';
+  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%) translateY(4px);
+  z-index: 3; pointer-events: none;
+  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.14em; font-weight: 600; font-size: 0.7rem;
+  background: var(--burgundy); color: var(--beer-foam); padding: 5px 11px; border-radius: 999px;
+  opacity: 0; transition: opacity .12s ease, transform .12s ease;
+}
+.cb-card .cb-poster:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }
 @keyframes cbRoll { 0% { opacity: 0.15; transform: translateY(-8px); } 100% { opacity: 1; transform: none; } }
 .cb-held-badge {
   position: absolute; top: 12px; left: 12px; z-index: 3;
@@ -587,14 +596,14 @@ function showToast(msg) {
   function cardHTML(card, i) {
     const keys = REEL_KEYS[card.concept];
     return '<div class="cb-card' + (card.held ? ' is-held' : '') + '" data-i="' + i + '">' +
-      '<div class="cb-poster" data-role="poster" data-i="' + i + '" title="Open this concept">' +
+      '<div class="cb-poster" data-role="poster" data-i="' + i + '">' +
         '<span class="cb-held-badge">' + ICON_PIN + ' Pinned</span>' +
         buildPosterSVG(card) + '</div>' +
       '<div class="cb-card-foot">' +
         '<div class="cb-card-top"><span class="cb-card-idx">' + CONCEPT_LABEL[card.concept] + ' · Concept ' + (i + 1) + '</span>' +
           '<div class="cb-card-actions">' +
             '<button class="cb-mini" type="button" data-act="hold" data-i="' + i + '" aria-pressed="' + card.held + '" title="Keep this whole card when you shuffle">' + ICON_PIN + (card.held ? ' Pinned' : ' Pin') + '</button>' +
-            '<button class="cb-mini cb-mini--keep" type="button" data-act="keep" data-i="' + i + '" title="Open this concept and get the package">Customize →</button>' +
+            '<button class="cb-mini cb-mini--keep" type="button" data-act="keep" data-i="' + i + '" title="Customize this concept and get the package">Customize →</button>' +
           '</div></div>' +
         '<div class="cb-reels cb-reels-' + keys.length + '">' + keys.map(k => reelHTML(i, k, card)).join('') + '</div>' +
       '</div></div>';
