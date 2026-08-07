@@ -176,6 +176,43 @@ window.PryesPosterV2 = (function () {
     return '#' + [(n >> 16) & 255, (n >> 8) & 255, n & 255]
       .map((v, i) => Math.round(v + (F[i] - v) * t).toString(16).padStart(2, '0')).join('').toUpperCase();
   }
+  /* Legibility gate: type that carries information (band headlines,
+     co-brand ink, partner marks) must clear WCAG 3:1 on its field.
+     A failing ink is swapped for the best-contrasting brand ink.
+     The big PRYES wordmark is intentionally NOT gated - tone-on-tone
+     wordmarks (foam on gold) are approved brand canon. */
+  function relLum(hex) {
+    const n = parseInt(hex.slice(1), 16);
+    const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+    return 0.2126 * f((n >> 16) & 255) + 0.7152 * f((n >> 8) & 255) + 0.0722 * f(n & 255);
+  }
+  function contrast(a, b) {
+    const la = relLum(a), lb = relLum(b);
+    return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+  }
+  function legible(fg, bg) {
+    if (contrast(fg, bg) >= 3) return fg;
+    return [fg, BRAND.foam, BRAND.burgundy, BRAND.offblack]
+      .sort((x, y) => contrast(y, bg) - contrast(x, bg))[0];
+  }
+  /* Exact shape hit-test: is poster-space point (px,py) on the painted
+     shape? Uses the real path geometry, so frame shapes with hollow
+     centers (e.g. shape 12) report their holes correctly. */
+  const hitCtx = (typeof document !== 'undefined') ? document.createElement('canvas').getContext('2d') : null;
+  function shapeHit(shapeAsset, r, px, py) {
+    if (!hitCtx || !shapeAsset) return false;
+    if (px < r.cx - r.w / 2 || px > r.cx + r.w / 2 || py < r.y || py > r.y + r.h) return false;
+    if (!shapeAsset.hitPaths) {
+      shapeAsset.hitPaths = [];
+      const re = /<path[^>]*\sd="([^"]+)"/g;
+      let m;
+      while ((m = re.exec(shapeAsset.body))) shapeAsset.hitPaths.push(new Path2D(m[1]));
+    }
+    const p = shapeAsset.vb.split(/\s+/).map(Number);
+    const vx = (px - (r.cx - r.w / 2)) / r.w * (p[2] || 100) + (p[0] || 0);
+    const vy = (py - r.y) / r.h * (p[3] || 100) + (p[1] || 0);
+    return shapeAsset.hitPaths.some(path => hitCtx.isPointInPath(path, vx, vy));
+  }
   const COLORWAYS = [
     { id:'beer',     name:'Beer color',      weight:3, paint: b => ({ bg:b.colors.bg, pattern:b.colors.deep, wordmark:BRAND.foam, band:BRAND.foam, bandText:b.colors.accent }) },
     { id:'accent',   name:'Beer accent',     weight:1, paint: b => { const pat = Math.abs(lum(b.colors.accent) - lum(b.colors.bg)) < 0.12 ? toneUp(b.colors.accent, 0.16) : b.colors.bg; return { bg:b.colors.accent, pattern:pat, wordmark:BRAND.foam, band:BRAND.foam, bandText:b.colors.accent }; } },
@@ -306,16 +343,19 @@ window.PryesPosterV2 = (function () {
   function headlineSize(s) { const n = (s || '').length; return n <= 10 ? 1 : n <= 14 ? 0.86 : n <= 18 ? 0.72 : n <= 24 ? 0.58 : 0.48; }
   function condText(e, txt, fill, o) {
     o = o || {};
+    /* fill may be an array of per-line inks (legibility gate on
+       fields the text straddles); a plain string colors every line */
+    const fill0 = Array.isArray(fill) ? fill[0] : fill;
     const lines = String(txt || '').split(/\r?\n/).filter(l => l.trim().length);
     const longest = lines.length ? lines.reduce((a, b) => (b.length > a.length ? b : a)) : (txt || '');
     const auto = o.autosize ? headlineSize(longest) : 1;
     const fs = e.size * auto * (o.sizeMul || 1) * KX;
     const track = (e.track != null ? e.track : 0.05) + (o.trackAdd || 0);
-    const open = '<text x="' + e.x * KX + '" y="' + e.y * KY + '" text-anchor="' + (e.anchor || 'middle') + '" font-family="' + COND + '" font-weight="600" font-size="' + fs + '" letter-spacing="' + fs * track + '" fill="' + fill + '">';
+    const open = '<text x="' + e.x * KX + '" y="' + e.y * KY + '" text-anchor="' + (e.anchor || 'middle') + '" font-family="' + COND + '" font-weight="600" font-size="' + fs + '" letter-spacing="' + fs * track + '" fill="' + fill0 + '">';
     if (lines.length <= 1) return open + up(txt) + '</text>';
     /* stacked all-caps condensed lines at the guide's tight 75% subhead leading */
     const lh = fs * (e.lh != null ? e.lh : 0.75);
-    return open + lines.map((ln, i) => '<tspan x="' + e.x * KX + '" dy="' + (i === 0 ? 0 : lh) + '">' + up(ln) + '</tspan>').join('') + '</text>';
+    return open + lines.map((ln, i) => '<tspan x="' + e.x * KX + '" dy="' + (i === 0 ? 0 : lh) + '"' + (Array.isArray(fill) && fill[i] !== fill0 ? ' fill="' + fill[i] + '"' : '') + '>' + up(ln) + '</tspan>').join('') + '</text>';
   }
   /* Serif line (Superclarendon in print, Bitter on the web) - as
      typed, no uppercasing; multi-line at a tight title leading. */
@@ -516,16 +556,28 @@ window.PryesPosterV2 = (function () {
     const beer = beerById(card.beer);
     const partner = partnerById(card.partner);
     const paint = cobrandWayById(card.colorway).paint(beer);
+    paint.ink = legible(paint.ink, paint.bg);
     const tag = !!opts.tag;
 
     let s = '<rect width="' + W + '" height="' + H + '" fill="' + paint.bg + '"/>';
 
     /* plaque: brand shape stretched into its hand-placed box */
     const shapeAsset = A.shapes[(card.shape - 1 + SHAPE_COUNT) % SHAPE_COUNT];
+    const r = resolveShapeFor('cobrand', card.shape);
     if (shapeAsset) {
-      const r = resolveShapeFor('cobrand', card.shape);
       s += wrap('cobrand.shape', '<svg x="' + (r.cx - r.w / 2) * KX + '" y="' + r.y * KY + '" width="' + r.w * KX + '" height="' + r.h * KY + '" viewBox="' + shapeAsset.vb + '" preserveAspectRatio="none"><g fill="' + paint.plaque + '">' + shapeAsset.body + '</g></svg>', tag);
     }
+    /* the foot elements can sit on the plaque, the background, or
+       straddle both; hit-test each headline line and the partner mark
+       against the real shape geometry and gate each ink to its field */
+    const hFs = E.headline.size * (c.h1Mul || 1);
+    const hLh = hFs * (E.headline.lh != null ? E.headline.lh : 0.75);
+    const headlineInk = String(c.headline || '').split(/\r?\n/).filter(l => l.trim().length)
+      .map((ln, i) => {
+        const y = E.headline.y + i * hLh - hFs * 0.35;
+        return legible(paint.ink, shapeHit(shapeAsset, r, E.headline.x, y) ? paint.plaque : paint.bg);
+      });
+    const partnerField = shapeHit(shapeAsset, r, E.partner.cx, E.partner.y + 70) ? paint.plaque : paint.bg;
 
     const canH = E.can.h * KY, canW = canH * beer.canAspect;
     const href = opts.canHref || beer.can;
@@ -534,10 +586,12 @@ window.PryesPosterV2 = (function () {
     const mark = A.assets[E.wordmark.asset || 'wordmark'];
     if (mark) s += wrap('cobrand.wordmark', placeSVG(mark, { cx: E.wordmark.cx * KX, y: E.wordmark.y * KY, w: E.wordmark.w * KX, color: paint.ink }), tag);
 
-    s += wrap('cobrand.headline', condText(E.headline, c.headline, paint.ink, { sizeMul: c.h1Mul, trackAdd: c.h1Track }), tag);
+    s += wrap('cobrand.headline', condText(E.headline, c.headline, headlineInk.length ? headlineInk : paint.ink, { sizeMul: c.h1Mul, trackAdd: c.h1Track }), tag);
 
     const logo = A.partners[partner.id];
-    if (logo) s += wrap('cobrand.partner', placeSVG(logo, { cx: E.partner.cx * KX, y: E.partner.y * KY, w: E.partner.w * KX, color: paint.dark ? partner.onDark : partner.color }), tag);
+    const partnerInk = contrast(partner.color, partnerField) >= 3 ? partner.color
+      : (contrast(partner.onDark, partnerField) > contrast(partner.color, partnerField) ? partner.onDark : partner.color);
+    if (logo) s += wrap('cobrand.partner', placeSVG(logo, { cx: E.partner.cx * KX, y: E.partner.y * KY, w: E.partner.w * KX, color: partnerInk }), tag);
 
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + SIZE.inW + '" height="' + SIZE.inH + '">' + s + '</svg>';
   }
@@ -580,6 +634,7 @@ window.PryesPosterV2 = (function () {
     const E = SPEC.beerfeature.elements;
     const beer = beerById(card.beer);
     const paint = colorwayById(card.colorway).paint(beer);
+    paint.bandText = legible(paint.bandText, paint.band);
     const density = densityById(card.density);
     const shape = A.shapes[(card.shape - 1 + SHAPE_COUNT) % SHAPE_COUNT];
     const tag = !!opts.tag;
