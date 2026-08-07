@@ -40,6 +40,28 @@ window.PryesPosterV2 = (function () {
      (band headline, diamonds). */
   const BEERS = [
     {
+      id: 'course-correct',
+      name: 'Course Correct',
+      headline: 'Course Correct',
+      subheadline: 'Available Now',
+      can: 'assets/photos/course-correct-can.png',
+      canAspect: 1500 / 2000,
+      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
+      patternName: 'Laurels',
+      colors: { bg: '#8FBE3F', deep: '#64941F', accent: '#3C5E12' }
+    },
+    {
+      id: 'glamorama',
+      name: 'Glamorama',
+      headline: 'Glamorama',
+      subheadline: 'Available Now',
+      can: 'assets/photos/glamorama-can.png',
+      canAspect: 1500 / 2000,
+      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
+      patternName: 'Laurels',
+      colors: { bg: '#B00D0D', deep: '#8C0909', accent: '#7C0A0C' }
+    },
+    {
       id: 'main-squeeze',
       name: 'Main Squeeze',
       headline: 'Main Squeeze',
@@ -49,6 +71,94 @@ window.PryesPosterV2 = (function () {
       pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
       patternName: 'Laurels',
       colors: { bg: '#E6CE49', deep: '#C9A92E', accent: '#335A23' }
+    },
+    {
+      id: 'mass-haze-teria',
+      name: 'Mass Haze-Teria',
+      headline: 'Mass Haze-Teria',
+      subheadline: 'Available Now',
+      can: 'assets/photos/mass-haze-teria-can.png',
+      canAspect: 1500 / 2000,
+      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
+      patternName: 'Laurels',
+      colors: { bg: '#E09150', deep: '#B53B12', accent: '#98300C' }
+    },
+    {
+      id: 'miraculum',
+      name: 'Miraculum',
+      headline: 'Miraculum',
+      subheadline: 'Available Now',
+      can: 'assets/photos/miraculum-can.png',
+      canAspect: 1500 / 2000,
+      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
+      patternName: 'Laurels',
+      colors: { bg: '#213B1E', deep: '#32492B', accent: '#182D15' }
+    },
+    {
+      id: 'peace-offering',
+      name: 'Peace Offering',
+      headline: 'Peace Offering',
+      subheadline: 'Available Now',
+      can: 'assets/photos/peace-offering-can.png',
+      canAspect: 1500 / 2000,
+      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
+      patternName: 'Laurels',
+      colors: { bg: '#141414', deep: '#2E2E2E', accent: '#101019' }
+    },
+    {
+      id: 'pragmatic',
+      name: 'Pragmatic',
+      headline: 'Pragmatic',
+      subheadline: 'Available Now',
+      can: 'assets/photos/pragmatic-can.png',
+      canAspect: 1500 / 2000,
+      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
+      patternName: 'Laurels',
+      colors: { bg: '#5FB0D0', deep: '#25689E', accent: '#174B80' }
+    },
+    {
+      id: 'pryes-gold',
+      name: 'Pryes Gold',
+      headline: 'Pryes Gold',
+      subheadline: 'Available Now',
+      can: 'assets/photos/pryes-gold-can.png',
+      canAspect: 1500 / 2000,
+      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
+      patternName: 'Laurels',
+      colors: { bg: '#D5C455', deep: '#B5951F', accent: '#1C1A12' }
+    },
+    {
+      id: 'royal-peach',
+      name: 'Royal Peach',
+      headline: 'Royal Peach',
+      subheadline: 'Available Now',
+      can: 'assets/photos/royal-peach-can.png',
+      canAspect: 1500 / 2000,
+      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
+      patternName: 'Laurels',
+      colors: { bg: '#C85870', deep: '#A84158', accent: '#7E2B3D' }
+    },
+    {
+      id: 'royal-pineapple',
+      name: 'Royal Pineapple',
+      headline: 'Royal Pineapple',
+      subheadline: 'Available Now',
+      can: 'assets/photos/royal-pineapple-can.png',
+      canAspect: 3000 / 4000,
+      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
+      patternName: 'Laurels',
+      colors: { bg: '#4E7A22', deep: '#3A5E14', accent: '#2F4D10' }
+    },
+    {
+      id: 'royal-raspberry',
+      name: 'Royal Raspberry',
+      headline: 'Royal Raspberry',
+      subheadline: 'Available Now',
+      can: 'assets/photos/royal-raspberry-can.png',
+      canAspect: 1500 / 2000,
+      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
+      patternName: 'Laurels',
+      colors: { bg: '#8E1119', deep: '#700D14', accent: '#8E1119' }
     }
   ];
 

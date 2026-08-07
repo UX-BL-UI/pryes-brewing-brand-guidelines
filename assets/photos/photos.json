@@ -1,3 +1,13 @@
 [
-  { "file": "main-squeeze-can.png", "label": "Main Squeeze can" }
+  { "file": "course-correct-can.png", "label": "Course Correct can" },
+  { "file": "glamorama-can.png", "label": "Glamorama can" },
+  { "file": "main-squeeze-can.png", "label": "Main Squeeze can" },
+  { "file": "mass-haze-teria-can.png", "label": "Mass Haze-Teria can" },
+  { "file": "miraculum-can.png", "label": "Miraculum can" },
+  { "file": "peace-offering-can.png", "label": "Peace Offering can" },
+  { "file": "pragmatic-can.png", "label": "Pragmatic can" },
+  { "file": "pryes-gold-can.png", "label": "Pryes Gold can" },
+  { "file": "royal-peach-can.png", "label": "Royal Peach can" },
+  { "file": "royal-pineapple-can.png", "label": "Royal Pineapple can" },
+  { "file": "royal-raspberry-can.png", "label": "Royal Raspberry can" }
 ]
