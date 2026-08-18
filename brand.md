@@ -20,9 +20,9 @@ Core (name · hex · rgb · cmyk · role):
 
 | Name | HEX | RGB | CMYK | Role |
 |---|---|---|---|---|
-| Beer Foam | `#FFF1E4` | 255,241,228 | 0,5,9,0 | primary light bg / reversed text · PMS 4102 |
+| Beer Foam | `#FFF1E4` | 255,241,228 | 0,5,9,0 | primary light bg / reversed text · PMS 9224 C |
 | Beige | `#EBCFB8` | 235,207,184 | 7,18,26,0 | tonal layering · PMS 9224C/9184U |
-| Regal Burgundy | `#3E0F23` | 62,15,35 | 53,89,58,67 | primary dark bg / text |
+| Regal Burgundy | `#3E0F23` | 62,15,35 | 53,89,58,67 | primary dark bg / text · PMS 4975 C |
 | Miraculum Green | `#213B1E` | 33,59,30 | 77,49,89,60 | secondary |
 | Miraculum Off-Black | `#121A12` | 18,26,18 | 74,62,71,80 | tonal / packaging shade |
 | Burgundy Off-Black | `#101019` | 16,16,25 | 79,73,59,80 | tonal / text on dark |
