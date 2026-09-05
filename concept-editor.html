@@ -320,7 +320,7 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   });
 
   const stage = document.getElementById('ed-poster');
-  let card = { concept: 'beerfeature', beer: P.BEERS[0].id, partner: P.PARTNERS[0].id, photo: P.FOCUS_PHOTOS[0].id, colorway: 'beer', shape: 5, density: 'medium' };
+  let card = { concept: 'beerfeature', beer: P.DEFAULT_BEER, partner: P.PARTNERS[0].id, photo: P.FOCUS_PHOTOS[0].id, colorway: 'beer', shape: 5, density: 'medium' };
   let selectedEl = null;   /* "<concept>.element" */
 
   function content() {
@@ -364,6 +364,7 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   photoSel.addEventListener('change', () => { card.photo = photoSel.value; render(); });
   const beerSel = document.getElementById('ed-beer');
   beerSel.innerHTML = P.BEERS.map(b => '<option value="' + b.id + '">' + b.name + '</option>').join('');
+  beerSel.value = card.beer;
   beerSel.addEventListener('change', () => { card.beer = beerSel.value; render(); });
   const waySel = document.getElementById('ed-colorway');
   waySel.innerHTML = P.COLORWAYS.map(w => '<option value="' + w.id + '"' + (w.id === card.colorway ? ' selected' : '') + '>' + w.name + '</option>').join('');

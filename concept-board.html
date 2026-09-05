@@ -490,10 +490,11 @@ function showToast(msg) {
 
   /* ---------- content + type state ---------- */
   const type = { h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
-  let beerId = BEERS[0].id;
+  let beerId = P.DEFAULT_BEER;
+  const firstBeer = P.beerById(beerId);
   /* each poster type keeps its own words; the overlay edits them */
   const contentByConcept = {
-    beerfeature: { headline: BEERS[0].headline, subheadline: BEERS[0].subheadline },
+    beerfeature: { headline: firstBeer.headline, subheadline: firstBeer.subheadline },
     brandfocus:  { headline: "It's a\nMidwest\nThing", subheadline: 'Available\nNow', showP: true },
     cobrand:     { headline: 'See You\nAt the Game', subheadline: '' },
     photofocus:  { headline: 'Trust Your Taste', subheadline: '' }
@@ -881,6 +882,7 @@ function showToast(msg) {
   /* beer select drives every beer-using card; its words only drive the beer feature poster */
   const beerSelect = document.getElementById('cb-beer-select');
   beerSelect.innerHTML = BEERS.map(b => '<option value="' + b.id + '">' + esc(b.name) + '</option>').join('');
+  beerSelect.value = beerId;
   beerSelect.addEventListener('change', () => {
     beerId = beerSelect.value;
     const b = P.beerById(beerId);

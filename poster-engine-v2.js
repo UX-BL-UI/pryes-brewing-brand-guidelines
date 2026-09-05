@@ -323,7 +323,9 @@ window.PryesPosterV2 = (function () {
   }
   function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
   function up(s) { return esc((s || '').toUpperCase()); }
-  function beerById(id) { return BEERS.find(b => b.id === id) || BEERS[0]; }
+  /* the beer every tool opens on; the list itself stays alphabetical */
+  const DEFAULT_BEER = 'miraculum';
+  function beerById(id) { return BEERS.find(b => b.id === id) || BEERS.find(b => b.id === DEFAULT_BEER) || BEERS[0]; }
   function colorwayById(id) { return COLORWAYS.find(c => c.id === id) || COLORWAYS[0]; }
   function densityById(id) { return DENSITIES.find(d => d.id === id) || DENSITIES[1]; }
 
@@ -703,7 +705,7 @@ window.PryesPosterV2 = (function () {
   }
 
   return {
-    SIZES: SIZES, BEERS: BEERS, COLORWAYS: COLORWAYS, DENSITIES: DENSITIES, SHAPE_COUNT: SHAPE_COUNT, ASSET_OPTIONS: ASSET_OPTIONS,
+    SIZES: SIZES, BEERS: BEERS, DEFAULT_BEER: DEFAULT_BEER, COLORWAYS: COLORWAYS, DENSITIES: DENSITIES, SHAPE_COUNT: SHAPE_COUNT, ASSET_OPTIONS: ASSET_OPTIONS,
     CONCEPTS: CONCEPTS, BRAND_COLORWAYS: BRAND_COLORWAYS, brandColorwayById: brandColorwayById,
     PARTNERS: PARTNERS, partnerById: partnerById, COBRAND_WAYS: COBRAND_WAYS, cobrandWayById: cobrandWayById,
     FOCUS_PHOTOS: FOCUS_PHOTOS, focusPhotoById: focusPhotoById,
