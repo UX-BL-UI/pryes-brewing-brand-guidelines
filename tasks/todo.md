@@ -19,6 +19,6 @@ Agreed with Ben 2026-09-06: clear the ground first, then more beer patterns, the
 
 - [ ] Ben picks the first type and supplies a reference poster; build, tune, bake (same loop as concepts 1-4).
 
-## Review
+## Review (2026-09-06)
 
-(filled in as steps land)
+Phase 1 complete and live (commits db8b9e0, 7728a5a, 058afde; review fixes in 7969446). Phase 2 switch built and proven with a stand-in pattern, reverted; waiting on pattern SVGs from Ben. Phase 3 waiting on Ben's first type + reference poster. Full transfer note: vault "Concept tools V2 - carry-forward" (compact transfer section).
