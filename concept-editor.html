@@ -161,11 +161,13 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
       <select id="ed-size"><option value="s1117" selected>11 × 17</option><option value="s1824">18 × 24</option></select></span>
     <span class="ed-ctl" id="ed-beer-ctl">Beer
       <select id="ed-beer"></select></span>
+    <span class="ed-ctl" id="ed-art-ctl">Pattern art
+      <select id="ed-art"></select></span>
     <span class="ed-ctl">Color
       <select id="ed-colorway"></select></span>
     <span class="ed-ctl" id="ed-shape-ctl">Shape
       <select id="ed-shape"></select></span>
-    <span class="ed-ctl" id="ed-density-ctl">Pattern
+    <span class="ed-ctl" id="ed-density-ctl">Pattern size
       <select id="ed-density"></select></span>
     <span class="ed-ctl" id="ed-showp-ctl" style="display:none">P watermark
       <select id="ed-showp"><option value="on" selected>Show</option><option value="off">Hide</option></select></span>
@@ -271,7 +273,7 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
   });
 
   const stage = document.getElementById('ed-poster');
-  let card = { concept: 'beerfeature', beer: P.DEFAULT_BEER, partner: P.PARTNERS[0].id, photo: P.FOCUS_PHOTOS[0].id, colorway: 'beer', shape: 5, density: 'medium' };
+  let card = { concept: 'beerfeature', beer: P.DEFAULT_BEER, art: 'laurels', partner: P.PARTNERS[0].id, photo: P.FOCUS_PHOTOS[0].id, colorway: 'beer', shape: 5, density: 'medium' };
   let selectedEl = null;   /* "<concept>.element" */
 
   function content() {
@@ -296,6 +298,7 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
     /* each control shows only for the types that use its ingredient */
     const show = (id, on) => { document.getElementById(id).style.display = on ? '' : 'none'; };
     show('ed-beer-ctl', cn.uses.beer); show('ed-shape-ctl', cn.uses.shape); show('ed-density-ctl', cn.uses.density);
+    syncArtOptions(cn.uses.art);
     show('ed-showp-ctl', cn.uses.showP); show('ed-partner-ctl', cn.uses.partner); show('ed-photo-ctl', cn.uses.photo);
     syncColorwayOptions();
     selectedEl = null; render(); syncPanel(); syncChanges();
@@ -310,7 +313,17 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
   const beerSel = document.getElementById('ed-beer');
   beerSel.innerHTML = P.BEERS.map(b => '<option value="' + b.id + '">' + b.name + '</option>').join('');
   beerSel.value = card.beer;
-  beerSel.addEventListener('change', () => { card.beer = beerSel.value; render(); });
+  beerSel.addEventListener('change', () => { card.beer = beerSel.value; syncArtOptions(P.conceptById(card.concept).uses.art); render(); });
+  /* pattern art: laurels for every beer, plus the beer's own when it has one */
+  const artSel = document.getElementById('ed-art');
+  function syncArtOptions(on) {
+    const arts = P.patternArtsFor(P.beerById(card.beer));
+    if (!arts.some(a => a.id === card.art)) card.art = 'laurels';
+    artSel.innerHTML = arts.map(a => '<option value="' + a.id + '"' + (a.id === card.art ? ' selected' : '') + '>' + a.name + '</option>').join('');
+    document.getElementById('ed-art-ctl').style.display = (on && arts.length > 1) ? '' : 'none';
+  }
+  artSel.addEventListener('change', () => { card.art = artSel.value; render(); });
+  syncArtOptions(true);
   const waySel = document.getElementById('ed-colorway');
   waySel.innerHTML = P.COLORWAYS.map(w => '<option value="' + w.id + '"' + (w.id === card.colorway ? ' selected' : '') + '>' + w.name + '</option>').join('');
   waySel.addEventListener('change', () => { card.colorway = waySel.value; render(); });

@@ -347,6 +347,7 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
           </div>
         </div>
         <div class="cb-h-field" id="cb-beer-field"><label for="cb-beer-select">Beer</label><select id="cb-beer-select"></select></div>
+        <div class="cb-h-field" id="cb-art-field"><label for="cb-art-select">Pattern art</label><select id="cb-art-select"></select></div>
         <div class="cb-h-field" id="cb-partner-field"><label for="cb-partner-select">Partner</label><select id="cb-partner-select"></select></div>
         <div class="cb-h-field" id="cb-photo-field"><label for="cb-photo-select">Photo</label><select id="cb-photo-select"></select></div>
         <div class="cb-h-field" id="cb-showp-field"><label for="cb-showp">P watermark</label><select id="cb-showp"><option value="on" selected>Show</option><option value="off">Hide</option></select></div>
@@ -433,6 +434,7 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
     const cn = P.conceptById(concept);
     const card = Object.assign({ concept: concept, held: false, lock: Object.fromEntries(cn.reels.map(k => [k, false])) }, fields);
     if (cn.uses.beer) card.beer = beerId;
+    if (cn.uses.art) card.art = card.art || 'laurels';
     if (cn.uses.partner) card.partner = card.partner || P.PARTNERS[0].id;
     if (cn.uses.photo) card.photo = card.photo || P.FOCUS_PHOTOS[0].id;
     return card;
@@ -479,7 +481,7 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
   const ICON_PIN = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 3l7 7-3 1-4 4-1 6-3-3-4 4-1-1 4-4-3-3 6-1 4-4z"/></svg>';
 
   /* ---------- render ---------- */
-  const REEL_LABELS = { shape: 'Shape', colorway: 'Color', density: 'Pattern' };
+  const REEL_LABELS = { shape: 'Shape', colorway: 'Color', density: 'Pattern size' };
   function reelValueLabel(card, key) {
     if (key === 'shape') return 'Shape ' + String(card.shape).padStart(2, '0');
     if (key === 'colorway') return P.conceptById(card.concept).wayById(card.colorway).name;
@@ -536,6 +538,7 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
   function fieldVisibility(concept) {
     const u = P.conceptById(concept).uses;
     document.getElementById('cb-beer-field').style.display = u.beer ? '' : 'none';
+    document.getElementById('cb-art-field').style.display = u.art ? '' : 'none';
     document.getElementById('cb-partner-field').style.display = u.partner ? '' : 'none';
     document.getElementById('cb-photo-field').style.display = u.photo ? '' : 'none';
     document.getElementById('cb-showp-field').style.display = u.showP ? '' : 'none';
@@ -567,7 +570,7 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
         '<b>Color</b> ' + R.way.name + ' · field ' + R.paint.bg + ' · ink ' + inkList(R.headlineInks, R.paint.ink) + '<br>' +
         '<b>Size</b> ' + P.SIZE.label;
     } else {
-      html = '<b>Beer</b> ' + esc(R.beer.name) + ' (can + ' + esc(R.beer.patternName) + ' pattern)<br>' +
+      html = '<b>Beer</b> ' + esc(R.beer.name) + ' (can + ' + esc(R.pattern.name) + ' pattern)<br>' +
         '<b>Shape</b> ' + String(card.shape).padStart(2, '0') + ' of ' + SHAPE_COUNT + '<br>' +
         '<b>Color</b> ' + R.way.name + ' · field ' + R.paint.bg + ' · band ' + R.paint.band + ' · band text ' + R.paint.bandText + '<br>' +
         '<b>Pattern</b> ' + R.density.name + '<br>' +
@@ -589,6 +592,7 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
     document.getElementById('cb-subheadline').value = cc.subheadline;
     document.getElementById('cb-showp').value = cc.showP === false ? 'off' : 'on';
     if (card.beer) document.getElementById('cb-beer-select').value = card.beer;
+    if (card.art) syncArtOptions();
     if (card.partner) document.getElementById('cb-partner-select').value = card.partner;
     if (card.photo) document.getElementById('cb-photo-select').value = card.photo;
     renderOverlayPoster();
@@ -671,7 +675,7 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
       ['Poster type', 'Beer feature · ' + P.SIZE.label + ' portrait'],
       ['Beer', R.beer.name],
       ['Can render', R.beer.can.split('/').pop() + ' (full-resolution copy in this package)'],
-      ['Pattern', R.beer.patternName + ' · ' + R.beer.pattern.split('/').pop() + ' · printed in ' + paint.pattern + ' · ' + R.density.name],
+      ['Pattern', R.pattern.name + ' · ' + R.pattern.file.split('/').pop() + ' · printed in ' + paint.pattern + ' · ' + R.density.name],
       ['Shape', 'Brand shape ' + String(card.shape).padStart(2, '0') + ' · ' + P.shapeUrl(card.shape).split('/').pop() + ' · printed in ' + paint.band],
       ['Colors', 'Field ' + paint.bg + ' · pattern ' + paint.pattern + ' · wordmark ' + paint.wordmark + ' · band ' + paint.band + ' · band text ' + paint.bandText],
       ['Headline', '"' + c.headline.replace(/\n/g, ' / ') + '" · Alternate Gothic No.2 D · ' + R.headlinePx + ' design units · tracking ' + trk(R.headlineTrack)],
@@ -786,12 +790,30 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
     beerId = beerSelect.value;
     const b = P.beerById(beerId);
     P.CONCEPTS.filter(cn => cn.uses.beer).forEach(cn => cardsByConcept[cn.id].forEach(card => { card.beer = beerId; }));
+    /* a beer without its own pattern falls back to the laurels */
+    P.CONCEPTS.filter(cn => cn.uses.art).forEach(cn => cardsByConcept[cn.id].forEach(card => { if (card.art === 'own' && !b.own) card.art = 'laurels'; }));
+    syncArtOptions();
     contentByConcept.beerfeature.headline = b.headline;
     contentByConcept.beerfeature.subheadline = b.subheadline;
     if (selectedCard && selectedCard.concept === 'beerfeature') {
       document.getElementById('cb-headline').value = b.headline;
       document.getElementById('cb-subheadline').value = b.subheadline;
     }
+    renderBoard();
+  });
+
+  /* pattern art: the laurels for every beer, plus the beer's own pattern
+     when it has one; the switch hides while there is only one choice */
+  const artSelect = document.getElementById('cb-art-select');
+  function syncArtOptions() {
+    const arts = P.patternArtsFor(P.beerById(beerId));
+    const cur = (selectedCard && selectedCard.art) || 'laurels';
+    artSelect.innerHTML = arts.map(a => '<option value="' + a.id + '">' + esc(a.name) + '</option>').join('');
+    artSelect.value = arts.some(a => a.id === cur) ? cur : 'laurels';
+    if (selectedCard && P.conceptById(selectedCard.concept).uses.art) document.getElementById('cb-art-field').style.display = arts.length > 1 ? '' : 'none';
+  }
+  artSelect.addEventListener('change', () => {
+    P.CONCEPTS.filter(cn => cn.uses.art).forEach(cn => cardsByConcept[cn.id].forEach(card => { card.art = artSelect.value; }));
     renderBoard();
   });
 

@@ -38,129 +38,36 @@ window.PryesPosterV2 = (function () {
      beers. colors: bg = the beer's field color, deep = tonal
      pattern color on that field, accent = the beer's dark ink
      (band headline, diamonds). */
+  const LAURELS = { id: 'laurels', name: 'Laurels', file: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg' };
+  /* Every beer shares these unless its row says otherwise. own = the
+     beer's signature pattern { name, file } - exported per the vault's
+     "Pattern export guide" into assets/patterns/svg/BEIGE/ - or null
+     until the design team supplies it. The laurels stay available to
+     every beer as the house pattern. */
+  const BEER_DEFAULTS = { subheadline: 'Available Now', canAspect: 1500 / 2000, own: null };
   const BEERS = [
-    {
-      id: 'course-correct',
-      name: 'Course Correct',
-      headline: 'Course Correct',
-      subheadline: 'Available Now',
-      can: 'assets/photos/course-correct-can.png',
-      canAspect: 1500 / 2000,
-      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
-      patternName: 'Laurels',
-      colors: { bg: '#8FBE3F', deep: '#64941F', accent: '#3C5E12' }
-    },
-    {
-      id: 'glamorama',
-      name: 'Glamorama',
-      headline: 'Glamorama',
-      subheadline: 'Available Now',
-      can: 'assets/photos/glamorama-can.png',
-      canAspect: 1500 / 2000,
-      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
-      patternName: 'Laurels',
-      colors: { bg: '#B00D0D', deep: '#8C0909', accent: '#7C0A0C' }
-    },
-    {
-      id: 'main-squeeze',
-      name: 'Main Squeeze',
-      headline: 'Main Squeeze',
-      subheadline: 'Available Now',
-      can: 'assets/photos/main-squeeze-can.png',
-      canAspect: 1500 / 2000,
-      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
-      patternName: 'Laurels',
-      colors: { bg: '#E6CE49', deep: '#C9A92E', accent: '#335A23' }
-    },
-    {
-      id: 'mass-haze-teria',
-      name: 'Mass Haze-Teria',
-      headline: 'Mass Haze-Teria',
-      subheadline: 'Available Now',
-      can: 'assets/photos/mass-haze-teria-can.png',
-      canAspect: 1500 / 2000,
-      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
-      patternName: 'Laurels',
-      colors: { bg: '#E09150', deep: '#B53B12', accent: '#98300C' }
-    },
-    {
-      id: 'miraculum',
-      name: 'Miraculum',
-      headline: 'Miraculum',
-      subheadline: 'Available Now',
-      can: 'assets/photos/miraculum-can.png',
-      canAspect: 1500 / 2000,
-      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
-      patternName: 'Laurels',
-      colors: { bg: '#213B1E', deep: '#32492B', accent: '#182D15' }
-    },
-    {
-      id: 'peace-offering',
-      name: 'Peace Offering',
-      headline: 'Peace Offering',
-      subheadline: 'Available Now',
-      can: 'assets/photos/peace-offering-can.png',
-      canAspect: 1500 / 2000,
-      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
-      patternName: 'Laurels',
-      colors: { bg: '#141414', deep: '#2E2E2E', accent: '#101019' }
-    },
-    {
-      id: 'pragmatic',
-      name: 'Pragmatic',
-      headline: 'Pragmatic',
-      subheadline: 'Available Now',
-      can: 'assets/photos/pragmatic-can.png',
-      canAspect: 1500 / 2000,
-      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
-      patternName: 'Laurels',
-      colors: { bg: '#5FB0D0', deep: '#25689E', accent: '#174B80' }
-    },
-    {
-      id: 'pryes-gold',
-      name: 'Pryes Gold',
-      headline: 'Pryes Gold',
-      subheadline: 'Available Now',
-      can: 'assets/photos/pryes-gold-can.png',
-      canAspect: 1500 / 2000,
-      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
-      patternName: 'Laurels',
-      colors: { bg: '#D5C455', deep: '#B5951F', accent: '#1C1A12' }
-    },
-    {
-      id: 'royal-peach',
-      name: 'Royal Peach',
-      headline: 'Royal Peach',
-      subheadline: 'Available Now',
-      can: 'assets/photos/royal-peach-can.png',
-      canAspect: 1500 / 2000,
-      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
-      patternName: 'Laurels',
-      colors: { bg: '#C87040', deep: '#A0522A', accent: '#B02820' }
-    },
-    {
-      id: 'royal-pineapple',
-      name: 'Royal Pineapple',
-      headline: 'Royal Pineapple',
-      subheadline: 'Available Now',
-      can: 'assets/photos/royal-pineapple-can.png',
-      canAspect: 3000 / 4000,
-      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
-      patternName: 'Laurels',
-      colors: { bg: '#4E7A22', deep: '#3A5E14', accent: '#2F4D10' }
-    },
-    {
-      id: 'royal-raspberry',
-      name: 'Royal Raspberry',
-      headline: 'Royal Raspberry',
-      subheadline: 'Available Now',
-      can: 'assets/photos/royal-raspberry-can.png',
-      canAspect: 1500 / 2000,
-      pattern: 'assets/patterns/svg/BEIGE/PRYES-PATTERN-LAURELS-BEIGE.svg',
-      patternName: 'Laurels',
-      colors: { bg: '#8E1119', deep: '#700D14', accent: '#8E1119' }
-    }
-  ];
+    { id: 'course-correct', name: 'Course Correct', can: 'assets/photos/course-correct-can.png', colors: { bg: '#8FBE3F', deep: '#64941F', accent: '#3C5E12' } },
+    { id: 'glamorama', name: 'Glamorama', can: 'assets/photos/glamorama-can.png', colors: { bg: '#B00D0D', deep: '#8C0909', accent: '#7C0A0C' } },
+    { id: 'main-squeeze', name: 'Main Squeeze', can: 'assets/photos/main-squeeze-can.png', colors: { bg: '#E6CE49', deep: '#C9A92E', accent: '#335A23' } },
+    { id: 'mass-haze-teria', name: 'Mass Haze-Teria', can: 'assets/photos/mass-haze-teria-can.png', colors: { bg: '#E09150', deep: '#B53B12', accent: '#98300C' } },
+    { id: 'miraculum', name: 'Miraculum', can: 'assets/photos/miraculum-can.png', colors: { bg: '#213B1E', deep: '#32492B', accent: '#182D15' } },
+    { id: 'peace-offering', name: 'Peace Offering', can: 'assets/photos/peace-offering-can.png', colors: { bg: '#141414', deep: '#2E2E2E', accent: '#101019' } },
+    { id: 'pragmatic', name: 'Pragmatic', can: 'assets/photos/pragmatic-can.png', colors: { bg: '#5FB0D0', deep: '#25689E', accent: '#174B80' } },
+    { id: 'pryes-gold', name: 'Pryes Gold', can: 'assets/photos/pryes-gold-can.png', colors: { bg: '#D5C455', deep: '#B5951F', accent: '#1C1A12' } },
+    { id: 'royal-peach', name: 'Royal Peach', can: 'assets/photos/royal-peach-can.png', colors: { bg: '#C87040', deep: '#A0522A', accent: '#B02820' } },
+    { id: 'royal-pineapple', name: 'Royal Pineapple', can: 'assets/photos/royal-pineapple-can.png', canAspect: 3000 / 4000, colors: { bg: '#4E7A22', deep: '#3A5E14', accent: '#2F4D10' } },
+    { id: 'royal-raspberry', name: 'Royal Raspberry', can: 'assets/photos/royal-raspberry-can.png', colors: { bg: '#8E1119', deep: '#700D14', accent: '#8E1119' } }
+  ].map(b => Object.assign({ headline: b.name }, BEER_DEFAULTS, b));
+  /* the pattern choices a beer offers, and the one a card picked */
+  function patternArtsFor(beer) {
+    const arts = [{ id: 'laurels', name: LAURELS.name }];
+    if (beer.own) arts.push({ id: 'own', name: beer.own.name });
+    return arts;
+  }
+  function patternFor(beer, art) {
+    const p = (art === 'own' && beer.own) ? beer.own : LAURELS;
+    return { id: p === LAURELS ? 'laurels' : 'own', name: p.name, file: p.file, art: A.patterns[p.file] };
+  }
 
   /* ---------- colorways ----------
      Beer-driven: the featured beer supplies its own colors and the
@@ -305,7 +212,7 @@ window.PryesPosterV2 = (function () {
      record here plus a layout block in layout-defaults-v2.js. */
   const CONCEPTS = [
     { id: 'beerfeature', label: 'Beer feature',
-      uses: { beer: true, shape: true, density: true, subheadline: true },
+      uses: { beer: true, art: true, shape: true, density: true, subheadline: true },
       reels: ['shape', 'colorway', 'density'],
       colorways: COLORWAYS, defaultColorway: 'beer',
       words: beer => ({ headline: beer.headline, subheadline: beer.subheadline }),
@@ -330,7 +237,7 @@ window.PryesPosterV2 = (function () {
       resolve: (card, c) => resolveBrand(card, c, 'photofocus'), build: (card, c, o) => buildPhotoFocus(card, c, o) }
   ];
   CONCEPTS.forEach(cn => {
-    cn.uses = Object.assign({ beer: false, partner: false, photo: false, shape: false, density: false, showP: false, subheadline: false }, cn.uses);
+    cn.uses = Object.assign({ beer: false, art: false, partner: false, photo: false, shape: false, density: false, showP: false, subheadline: false }, cn.uses);
     cn.wayById = id => cn.colorways.find(w => w.id === id) || cn.colorways[0];
   });
   function conceptById(id) { return CONCEPTS.find(cn => cn.id === id) || CONCEPTS[0]; }
@@ -584,6 +491,7 @@ window.PryesPosterV2 = (function () {
     paint.bandText = legible(paint.bandText, paint.band);
     return {
       concept: 'beerfeature', E: E, beer: beer, way: way, paint: paint,
+      pattern: patternFor(beer, card.art),
       density: densityById(card.density),
       shape: A.shapes[(card.shape - 1 + SHAPE_COUNT) % SHAPE_COUNT],
       headlinePx: Math.round(E.headline.size * headlineSize(longestLine(c.headline)) * (c.h1Mul || 1)),
@@ -732,7 +640,7 @@ window.PryesPosterV2 = (function () {
     const tag = !!opts.tag;
 
     let s = '<rect width="' + W + '" height="' + H + '" fill="' + paint.bg + '"/>';
-    s += wrap('beerfeature.pattern', patternField(A.patterns[beer.id], paint.pattern, density.cols, E.pattern, opts.standalone), tag);
+    s += wrap('beerfeature.pattern', patternField(R.pattern.art, paint.pattern, density.cols, E.pattern, opts.standalone), tag);
 
     /* shape + band sit under the can so the can fronts the divider
        notch, exactly as in the reference poster */
@@ -795,14 +703,14 @@ window.PryesPosterV2 = (function () {
     await Promise.all([
       Promise.all(Object.keys(ASSET_URLS).map(async k => { A.assets[k] = await once(ASSET_URLS[k]); })),
       Promise.all(Array.from({ length: SHAPE_COUNT }, (_, i) => once(shapeUrl(i + 1)))).then(list => { A.shapes = list; }),
-      Promise.all(BEERS.map(async b => { A.patterns[b.id] = await once(b.pattern); if (A.patterns[b.id]) A.patterns[b.id].key = b.pattern; })),
+      Promise.all([LAURELS.file].concat(BEERS.map(b => b.own && b.own.file).filter(Boolean)).map(async url => { A.patterns[url] = await once(url); if (A.patterns[url]) A.patterns[url].key = url; })),
       Promise.all(PARTNERS.map(async p => { A.partners[p.id] = await once(p.file); }))
     ]);
     measureShapes();
   }
 
   return {
-    SIZES: SIZES, BEERS: BEERS, DEFAULT_BEER: DEFAULT_BEER, COLORWAYS: COLORWAYS, DENSITIES: DENSITIES, SHAPE_COUNT: SHAPE_COUNT, ASSET_OPTIONS: ASSET_OPTIONS,
+    SIZES: SIZES, BEERS: BEERS, DEFAULT_BEER: DEFAULT_BEER, patternArtsFor: patternArtsFor, COLORWAYS: COLORWAYS, DENSITIES: DENSITIES, SHAPE_COUNT: SHAPE_COUNT, ASSET_OPTIONS: ASSET_OPTIONS,
     CONCEPTS: CONCEPTS, conceptById: conceptById, BRAND_COLORWAYS: BRAND_COLORWAYS, brandColorwayById: brandColorwayById,
     PARTNERS: PARTNERS, partnerById: partnerById, COBRAND_WAYS: COBRAND_WAYS, cobrandWayById: cobrandWayById,
     FOCUS_PHOTOS: FOCUS_PHOTOS, focusPhotoById: focusPhotoById,
