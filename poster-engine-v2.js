@@ -343,14 +343,15 @@ window.PryesPosterV2 = (function () {
      names stay inside the band. Condensed 600 per the guide's
      subhead spec; the designer's size/track multipliers ride on top. */
   function headlineSize(s) { const n = (s || '').length; return n <= 10 ? 1 : n <= 14 ? 0.86 : n <= 18 ? 0.72 : n <= 24 ? 0.58 : 0.48; }
+  function textLines(txt) { return String(txt || '').split(/\r?\n/).filter(l => l.trim().length); }
+  function longestLine(txt) { const lines = textLines(txt); return lines.length ? lines.reduce((a, b) => (b.length > a.length ? b : a)) : String(txt || ''); }
   function condText(e, txt, fill, o) {
     o = o || {};
     /* fill may be an array of per-line inks (legibility gate on
        fields the text straddles); a plain string colors every line */
     const fill0 = Array.isArray(fill) ? fill[0] : fill;
-    const lines = String(txt || '').split(/\r?\n/).filter(l => l.trim().length);
-    const longest = lines.length ? lines.reduce((a, b) => (b.length > a.length ? b : a)) : (txt || '');
-    const auto = o.autosize ? headlineSize(longest) : 1;
+    const lines = textLines(txt);
+    const auto = o.autosize ? headlineSize(longestLine(txt)) : 1;
     const fs = e.size * auto * (o.sizeMul || 1) * KX;
     const track = (e.track != null ? e.track : 0.05) + (o.trackAdd || 0);
     const open = '<text x="' + e.x * KX + '" y="' + e.y * KY + '" text-anchor="' + (e.anchor || 'middle') + '" font-family="' + COND + '" font-weight="600" font-size="' + fs + '" letter-spacing="' + fs * track + '" fill="' + fill0 + '">';
@@ -391,7 +392,9 @@ window.PryesPosterV2 = (function () {
      in a persistent hidden holder and every poster references it; exports
      stay standalone and carry their own copy. */
   const patternDefs = { host: null, seen: {} };
-  function sharedPatternId(pat, color) {
+  /* the hidden holder; if it ever leaves the document every cached
+     id is stale, so the cache resets with it */
+  function patternHost() {
     if (!patternDefs.host || !document.body.contains(patternDefs.host)) {
       patternDefs.host = document.createElement('div');
       patternDefs.host.setAttribute('aria-hidden', 'true');
@@ -399,6 +402,10 @@ window.PryesPosterV2 = (function () {
       document.body.appendChild(patternDefs.host);
       patternDefs.seen = {};
     }
+    return patternDefs.host;
+  }
+  function sharedPatternId(pat, color) {
+    patternHost();
     const key = (pat.key || pat.vb) + '|' + color;
     if (!patternDefs.seen[key]) {
       const id = 'pryespatshared' + (++patternUid);
@@ -448,18 +455,23 @@ window.PryesPosterV2 = (function () {
          cell once and repeats it as paint, so laying out thousands of
          art copies per poster is avoided. Tiles overlap their stride to
          interleave, and repeated cells clip at their own edges - so each
-         cell draws its 3x3 neighborhood, arriving pre-interleaved and
-         seamless. The art is one flat color, so overlap order is invisible. */
+         cell draws every neighboring tile that reaches into it, arriving
+         pre-interleaved and seamless at any overlap. The art is one flat
+         color, so overlap order is invisible. */
       /* the pattern def itself is shared and persistent too, keyed by
-         art + color + geometry, so re-renders reuse the browser's
-         cached raster instead of building a fresh one per poster */
-      const defKey = 'def|' + (pat.key || pat.vb) + '|' + color + '|' + cols + '|' + ovX.toFixed(2) + '|' + ovY.toFixed(2) + '|' + W + 'x' + H;
+         art + color + every input that shapes the grid (the padding
+         that comes with an angle shifts the grid's phase), so re-renders
+         reuse the browser's cached raster instead of building a fresh one */
+      patternHost();
+      const defKey = 'def|' + (pat.key || pat.vb) + '|' + color + '|' + cols + '|' + ovX.toFixed(2) + '|' + ovY.toFixed(2) + '|' + pad + '|' + W + 'x' + H;
       if (!patternDefs.seen[defKey]) {
         const symId = sharedPatternId(pat, color);
         const fillId = 'pryespatfill' + (++patternUid);
+        /* a tile at offset -k reaches into this cell while k * stride < tile size */
+        const reachX = Math.ceil(tw / strideX) - 1, reachY = Math.ceil(th / strideY) - 1;
         let cell = '';
-        for (let dy = -1; dy <= 1; dy++) {
-          for (let dx = -1; dx <= 1; dx++) {
+        for (let dy = -reachY; dy <= 0; dy++) {
+          for (let dx = -reachX; dx <= 0; dx++) {
             cell += '<use href="#' + symId + '" x="' + (dx * strideX) + '" y="' + (dy * strideY) + '" width="' + tw + '" height="' + th + '"/>';
           }
         }
@@ -484,13 +496,13 @@ window.PryesPosterV2 = (function () {
     const p = shape.vb.split(/\s+/).map(Number);
     const vw = p[2] || 100, vh = p[3] || 100;
     const w = 1872, k = w / vw;
-    /* KX/KY correction keeps the automatic placement aspect-true on
-       the print artboard; hand-placed values render exactly as given */
-    const aspectFix = KX / KY;
-    const h = w * (vh / vw) * aspectFix;
+    /* pure design-space values: the automatic placement stretches
+       between print sizes exactly like a hand-placed one, and can be
+       stored in the defaults without carrying a size inside it */
+    const h = w * (vh / vw);
     const bb = shape.bbox || { y: 0, h: vh };
-    const massH = bb.h * k * aspectFix;
-    const bbTop = bb.y * k * aspectFix;
+    const massH = bb.h * k;
+    const bbTop = bb.y * k;
     const y = massH <= 375 ? bandY - massH - bbTop : (bandY - 150) - bbTop;
     return { kind: 'shape', cx: 900, y: Math.round(y), w: w, h: Math.round(h) };
   }
@@ -527,6 +539,86 @@ window.PryesPosterV2 = (function () {
      opts = { canHref, tag } */
   function wrap(id, str, tag) { return (tag && str) ? '<g data-el="' + id + '">' + str + '</g>' : str; }
 
+  /* ---------- resolved facts ----------
+     Everything the legibility gate decides (final inks, per-line inks,
+     the partner mark's ink, the auto-sized headline) is computed here,
+     once. The SVG builders render from it and the board's build recipe
+     reads it, so the recipe can never describe a poster differently
+     than it renders. */
+  function trackOf(e, add) { return (e.track != null ? e.track : 0.05) + (add || 0); }
+  function resolveBeerFeature(card, c) {
+    const E = SPEC.beerfeature.elements;
+    const beer = beerById(card.beer);
+    const way = colorwayById(card.colorway);
+    const paint = way.paint(beer);
+    paint.bandText = legible(paint.bandText, paint.band);
+    return {
+      concept: 'beerfeature', E: E, beer: beer, way: way, paint: paint,
+      density: densityById(card.density),
+      shape: A.shapes[(card.shape - 1 + SHAPE_COUNT) % SHAPE_COUNT],
+      headlinePx: Math.round(E.headline.size * headlineSize(longestLine(c.headline)) * (c.h1Mul || 1)),
+      headlineTrack: trackOf(E.headline, c.h1Track),
+      subheadlinePx: Math.round(E.subheadline.size * (c.h2Mul || 1)),
+      subheadlineTrack: trackOf(E.subheadline, c.h2Track)
+    };
+  }
+  function resolveCobrand(card, c) {
+    const E = SPEC.cobrand.elements;
+    const beer = beerById(card.beer);
+    const partner = partnerById(card.partner);
+    const way = cobrandWayById(card.colorway);
+    const paint = way.paint(beer);
+    paint.ink = legible(paint.ink, paint.bg);
+    const shapeAsset = A.shapes[(card.shape - 1 + SHAPE_COUNT) % SHAPE_COUNT];
+    const r = resolveShapeFor('cobrand', card.shape);
+    /* the foot elements can sit on the plaque, the background, or
+       straddle both; hit-test each headline line and the partner mark
+       against the real shape geometry and gate each ink to its field */
+    const hFs = E.headline.size * (c.h1Mul || 1);
+    const hLh = hFs * (E.headline.lh != null ? E.headline.lh : 0.75);
+    const headlineInks = textLines(c.headline).map((ln, i) => {
+      const y = E.headline.y + i * hLh - hFs * 0.35;
+      return legible(paint.ink, shapeHit(shapeAsset, r, E.headline.x, y) ? paint.plaque : paint.bg);
+    });
+    const partnerField = shapeHit(shapeAsset, r, E.partner.cx, E.partner.y + 70) ? paint.plaque : paint.bg;
+    const partnerInk = contrast(partner.color, partnerField) >= 3 ? partner.color
+      : (contrast(partner.onDark, partnerField) > contrast(partner.color, partnerField) ? partner.onDark : partner.color);
+    return {
+      concept: 'cobrand', E: E, beer: beer, partner: partner, way: way, paint: paint,
+      shapeAsset: shapeAsset, r: r, headlineInks: headlineInks, partnerField: partnerField, partnerInk: partnerInk,
+      headlinePx: Math.round(hFs),
+      headlineTrack: trackOf(E.headline, c.h1Track)
+    };
+  }
+  function resolveBrand(card, c, concept) {
+    const E = SPEC[concept].elements;
+    const way = brandColorwayById(card.colorway);
+    const auto = concept === 'brandfocus' ? headlineSize(longestLine(c.headline)) : 1;
+    const out = {
+      concept: concept, E: E, way: way, paint: way.paint,
+      headlinePx: Math.round(E.headline.size * auto * (c.h1Mul || 1)),
+      headlineTrack: trackOf(E.headline, c.h1Track)
+    };
+    if (concept === 'photofocus') out.photo = focusPhotoById(card.photo);
+    if (E.subheadline) out.subheadlinePx = Math.round(E.subheadline.size * (c.h2Mul || 1));
+    return out;
+  }
+  function describe(card, c) {
+    const k = card.concept || 'beerfeature';
+    if (k === 'cobrand') return resolveCobrand(card, c);
+    if (k === 'brandfocus' || k === 'photofocus') return resolveBrand(card, c, k);
+    return resolveBeerFeature(card, c);
+  }
+
+  /* the shipped words per poster type; beer feature words follow the beer */
+  function defaultWords(concept, beerId) {
+    if (concept === 'brandfocus') return { headline: "It's a\nMidwest\nThing", subheadline: 'Available\nNow', showP: true };
+    if (concept === 'cobrand') return { headline: 'See You\nAt the Game', subheadline: '' };
+    if (concept === 'photofocus') return { headline: 'Trust Your Taste', subheadline: '' };
+    const b = beerById(beerId);
+    return { headline: b.headline, subheadline: b.subheadline };
+  }
+
   /* Brand-focus poster: flat brand field, stacked wordmark, laurel
      wreath + P watermark behind the headline, serif line at the
      foot. card = { concept:'brandfocus', colorway } */
@@ -554,32 +646,16 @@ window.PryesPosterV2 = (function () {
      card = { concept:'cobrand', beer, partner, shape, colorway } */
   function buildCobrand(card, c, opts) {
     opts = opts || {};
-    const E = SPEC.cobrand.elements;
-    const beer = beerById(card.beer);
-    const partner = partnerById(card.partner);
-    const paint = cobrandWayById(card.colorway).paint(beer);
-    paint.ink = legible(paint.ink, paint.bg);
+    const R = resolveCobrand(card, c);
+    const E = R.E, beer = R.beer, partner = R.partner, paint = R.paint, shapeAsset = R.shapeAsset, r = R.r;
     const tag = !!opts.tag;
 
     let s = '<rect width="' + W + '" height="' + H + '" fill="' + paint.bg + '"/>';
 
     /* plaque: brand shape stretched into its hand-placed box */
-    const shapeAsset = A.shapes[(card.shape - 1 + SHAPE_COUNT) % SHAPE_COUNT];
-    const r = resolveShapeFor('cobrand', card.shape);
     if (shapeAsset) {
       s += wrap('cobrand.shape', '<svg x="' + (r.cx - r.w / 2) * KX + '" y="' + r.y * KY + '" width="' + r.w * KX + '" height="' + r.h * KY + '" viewBox="' + shapeAsset.vb + '" preserveAspectRatio="none"><g fill="' + paint.plaque + '">' + shapeAsset.body + '</g></svg>', tag);
     }
-    /* the foot elements can sit on the plaque, the background, or
-       straddle both; hit-test each headline line and the partner mark
-       against the real shape geometry and gate each ink to its field */
-    const hFs = E.headline.size * (c.h1Mul || 1);
-    const hLh = hFs * (E.headline.lh != null ? E.headline.lh : 0.75);
-    const headlineInk = String(c.headline || '').split(/\r?\n/).filter(l => l.trim().length)
-      .map((ln, i) => {
-        const y = E.headline.y + i * hLh - hFs * 0.35;
-        return legible(paint.ink, shapeHit(shapeAsset, r, E.headline.x, y) ? paint.plaque : paint.bg);
-      });
-    const partnerField = shapeHit(shapeAsset, r, E.partner.cx, E.partner.y + 70) ? paint.plaque : paint.bg;
 
     const canH = E.can.h * KY, canW = canH * beer.canAspect;
     const href = opts.canHref || beer.can;
@@ -588,12 +664,10 @@ window.PryesPosterV2 = (function () {
     const mark = A.assets[E.wordmark.asset || 'wordmark'];
     if (mark) s += wrap('cobrand.wordmark', placeSVG(mark, { cx: E.wordmark.cx * KX, y: E.wordmark.y * KY, w: E.wordmark.w * KX, color: paint.ink }), tag);
 
-    s += wrap('cobrand.headline', condText(E.headline, c.headline, headlineInk.length ? headlineInk : paint.ink, { sizeMul: c.h1Mul, trackAdd: c.h1Track }), tag);
+    s += wrap('cobrand.headline', condText(E.headline, c.headline, R.headlineInks.length ? R.headlineInks : paint.ink, { sizeMul: c.h1Mul, trackAdd: c.h1Track }), tag);
 
     const logo = A.partners[partner.id];
-    const partnerInk = contrast(partner.color, partnerField) >= 3 ? partner.color
-      : (contrast(partner.onDark, partnerField) > contrast(partner.color, partnerField) ? partner.onDark : partner.color);
-    if (logo) s += wrap('cobrand.partner', placeSVG(logo, { cx: E.partner.cx * KX, y: E.partner.y * KY, w: E.partner.w * KX, color: partnerInk }), tag);
+    if (logo) s += wrap('cobrand.partner', placeSVG(logo, { cx: E.partner.cx * KX, y: E.partner.y * KY, w: E.partner.w * KX, color: R.partnerInk }), tag);
 
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + SIZE.inW + '" height="' + SIZE.inH + '">' + s + '</svg>';
   }
@@ -633,12 +707,8 @@ window.PryesPosterV2 = (function () {
     if ((card.concept || 'beerfeature') === 'brandfocus') return buildBrandFocus(card, c, opts);
     if ((card.concept || 'beerfeature') === 'cobrand') return buildCobrand(card, c, opts);
     if ((card.concept || 'beerfeature') === 'photofocus') return buildPhotoFocus(card, c, opts);
-    const E = SPEC.beerfeature.elements;
-    const beer = beerById(card.beer);
-    const paint = colorwayById(card.colorway).paint(beer);
-    paint.bandText = legible(paint.bandText, paint.band);
-    const density = densityById(card.density);
-    const shape = A.shapes[(card.shape - 1 + SHAPE_COUNT) % SHAPE_COUNT];
+    const R = resolveBeerFeature(card, c);
+    const E = R.E, beer = R.beer, paint = R.paint, density = R.density, shape = R.shape;
     const tag = !!opts.tag;
 
     let s = '<rect width="' + W + '" height="' + H + '" fill="' + paint.bg + '"/>';
@@ -697,10 +767,17 @@ window.PryesPosterV2 = (function () {
     document.body.removeChild(host);
   }
   async function load() {
-    await Promise.all(Object.keys(ASSET_URLS).map(async k => { A.assets[k] = await loadOne(ASSET_URLS[k]); }));
-    A.shapes = await Promise.all(Array.from({ length: SHAPE_COUNT }, (_, i) => loadOne(shapeUrl(i + 1))));
-    await Promise.all(BEERS.map(async b => { A.patterns[b.id] = await loadOne(b.pattern); if (A.patterns[b.id]) A.patterns[b.id].key = b.id; }));
-    await Promise.all(PARTNERS.map(async p => { A.partners[p.id] = await loadOne(p.file); }));
+    /* every file is fetched once, all requests in flight together;
+       beers that share a pattern file share one parsed copy, keyed by
+       the file so the shared preview art is defined once per color */
+    const byUrl = {};
+    const once = url => (byUrl[url] = byUrl[url] || loadOne(url));
+    await Promise.all([
+      Promise.all(Object.keys(ASSET_URLS).map(async k => { A.assets[k] = await once(ASSET_URLS[k]); })),
+      Promise.all(Array.from({ length: SHAPE_COUNT }, (_, i) => once(shapeUrl(i + 1)))).then(list => { A.shapes = list; }),
+      Promise.all(BEERS.map(async b => { A.patterns[b.id] = await once(b.pattern); if (A.patterns[b.id]) A.patterns[b.id].key = b.pattern; })),
+      Promise.all(PARTNERS.map(async p => { A.partners[p.id] = await once(p.file); }))
+    ]);
     measureShapes();
   }
 
@@ -714,6 +791,7 @@ window.PryesPosterV2 = (function () {
     get SPEC() { return SPEC; },
     setSize: setSize, setSpec: setSpec,
     buildPosterSVG: buildPosterSVG, toPrintFonts: toPrintFonts,
+    describe: describe, defaultWords: defaultWords,
     beerById: beerById, colorwayById: colorwayById, densityById: densityById,
     resolveShape: resolveShape, shapeFallback: shapeFallback,
     esc: esc, up: up, shapeUrl: shapeUrl,

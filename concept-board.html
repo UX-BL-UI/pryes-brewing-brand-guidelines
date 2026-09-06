@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Barlow+Condensed:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@500;600&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   PRYES CONCEPT BOARD V2 — designer tool
+   PRYES CONCEPT BOARD V2 - designer tool
    Poster wall first: sorting pills up top, every concept's cards
    on the board, shuffle in a sticky footer, and the content lives
    in an overlay that opens when a poster is picked.
@@ -112,7 +112,7 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
 .cb-poster.is-rolling > svg { animation: cbRoll .42s ease; }
 .cb-card .cb-poster::after {
   content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  border-radius: 10px;
+  border-radius: 7px 7px 0 0; /* traces the poster: card-clipped top corners, square bottom */
   box-shadow: inset 0 0 0 5px rgba(255,241,228,0.55), inset 0 0 0 6px rgba(16,16,25,0.18);
   opacity: 0; transition: opacity .15s ease;
 }
@@ -261,6 +261,7 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
 .cb-sizes { display: flex; gap: 8px; }
 .cb-size { flex: 1; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; font-size: 0.85rem; padding: 8px 0; border: 1.5px solid rgba(255,241,228,0.3); border-radius: 3px; background: transparent; color: var(--cream-soft); cursor: pointer; }
 .cb-size[aria-pressed="true"] { background: var(--beer-foam); color: var(--burgundy); border-color: var(--beer-foam); }
+.cb-size[aria-pressed="true"]::before { content: "\2713\00a0"; } /* check mark: the chosen size never reads by color alone */
 
 .cb-type { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 22px; margin-top: 18px; padding-top: 18px; border-top: 1px solid rgba(255,241,228,0.2); }
 .cb-t-field { display: flex; flex-direction: column; gap: 4px; }
@@ -473,7 +474,7 @@ function showToast(msg) {
 }
 
 /* ============================================================
-   CONCEPT BOARD V2 — poster wall
+   CONCEPT BOARD V2 - poster wall
    All poster types on one board, sorting pills filter, shuffle
    in the sticky footer, and content edits happen in the overlay
    after picking a poster.
@@ -491,13 +492,12 @@ function showToast(msg) {
   /* ---------- content + type state ---------- */
   const type = { h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
   let beerId = P.DEFAULT_BEER;
-  const firstBeer = P.beerById(beerId);
   /* each poster type keeps its own words; the overlay edits them */
   const contentByConcept = {
-    beerfeature: { headline: firstBeer.headline, subheadline: firstBeer.subheadline },
-    brandfocus:  { headline: "It's a\nMidwest\nThing", subheadline: 'Available\nNow', showP: true },
-    cobrand:     { headline: 'See You\nAt the Game', subheadline: '' },
-    photofocus:  { headline: 'Trust Your Taste', subheadline: '' }
+    beerfeature: P.defaultWords('beerfeature', beerId),
+    brandfocus:  P.defaultWords('brandfocus'),
+    cobrand:     P.defaultWords('cobrand'),
+    photofocus:  P.defaultWords('photofocus')
   };
   function contentFor(card) {
     const cc = contentByConcept[card.concept];
@@ -615,7 +615,11 @@ function showToast(msg) {
     if (!reduce && bumpSet) bumpSet.forEach(i => { const p = board.querySelector('.cb-card[data-i="' + i + '"] .cb-poster'); if (p) { void p.offsetWidth; p.classList.add('is-rolling'); } });
     if (selectedCard) renderOverlayPoster();
   }
+  let boardDirty = false;
   function posterOnlyRefresh() {
+    /* while the overlay is open the board is hidden behind it - redraw
+       only the poster in view and catch the board up when it closes */
+    if (selectedCard) { boardDirty = true; renderOverlayPoster(); return; }
     const vis = visible();
     vis.forEach((card, i) => {
       const p = board.querySelector('.cb-card[data-i="' + i + '"] .cb-poster');
@@ -643,38 +647,38 @@ function showToast(msg) {
   function renderRecipe() {
     const card = selectedCard;
     const c = contentFor(card);
+    const R = P.describe(card, c);
     document.getElementById('cb-ov-type').textContent = CONCEPT_LABEL[card.concept];
     document.getElementById('cb-ov-title').textContent = (c.headline || 'Concept').replace(/\n/g, ' ');
     let html = '';
     if (card.concept === 'brandfocus') {
-      const bp = P.brandColorwayById(card.colorway).paint;
-      html = '<b>Color</b> ' + P.brandColorwayById(card.colorway).name + ' · field ' + bp.bg + ' · ink ' + bp.ink + '<br>' +
+      html = '<b>Color</b> ' + R.way.name + ' · field ' + R.paint.bg + ' · ink ' + R.paint.ink + '<br>' +
         '<b>Marks</b> Pryes Brewing wordmark · laurel wreath' + (c.showP !== false ? ' · P watermark' : ' · P watermark off') + '<br>' +
         '<b>Size</b> ' + P.SIZE.label;
     } else if (card.concept === 'photofocus') {
-      const bp = P.brandColorwayById(card.colorway).paint;
-      html = '<b>Photo</b> ' + esc(P.focusPhotoById(card.photo).name) + '<br>' +
-        '<b>Color</b> ' + P.brandColorwayById(card.colorway).name + ' · field ' + bp.bg + ' · ink ' + bp.ink + '<br>' +
+      html = '<b>Photo</b> ' + esc(R.photo.name) + '<br>' +
+        '<b>Color</b> ' + R.way.name + ' · field ' + R.paint.bg + ' · ink ' + R.paint.ink + '<br>' +
         '<b>Size</b> ' + P.SIZE.label;
     } else if (card.concept === 'cobrand') {
-      const beer = P.beerById(card.beer);
-      const partner = P.partnerById(card.partner);
-      const cp = P.cobrandWayById(card.colorway).paint(beer);
-      html = '<b>Beer</b> ' + esc(beer.name) + '<br>' +
-        '<b>Partner</b> ' + esc(partner.name) + ' · logo in ' + (cp.dark ? partner.onDark : partner.color) + '<br>' +
-        '<b>Plaque</b> Shape ' + String(card.shape).padStart(2, '0') + ' · ' + cp.plaque + '<br>' +
-        '<b>Color</b> ' + P.cobrandWayById(card.colorway).name + ' · field ' + cp.bg + '<br>' +
+      html = '<b>Beer</b> ' + esc(R.beer.name) + '<br>' +
+        '<b>Partner</b> ' + esc(R.partner.name) + ' · logo in ' + R.partnerInk + '<br>' +
+        '<b>Plaque</b> Shape ' + String(card.shape).padStart(2, '0') + ' · ' + R.paint.plaque + '<br>' +
+        '<b>Color</b> ' + R.way.name + ' · field ' + R.paint.bg + ' · ink ' + inkList(R.headlineInks, R.paint.ink) + '<br>' +
         '<b>Size</b> ' + P.SIZE.label;
     } else {
-      const beer = P.beerById(card.beer);
-      const paint = P.colorwayById(card.colorway).paint(beer);
-      html = '<b>Beer</b> ' + esc(beer.name) + ' (can + ' + esc(beer.patternName) + ' pattern)<br>' +
+      html = '<b>Beer</b> ' + esc(R.beer.name) + ' (can + ' + esc(R.beer.patternName) + ' pattern)<br>' +
         '<b>Shape</b> ' + String(card.shape).padStart(2, '0') + ' of ' + SHAPE_COUNT + '<br>' +
-        '<b>Color</b> ' + P.colorwayById(card.colorway).name + ' · field ' + paint.bg + ' · band ' + paint.band + '<br>' +
-        '<b>Pattern</b> ' + P.densityById(card.density).name + '<br>' +
+        '<b>Color</b> ' + R.way.name + ' · field ' + R.paint.bg + ' · band ' + R.paint.band + ' · band text ' + R.paint.bandText + '<br>' +
+        '<b>Pattern</b> ' + R.density.name + '<br>' +
         '<b>Size</b> ' + P.SIZE.label;
     }
     document.getElementById('cb-ov-recipe').innerHTML = html;
+  }
+  /* per-line inks collapse to one value when every line agrees */
+  function inkList(inks, fallback) {
+    if (!inks || !inks.length) return fallback;
+    const uniq = inks.filter((v, i) => inks.indexOf(v) === i);
+    return uniq.length === 1 ? uniq[0] : inks.map((v, i) => 'line ' + (i + 1) + ' ' + v).join(', ');
   }
   function openOverlay(card) {
     selectedCard = card;
@@ -694,6 +698,7 @@ function showToast(msg) {
     selectedCard = null;
     overlay.classList.remove('is-open');
     document.body.style.overflow = '';
+    if (boardDirty) { boardDirty = false; renderBoard(); }
   }
   document.getElementById('cb-ov-close').addEventListener('click', closeOverlay);
   document.getElementById('cb-ov-back').addEventListener('click', closeOverlay);
@@ -723,60 +728,53 @@ function showToast(msg) {
       '<table>' + rows.map(tr).join('') + '</table></body></html>';
   }
   function recipeRows(c, card) {
+    const R = P.describe(card, c);
     const FONTS = ['Fonts', 'Alternate Gothic No.2 D / Gotham / Superclarendon - SVG text is live and editable'];
     const SPACE = ['Design space', '1800 × 2400 units; the SVG opens at true print size in Illustrator'];
+    const trk = t => t.toFixed(2) + 'em';
     if (card.concept === 'brandfocus') {
-      const way = P.brandColorwayById(card.colorway), bp = way.paint;
-      const E = P.SPEC.brandfocus.elements;
+      const bp = R.paint;
       return [
         ['Poster type', 'Brand focus · ' + P.SIZE.label + ' portrait'],
-        ['Colorway', way.name + ' · field ' + bp.bg + ' · ink ' + bp.ink],
+        ['Colorway', R.way.name + ' · field ' + bp.bg + ' · ink ' + bp.ink],
         ['Marks', 'Pryes Brewing wordmark (' + bp.ink + ') · laurel wreath (' + bp.wreath + ' at ' + Math.round(bp.wreathOp * 100) + '%)' + (c.showP !== false ? ' · P watermark (' + bp.pmark + ' at ' + Math.round(bp.pmarkOp * 100) + '%)' : ' · P watermark off')],
-        ['Headline', '"' + c.headline.replace(/\n/g, ' / ') + '" · Alternate Gothic No.2 D · tracking ' + (E.headline.track + c.h1Track).toFixed(2) + 'em'],
-        ['Subheadline', '"' + c.subheadline.replace(/\n/g, ' / ') + '" · Superclarendon · ' + Math.round(E.subheadline.size * c.h2Mul) + ' design units'],
+        ['Headline', '"' + c.headline.replace(/\n/g, ' / ') + '" · Alternate Gothic No.2 D · ' + R.headlinePx + ' design units · tracking ' + trk(R.headlineTrack)],
+        ['Subheadline', '"' + c.subheadline.replace(/\n/g, ' / ') + '" · Superclarendon · ' + R.subheadlinePx + ' design units'],
         FONTS, SPACE
       ];
     }
     if (card.concept === 'photofocus') {
-      const way = P.brandColorwayById(card.colorway), bp = way.paint;
-      const photo = P.focusPhotoById(card.photo);
-      const E = P.SPEC.photofocus.elements;
+      const bp = R.paint;
       return [
         ['Poster type', 'Photo focus · ' + P.SIZE.label + ' portrait'],
-        ['Photo', photo.name + ' · ' + photo.file.split('/').pop() + ' (full-resolution copy in this package)'],
-        ['Colorway', way.name + ' · field ' + bp.bg + ' · ink ' + bp.ink],
-        ['Headline', '"' + c.headline + '" · Alternate Gothic No.2 D · ' + Math.round(E.headline.size * c.h1Mul) + ' design units · tracking ' + (E.headline.track + c.h1Track).toFixed(2) + 'em'],
+        ['Photo', R.photo.name + ' · ' + R.photo.file.split('/').pop() + ' (full-resolution copy in this package)'],
+        ['Colorway', R.way.name + ' · field ' + bp.bg + ' · ink ' + bp.ink],
+        ['Headline', '"' + c.headline + '" · Alternate Gothic No.2 D · ' + R.headlinePx + ' design units · tracking ' + trk(R.headlineTrack)],
         FONTS, SPACE
       ];
     }
     if (card.concept === 'cobrand') {
-      const beer = P.beerById(card.beer);
-      const partner = P.partnerById(card.partner);
-      const way = P.cobrandWayById(card.colorway), cp = way.paint(beer);
-      const E = P.SPEC.cobrand.elements;
+      const cp = R.paint;
       return [
         ['Poster type', 'Co-branded · ' + P.SIZE.label + ' portrait'],
-        ['Beer', beer.name + ' · ' + beer.can.split('/').pop() + ' (full-resolution copy in this package)'],
-        ['Partner', partner.name + ' · ' + partner.file.split('/').pop() + ' · printed in ' + (cp.dark ? partner.onDark : partner.color)],
+        ['Beer', R.beer.name + ' · ' + R.beer.can.split('/').pop() + ' (full-resolution copy in this package)'],
+        ['Partner', R.partner.name + ' · ' + R.partner.file.split('/').pop() + ' · printed in ' + R.partnerInk],
         ['Plaque', 'Brand shape ' + String(card.shape).padStart(2, '0') + ' · printed in ' + cp.plaque],
-        ['Colors', way.name + ' · field ' + cp.bg + ' · plaque ' + cp.plaque + ' · ink ' + cp.ink],
-        ['Headline', '"' + c.headline.replace(/\n/g, ' / ') + '" · Alternate Gothic No.2 D · ' + Math.round(E.headline.size * c.h1Mul) + ' design units · tracking ' + (E.headline.track + c.h1Track).toFixed(2) + 'em'],
+        ['Colors', R.way.name + ' · field ' + cp.bg + ' · plaque ' + cp.plaque + ' · headline ink ' + inkList(R.headlineInks, cp.ink)],
+        ['Headline', '"' + c.headline.replace(/\n/g, ' / ') + '" · Alternate Gothic No.2 D · ' + R.headlinePx + ' design units · tracking ' + trk(R.headlineTrack)],
         FONTS, SPACE
       ];
     }
-    const beer = P.beerById(card.beer);
-    const paint = P.colorwayById(card.colorway).paint(beer);
-    const E = P.SPEC.beerfeature.elements;
-    const h1fs = Math.round(E.headline.size * (c.headline.length <= 10 ? 1 : c.headline.length <= 14 ? 0.86 : c.headline.length <= 18 ? 0.72 : c.headline.length <= 24 ? 0.58 : 0.48) * c.h1Mul);
+    const paint = R.paint;
     return [
       ['Poster type', 'Beer feature · ' + P.SIZE.label + ' portrait'],
-      ['Beer', beer.name],
-      ['Can render', beer.can.split('/').pop() + ' (full-resolution copy in this package)'],
-      ['Pattern', beer.patternName + ' · ' + beer.pattern.split('/').pop() + ' · printed in ' + paint.pattern],
+      ['Beer', R.beer.name],
+      ['Can render', R.beer.can.split('/').pop() + ' (full-resolution copy in this package)'],
+      ['Pattern', R.beer.patternName + ' · ' + R.beer.pattern.split('/').pop() + ' · printed in ' + paint.pattern + ' · ' + R.density.name],
       ['Shape', 'Brand shape ' + String(card.shape).padStart(2, '0') + ' · ' + P.shapeUrl(card.shape).split('/').pop() + ' · printed in ' + paint.band],
       ['Colors', 'Field ' + paint.bg + ' · pattern ' + paint.pattern + ' · wordmark ' + paint.wordmark + ' · band ' + paint.band + ' · band text ' + paint.bandText],
-      ['Headline', '"' + c.headline.replace(/\n/g, ' / ') + '" · Alternate Gothic No.2 D · ' + h1fs + ' design units · tracking ' + (E.headline.track + c.h1Track).toFixed(2) + 'em'],
-      ['Subheadline', '"' + c.subheadline.replace(/\n/g, ' / ') + '" · Alternate Gothic No.2 D · ' + Math.round(E.subheadline.size * c.h2Mul) + ' design units · tracking ' + (E.subheadline.track + c.h2Track).toFixed(2) + 'em'],
+      ['Headline', '"' + c.headline.replace(/\n/g, ' / ') + '" · Alternate Gothic No.2 D · ' + R.headlinePx + ' design units · tracking ' + trk(R.headlineTrack)],
+      ['Subheadline', '"' + c.subheadline.replace(/\n/g, ' / ') + '" · Alternate Gothic No.2 D · ' + R.subheadlinePx + ' design units · tracking ' + trk(R.subheadlineTrack)],
       FONTS, SPACE
     ];
   }
@@ -788,8 +786,13 @@ function showToast(msg) {
     const slug = (c.headline || (beer ? beer.name : 'brand')).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'concept';
     const artPath = beer ? beer.can : card.concept === 'photofocus' ? P.focusPhotoById(card.photo).file : null;
     const art = artPath ? await fileData(artPath) : null;
-    const opts = card.concept === 'photofocus' ? { photoHref: art && art.dataUrl, standalone: true } : { canHref: art && art.dataUrl, standalone: true };
-    const svg = '<?xml version="1.0" encoding="UTF-8"?>\n' + toPrintFonts(buildPosterSVG(card, opts));
+    /* the art goes in as a placeholder so the font swap runs over a
+       small string; the multi-megabyte data URL is spliced in after */
+    const ART = 'pryes-art-placeholder';
+    const opts = card.concept === 'photofocus' ? { photoHref: art ? ART : null, standalone: true } : { canHref: art ? ART : null, standalone: true };
+    let body = toPrintFonts(buildPosterSVG(card, opts));
+    if (art) body = body.replace('href="' + ART + '"', 'href="' + art.dataUrl + '"');
+    const svg = '<?xml version="1.0" encoding="UTF-8"?>\n' + body;
     const svgName = 'pryes-' + slug + '-' + P.SIZE.slug + '.svg';
     if (window.JSZip) {
       const zip = new JSZip();
@@ -798,7 +801,7 @@ function showToast(msg) {
       if (art) zip.file(art.name, art.blob);
       const blob = await zip.generateAsync({ type: 'blob' });
       downloadBlob(blob, 'pryes-' + slug + '-concept.zip');
-      showToast(!artPath || art ? 'Concept package downloaded' : 'Image file missing, exported without it');
+      showToast((!artPath || art) ? 'Concept package downloaded' : 'Image file missing, exported without it');
     } else {
       downloadBlob(new Blob([svg], { type: 'image/svg+xml' }), svgName);
       showToast('ZIP unavailable, SVG downloaded');
@@ -856,13 +859,8 @@ function showToast(msg) {
     contentByConcept.brandfocus.showP = document.getElementById('cb-showp').value !== 'off';
     posterOnlyRefresh();
   });
-  /* the shipped words per poster type; beer feature words follow the beer */
-  function defaultWords(concept) {
-    if (concept === 'beerfeature') { const b = P.beerById(beerId); return { headline: b.headline, subheadline: b.subheadline }; }
-    if (concept === 'brandfocus') return { headline: "It's a\nMidwest\nThing", subheadline: 'Available\nNow', showP: true };
-    if (concept === 'cobrand') return { headline: 'See You\nAt the Game', subheadline: '' };
-    return { headline: 'Trust Your Taste', subheadline: '' };
-  }
+  /* the shipped words per poster type live in the engine; beer feature words follow the beer */
+  function defaultWords(concept) { return P.defaultWords(concept, beerId); }
   document.getElementById('cb-text-reset').addEventListener('click', () => {
     if (!selectedCard) return;
     const concept = selectedCard.concept;
@@ -951,6 +949,10 @@ function showToast(msg) {
   var proto = HTMLSelectElement.prototype;
   var valueD = Object.getOwnPropertyDescriptor(proto, 'value');
   var indexD = Object.getOwnPropertyDescriptor(proto, 'selectedIndex');
+  /* one page-level listener closes whichever menu is open - per-select
+     listeners would pile up as panels rebuild their selects */
+  var openMenu = null;
+  document.addEventListener('pointerdown', function (e) { if (openMenu && !openMenu.wrap.contains(e.target)) openMenu.close(); });
   function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
   function enhance(sel) {
     if (sel.closest('.csel')) return;
@@ -969,9 +971,11 @@ function showToast(msg) {
         return '<button type="button" class="csel-opt" role="option" data-i="' + i + '" aria-selected="' + (i === sel.selectedIndex) + '"><span>' + esc(op.textContent) + '</span>' + CHECK + '</button>';
       }).join('');
     }
-    function close() { menu.hidden = true; trig.setAttribute('aria-expanded', 'false'); menu.classList.remove('csel-menu--up'); }
+    function close() { menu.hidden = true; trig.setAttribute('aria-expanded', 'false'); menu.classList.remove('csel-menu--up'); if (openMenu && openMenu.wrap === wrap) openMenu = null; }
     trig.addEventListener('click', function () {
       if (!menu.hidden) return close();
+      if (openMenu) openMenu.close();
+      openMenu = { wrap: wrap, close: close };
       sync(); menu.hidden = false; trig.setAttribute('aria-expanded', 'true');
       var r = menu.getBoundingClientRect();
       if (r.bottom > window.innerHeight - 8) menu.classList.add('csel-menu--up');
@@ -981,7 +985,6 @@ function showToast(msg) {
       indexD.set.call(sel, +b.dataset.i); sync(); close();
       sel.dispatchEvent(new Event('change', { bubbles: true }));
     });
-    document.addEventListener('pointerdown', function (e) { if (!wrap.contains(e.target) && !menu.hidden) close(); });
     trig.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
     sel.addEventListener('change', sync);
     new MutationObserver(sync).observe(sel, { childList: true, subtree: true, attributes: true });

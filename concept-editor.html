@@ -296,6 +296,13 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
       Object.keys(PRISTINE[l].elements).forEach(k => {
         out[k] = saved[l].elements[k] || JSON.parse(JSON.stringify(PRISTINE[l].elements[k]));
         Object.keys(PRISTINE[l].elements[k]).forEach(p => { if (out[k][p] == null) out[k][p] = PRISTINE[l].elements[k][p]; });
+        /* per-shape placements shipped after this save was made come
+           along too - otherwise an export would silently drop them */
+        const ps = PRISTINE[l].elements[k].perShape;
+        if (ps) {
+          out[k].perShape = out[k].perShape || {};
+          Object.keys(ps).forEach(n => { if (!out[k].perShape[n]) out[k].perShape[n] = JSON.parse(JSON.stringify(ps[n])); });
+        }
       });
       saved[l].elements = out;
       saved[l].label = PRISTINE[l].label;
@@ -307,7 +314,13 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
     const saved = localStorage.getItem(STORE_KEY);
     if (saved) {
       const parsed = migrate(JSON.parse(saved));
-      if (parsed && parsed.beerfeature && JSON.stringify(parsed) !== JSON.stringify(PRISTINE)) { spec = parsed; restored = true; }
+      /* "restored" means real edits: the change list is the one
+         definition of changed, so the banner and the count agree */
+      if (parsed && parsed.beerfeature) {
+        spec = parsed;
+        restored = diff().length > 0;
+        if (!restored) spec = JSON.parse(JSON.stringify(PRISTINE));
+      }
     }
   } catch (e) {}
   P.setSpec(spec);
@@ -324,11 +337,9 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   let selectedEl = null;   /* "<concept>.element" */
 
   function content() {
-    if (card.concept === 'brandfocus') return { headline: "It's a\nMidwest\nThing", subheadline: 'Available\nNow', showP: document.getElementById('ed-showp').value !== 'off', h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
-    if (card.concept === 'cobrand') return { headline: 'See You\nAt the Game', subheadline: '', h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
-    if (card.concept === 'photofocus') return { headline: 'Trust Your Taste', subheadline: '', h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
-    const b = P.beerById(card.beer);
-    return { headline: b.headline, subheadline: b.subheadline, h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
+    const w = P.defaultWords(card.concept, card.beer);
+    if (card.concept === 'brandfocus') w.showP = document.getElementById('ed-showp').value !== 'off';
+    return Object.assign(w, { h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 });
   }
 
   /* ---------- controls ---------- */
@@ -476,11 +487,20 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
 
   /* ---------- panel ---------- */
   const propsBox = document.getElementById('ed-props');
+  let panelKey = null;
   function syncPanel() {
     const e = elSpec(selectedEl);
     document.getElementById('ed-selname').textContent = selectedEl ? spec[selectedEl.split('.')[0]].label + ' · ' + selectedEl.split('.')[1] : 'Nothing selected';
     document.getElementById('ed-reset-el').disabled = !selectedEl;
-    if (!e) { propsBox.innerHTML = ''; return; }
+    if (!e) { propsBox.innerHTML = ''; panelKey = null; return; }
+    /* a drag calls this every frame: same element means refresh the
+       numbers in place, never rebuild the inputs (or their dropdown) */
+    const key = selectedEl + '|' + card.shape + '|' + EDITABLE.filter(k => e[k] != null).join(',');
+    if (key === panelKey) {
+      propsBox.querySelectorAll('input[data-k]').forEach(inp => { if (document.activeElement !== inp) inp.value = e[inp.dataset.k]; });
+      return;
+    }
+    panelKey = key;
     const assetPicker = e.kind === 'asset'
       ? '<div class="ed-prop" style="grid-column:1/-1"><label for="edp-asset">Mark</label><select id="edp-asset">' +
         P.ASSET_OPTIONS.map(o => '<option value="' + o.id + '"' + (o.id === (e.asset || 'wordmarktag') ? ' selected' : '') + '>' + o.label + '</option>').join('') +
@@ -502,8 +522,13 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   document.getElementById('ed-reset-el').addEventListener('click', () => {
     if (!selectedEl) return;
     const [l, k] = selectedEl.split('.');
-    if (spec[l].elements[k].kind === 'shape') delete spec[l].elements[k].perShape[card.shape];
-    else spec[l].elements[k] = JSON.parse(JSON.stringify(PRISTINE[l].elements[k]));
+    if (spec[l].elements[k].kind === 'shape') {
+      /* back to the shipped placement of the shape on screen; a shape
+         that was never hand-placed goes back to the automatic one */
+      const shipped = PRISTINE[l].elements[k].perShape && PRISTINE[l].elements[k].perShape[card.shape];
+      if (shipped) spec[l].elements[k].perShape[card.shape] = JSON.parse(JSON.stringify(shipped));
+      else delete spec[l].elements[k].perShape[card.shape];
+    } else spec[l].elements[k] = JSON.parse(JSON.stringify(PRISTINE[l].elements[k]));
     render(); syncPanel(); persist(); syncChanges();
   });
   document.getElementById('ed-reset-all').addEventListener('click', () => {
@@ -588,6 +613,10 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   var proto = HTMLSelectElement.prototype;
   var valueD = Object.getOwnPropertyDescriptor(proto, 'value');
   var indexD = Object.getOwnPropertyDescriptor(proto, 'selectedIndex');
+  /* one page-level listener closes whichever menu is open - per-select
+     listeners would pile up as panels rebuild their selects */
+  var openMenu = null;
+  document.addEventListener('pointerdown', function (e) { if (openMenu && !openMenu.wrap.contains(e.target)) openMenu.close(); });
   function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
   function enhance(sel) {
     if (sel.closest('.csel')) return;
@@ -606,9 +635,11 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
         return '<button type="button" class="csel-opt" role="option" data-i="' + i + '" aria-selected="' + (i === sel.selectedIndex) + '"><span>' + esc(op.textContent) + '</span>' + CHECK + '</button>';
       }).join('');
     }
-    function close() { menu.hidden = true; trig.setAttribute('aria-expanded', 'false'); menu.classList.remove('csel-menu--up'); }
+    function close() { menu.hidden = true; trig.setAttribute('aria-expanded', 'false'); menu.classList.remove('csel-menu--up'); if (openMenu && openMenu.wrap === wrap) openMenu = null; }
     trig.addEventListener('click', function () {
       if (!menu.hidden) return close();
+      if (openMenu) openMenu.close();
+      openMenu = { wrap: wrap, close: close };
       sync(); menu.hidden = false; trig.setAttribute('aria-expanded', 'true');
       var r = menu.getBoundingClientRect();
       if (r.bottom > window.innerHeight - 8) menu.classList.add('csel-menu--up');
@@ -618,7 +649,6 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
       indexD.set.call(sel, +b.dataset.i); sync(); close();
       sel.dispatchEvent(new Event('change', { bubbles: true }));
     });
-    document.addEventListener('pointerdown', function (e) { if (!wrap.contains(e.target) && !menu.hidden) close(); });
     trig.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
     sel.addEventListener('change', sync);
     new MutationObserver(sync).observe(sel, { childList: true, subtree: true, attributes: true });
