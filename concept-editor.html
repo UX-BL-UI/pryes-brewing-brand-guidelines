@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Barlow+Condensed:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@500;600&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="pryes-ui.css">
 <style>
 :root {
   --burgundy: #3e0f23; --burgundy-deep: #320c1c; --beer-foam: #fff1e4; --beige: #ebcfb8;
@@ -81,30 +82,8 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
   background-repeat: no-repeat; background-position: right 10px center; background-size: 12px;
 }
 
-/* ---------- custom dropdown menus (native popups ignore the brand) ---------- */
-.csel { position: relative; display: inline-block; vertical-align: middle; }
-.csel > select { display: none !important; }
-.csel-trigger { text-align: left; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ed-prop .csel { display: block; }
 .ed-prop .csel-trigger { width: 100%; }
-.csel-menu {
-  position: absolute; z-index: 500; top: calc(100% + 5px); left: 0; min-width: 100%;
-  background: #fff8ef; color: var(--ink);
-  border: 1px solid var(--line); border-radius: 10px;
-  box-shadow: 0 12px 32px rgba(16,16,25,0.22);
-  padding: 5px; max-height: 300px; overflow: auto;
-}
-.csel-menu--up { top: auto; bottom: calc(100% + 5px); }
-.csel-opt {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  width: 100%; text-align: left; border: 0; background: transparent; cursor: pointer;
-  font-family: var(--sans); font-size: 0.85rem; color: var(--ink); white-space: nowrap;
-  padding: 8px 11px; border-radius: 6px;
-}
-.csel-opt:hover { background: rgba(62,15,35,0.07); }
-.csel-opt[aria-selected="true"] { font-weight: 500; }
-.csel-opt .csel-check { width: 14px; height: 14px; opacity: 0; flex: none; color: var(--burgundy); }
-.csel-opt[aria-selected="true"] .csel-check { opacity: 1; }
 .ed-count { margin-left: auto; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.82rem; color: var(--ink-soft); }
 .ed-count b { color: var(--orange-shade); }
 
@@ -135,20 +114,6 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
 .ed-empty { font-size: 0.8rem; color: var(--ink-soft); font-style: italic; }
 .ed-restore { background: rgba(227,136,77,0.14); border: 1px solid var(--orange-shade); border-radius: 6px; padding: 10px 14px; font-size: 0.82rem; display: flex; gap: 12px; align-items: center; margin-bottom: 14px; }
 .ed-restore button { font-size: 0.74rem; padding: 5px 10px; }
-.toast { position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--burgundy); color: var(--beer-foam);
-  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; font-size: 0.85rem; padding: 12px 22px; border-radius: 999px; z-index: 200;
-  opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-#password-overlay { position: fixed; inset: 0; z-index: 1000; background: var(--burgundy); display: flex; align-items: center; justify-content: center; padding: 24px; }
-#password-overlay.hidden { display: none; }
-.password-box { width: 100%; max-width: 380px; text-align: center; }
-.password-box img { width: 150px; margin: 0 auto 30px; }
-.password-eyebrow { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.28em; font-weight: 600; font-size: 0.74rem; color: var(--beige); margin-bottom: 10px; }
-.password-title { font-family: var(--serif); font-weight: 600; font-size: 2rem; color: var(--beer-foam); margin-bottom: 26px; }
-.password-input { width: 100%; padding: 14px 18px; border-radius: 3px; border: 1.5px solid rgba(255,241,228,0.35); background: rgba(255,241,228,0.06); color: var(--beer-foam); font-family: var(--sans); font-size: 1rem; text-align: center; }
-.password-button { width: 100%; margin-top: 14px; padding: 14px; border: none; border-radius: 3px; background: var(--beer-foam); color: var(--burgundy); cursor: pointer; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; font-size: 0.95rem; }
-.password-error { color: var(--orange); font-size: 0.85rem; margin-top: 16px; min-height: 1.2em; opacity: 0; transition: opacity .2s; }
-.password-error.show { opacity: 1; }
 @media (max-width: 1000px) { .nav { display: none; } body { padding-left: 0; } .ed-main { grid-template-columns: 1fr; } .ed-panel { position: static; max-height: none; } .ed-poster { height: auto; width: 100%; } }
 </style>
 </head>
@@ -242,35 +207,8 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
 
 <script src="layout-defaults-v2.js"></script>
 <script src="poster-engine-v2.js"></script>
+<script src="pryes-ui.js"></script>
 <script>
-/* ---------- password (shares the guide's session key) ---------- */
-const CORRECT_PASSWORD = 'pryes2026';
-function checkPassword() {
-  const input = document.getElementById('password-input');
-  if (input.value.trim().toLowerCase() === CORRECT_PASSWORD) {
-    document.getElementById('password-overlay').classList.add('hidden');
-    document.body.style.overflow = '';
-    try { sessionStorage.setItem('pryes_auth', '1'); } catch (e) {}
-  } else {
-    document.getElementById('password-error').classList.add('show');
-    input.value = ''; input.focus();
-  }
-}
-(function () {
-  let authed = false;
-  try { authed = sessionStorage.getItem('pryes_auth') === '1'; } catch (e) {}
-  if (authed) document.getElementById('password-overlay').classList.add('hidden');
-  else {
-    document.body.style.overflow = 'hidden';
-    const pi = document.getElementById('password-input');
-    if (pi) { pi.focus(); pi.addEventListener('keypress', e => { if (e.key === 'Enter') checkPassword(); }); }
-  }
-})();
-
-const toast = document.getElementById('toast');
-let toastTimer;
-function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 1600); }
-
 /* ============================================================
    CONCEPT EDITOR V2
    Edits window.PRYES_LAYOUT_DEFAULTS_V2 geometry live and exports
@@ -413,18 +351,34 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
     const pt = new DOMPoint(evt.clientX, evt.clientY).matrixTransform(svg.getScreenCTM().inverse());
     return pt;
   }
+  /* ---------- element addressing ----------
+     Every editable thing has one address, "<layout>.<element>". A shape
+     element stores one placement per shape number, and its address
+     resolves to the placement of the shape on screen. baselineFor()
+     and targetFor() are the only two places that know this rule, so
+     reset, the change list, and the panel all share it. */
+  function baselineFor(l, k, n) {
+    const e = PRISTINE[l].elements[k];
+    if (e.kind === 'shape') return (e.perShape && e.perShape[n]) || P.shapeFallbackFor(l, +n, PRISTINE);
+    return e;
+  }
+  function targetFor(l, k, n) {
+    const e = spec[l] && spec[l].elements[k];
+    if (!e) return null;
+    if (e.kind !== 'shape') return e;
+    if (!e.perShape) e.perShape = {};
+    if (!e.perShape[n]) e.perShape[n] = JSON.parse(JSON.stringify(P.resolveShapeFor(l, +n)));
+    return e.perShape[n];
+  }
+  function labelFor(id) {
+    const [l, k] = id.split('.');
+    const e = spec[l].elements[k];
+    return spec[l].label + ' · ' + k + (e && e.kind === 'shape' ? ' ' + String(card.shape).padStart(2, '0') : '');
+  }
   function elSpec(id) {
     if (!id) return null;
     const [l, k] = id.split('.');
-    const e = spec[l] && spec[l].elements[k];
-    /* the divider shape stores one placement per shape number - the
-       editor always works on the placement of the shape on screen */
-    if (e && e.kind === 'shape') {
-      if (!e.perShape) e.perShape = {};
-      if (!e.perShape[card.shape]) e.perShape[card.shape] = JSON.parse(JSON.stringify(P.resolveShapeFor(l, card.shape)));
-      return e.perShape[card.shape];
-    }
-    return e;
+    return targetFor(l, k, card.shape);
   }
   let drag = null, raf = false;
   stage.addEventListener('pointerdown', evt => {
@@ -486,7 +440,7 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   let panelKey = null;
   function syncPanel() {
     const e = elSpec(selectedEl);
-    document.getElementById('ed-selname').textContent = selectedEl ? spec[selectedEl.split('.')[0]].label + ' · ' + selectedEl.split('.')[1] : 'Nothing selected';
+    document.getElementById('ed-selname').textContent = selectedEl ? labelFor(selectedEl) : 'Nothing selected';
     document.getElementById('ed-reset-el').disabled = !selectedEl;
     if (!e) { propsBox.innerHTML = ''; panelKey = null; return; }
     /* a drag calls this every frame: same element means refresh the
@@ -518,13 +472,14 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   document.getElementById('ed-reset-el').addEventListener('click', () => {
     if (!selectedEl) return;
     const [l, k] = selectedEl.split('.');
-    if (spec[l].elements[k].kind === 'shape') {
+    const e = spec[l].elements[k];
+    if (e.kind === 'shape') {
       /* back to the shipped placement of the shape on screen; a shape
          that was never hand-placed goes back to the automatic one */
       const shipped = PRISTINE[l].elements[k].perShape && PRISTINE[l].elements[k].perShape[card.shape];
-      if (shipped) spec[l].elements[k].perShape[card.shape] = JSON.parse(JSON.stringify(shipped));
-      else delete spec[l].elements[k].perShape[card.shape];
-    } else spec[l].elements[k] = JSON.parse(JSON.stringify(PRISTINE[l].elements[k]));
+      if (shipped) e.perShape[card.shape] = JSON.parse(JSON.stringify(shipped));
+      else delete e.perShape[card.shape];
+    } else spec[l].elements[k] = JSON.parse(JSON.stringify(baselineFor(l, k)));
     render(); syncPanel(); persist(); syncChanges();
   });
   document.getElementById('ed-reset-all').addEventListener('click', () => {
@@ -538,24 +493,16 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   /* ---------- change tracking ---------- */
   function diff() {
     const out = [];
+    const compare = (id, base, cur, props) => props.forEach(p => {
+      if ((typeof base[p] === 'number' || typeof base[p] === 'string') && base[p] !== cur[p]) out.push({ el: id, prop: p, from: base[p], to: cur[p] });
+    });
     Object.keys(PRISTINE).forEach(l => Object.keys(PRISTINE[l].elements).forEach(k => {
       const a = PRISTINE[l].elements[k], b = spec[l].elements[k];
-      Object.keys(a).forEach(p => { if ((typeof a[p] === 'number' || typeof a[p] === 'string') && a[p] !== b[p]) out.push({ el: l + '.' + k, prop: p, from: a[p], to: b[p] }); });
+      if (a.kind === 'shape') {
+        /* one address per shape number, each against its own baseline */
+        Object.keys((b && b.perShape) || {}).forEach(n => compare(l + '.' + k + '.' + String(n).padStart(2, '0'), baselineFor(l, k, n), b.perShape[n], ['cx', 'y', 'w', 'h']));
+      } else compare(l + '.' + k, a, b, Object.keys(a));
     }));
-    /* per-shape placements: each shape number diffs against its own
-       baseline (a shipped entry, or the automatic placement), for
-       every concept that carries a shape element */
-    Object.keys(PRISTINE).forEach(l => {
-      if (!PRISTINE[l].elements.shape) return;
-      const cur = (spec[l].elements.shape && spec[l].elements.shape.perShape) || {};
-      const pris = PRISTINE[l].elements.shape.perShape || {};
-      Object.keys(cur).forEach(n => {
-        const base = pris[n] || P.shapeFallbackFor(l, +n, PRISTINE);
-        ['cx', 'y', 'w', 'h'].forEach(p => {
-          if (cur[n][p] != null && base[p] != null && cur[n][p] !== base[p]) out.push({ el: l + '.shape.' + String(n).padStart(2, '0'), prop: p, from: base[p], to: cur[n][p] });
-        });
-      });
-    });
     return out;
   }
   function syncChanges() {
@@ -598,70 +545,6 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   /* ---------- boot ---------- */
   P.setSize('s1117');
   P.load().then(() => { render(); syncPanel(); syncChanges(); });
-})();
-</script>
-<script>
-/* Custom dropdowns: the OS paints native select menus and ignores the
-   brand, so each select gets a styled twin. The real select stays in
-   the DOM (all existing logic keeps working); a button + menu render it. */
-(function () {
-  var CHECK = '<svg class="csel-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
-  var proto = HTMLSelectElement.prototype;
-  var valueD = Object.getOwnPropertyDescriptor(proto, 'value');
-  var indexD = Object.getOwnPropertyDescriptor(proto, 'selectedIndex');
-  /* one page-level listener closes whichever menu is open - per-select
-     listeners would pile up as panels rebuild their selects */
-  var openMenu = null;
-  document.addEventListener('pointerdown', function (e) { if (openMenu && !openMenu.wrap.contains(e.target)) openMenu.close(); });
-  function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
-  function enhance(sel) {
-    if (sel.closest('.csel')) return;
-    var wrap = document.createElement('span'); wrap.className = 'csel';
-    sel.parentNode.insertBefore(wrap, sel); wrap.appendChild(sel);
-    var trig = document.createElement('button');
-    trig.type = 'button'; trig.className = 'csel-trigger';
-    trig.setAttribute('aria-haspopup', 'listbox'); trig.setAttribute('aria-expanded', 'false');
-    var menu = document.createElement('div');
-    menu.className = 'csel-menu'; menu.hidden = true; menu.setAttribute('role', 'listbox');
-    wrap.appendChild(trig); wrap.appendChild(menu);
-    function sync() {
-      var o = sel.options[sel.selectedIndex];
-      trig.textContent = o ? o.textContent : '';
-      menu.innerHTML = Array.prototype.map.call(sel.options, function (op, i) {
-        return '<button type="button" class="csel-opt" role="option" data-i="' + i + '" aria-selected="' + (i === sel.selectedIndex) + '"><span>' + esc(op.textContent) + '</span>' + CHECK + '</button>';
-      }).join('');
-    }
-    function close() { menu.hidden = true; trig.setAttribute('aria-expanded', 'false'); menu.classList.remove('csel-menu--up'); if (openMenu && openMenu.wrap === wrap) openMenu = null; }
-    trig.addEventListener('click', function () {
-      if (!menu.hidden) return close();
-      if (openMenu) openMenu.close();
-      openMenu = { wrap: wrap, close: close };
-      sync(); menu.hidden = false; trig.setAttribute('aria-expanded', 'true');
-      var r = menu.getBoundingClientRect();
-      if (r.bottom > window.innerHeight - 8) menu.classList.add('csel-menu--up');
-    });
-    menu.addEventListener('click', function (e) {
-      var b = e.target.closest('.csel-opt'); if (!b) return;
-      indexD.set.call(sel, +b.dataset.i); sync(); close();
-      sel.dispatchEvent(new Event('change', { bubbles: true }));
-    });
-    trig.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
-    sel.addEventListener('change', sync);
-    new MutationObserver(sync).observe(sel, { childList: true, subtree: true, attributes: true });
-    Object.defineProperty(sel, 'value', { get: function () { return valueD.get.call(this); }, set: function (v) { valueD.set.call(this, v); sync(); } });
-    Object.defineProperty(sel, 'selectedIndex', { get: function () { return indexD.get.call(this); }, set: function (v) { indexD.set.call(this, v); sync(); } });
-    sync();
-  }
-  document.querySelectorAll('select').forEach(enhance);
-  new MutationObserver(function (muts) {
-    muts.forEach(function (m) {
-      Array.prototype.forEach.call(m.addedNodes, function (n) {
-        if (n.nodeType !== 1) return;
-        if (n.tagName === 'SELECT') enhance(n);
-        else if (n.querySelectorAll) n.querySelectorAll('select').forEach(enhance);
-      });
-    });
-  }).observe(document.body, { childList: true, subtree: true });
 })();
 </script>
 </body>

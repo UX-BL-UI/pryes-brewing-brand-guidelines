@@ -4,9 +4,9 @@ Agreed with Ben 2026-09-06: clear the ground first, then more beer patterns, the
 
 ## Phase 1 - clear the ground
 
-- [ ] 1. Per-type descriptor in the engine (fields, reels, color list, default words, label, renderer). Board and editor read it; the if/else ladders go away.
-- [ ] 2. Shape placements become first-class elements in the editor (reset, change list, migration, panel share one path).
-- [ ] 3. Shared page furniture: password gate, toast, custom dropdown in one `pryes-ui.js` + `pryes-ui.css`, loaded by board and editor.
+- [x] 1. Per-type descriptor in the engine (fields, reels, color list, default words, label, renderer). Board and editor read it; the if/else ladders go away.
+- [x] 2. Shape placements become first-class elements in the editor (reset, change list, migration, panel share one path).
+- [x] 3. Shared page furniture: password gate, toast, custom dropdown in one `pryes-ui.js` + `pryes-ui.css`, loaded by board and editor.
 - [ ] 4. Beer list as defaults-plus-overrides; per-beer signature pattern slot.
 - [ ] 5. Deliver to Ben: the laurel pattern template file + Illustrator export steps.
 

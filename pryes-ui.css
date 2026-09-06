@@ -1,0 +1,56 @@
+/* ============================================================
+   PRYES UI - shared page furniture for the concept tools
+   Password gate, toast, brand-styled dropdown menus. Loaded by
+   concept-board.html and concept-editor.html before their own
+   styles, so a page can still adjust a detail (the board lifts the
+   toast above its sticky footer with --toast-bottom).
+   ============================================================ */
+
+/* ---------- password gate (one session key shared with the brand guide) ---------- */
+#password-overlay { position: fixed; inset: 0; z-index: 1000; background: var(--burgundy); display: flex; align-items: center; justify-content: center; padding: 24px; }
+#password-overlay.hidden { display: none; }
+.password-box { width: 100%; max-width: 380px; text-align: center; }
+.password-box img { width: 150px; margin: 0 auto 30px; }
+.password-eyebrow { font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.28em; font-weight: 600; font-size: 0.74rem; color: var(--beige); margin-bottom: 10px; }
+.password-title { font-family: var(--serif); font-weight: 600; font-size: 2rem; color: var(--beer-foam); margin-bottom: 26px; }
+.password-input { width: 100%; padding: 14px 18px; border-radius: 3px; border: 1.5px solid rgba(255,241,228,0.35); background: rgba(255,241,228,0.06); color: var(--beer-foam); font-family: var(--sans); font-size: 1rem; text-align: center; letter-spacing: 0.05em; }
+.password-input::placeholder { color: rgba(255,241,228,0.45); }
+.password-input:focus { outline: none; border-color: var(--beige); }
+.password-button { width: 100%; margin-top: 14px; padding: 14px; border: none; border-radius: 3px; background: var(--beer-foam); color: var(--burgundy); cursor: pointer; font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; font-size: 0.95rem; transition: background .2s; }
+.password-button:hover { background: var(--beige); }
+.password-error { color: var(--orange); font-size: 0.85rem; margin-top: 16px; min-height: 1.2em; opacity: 0; transition: opacity .2s; }
+.password-error.show { opacity: 1; }
+
+/* ---------- toast ---------- */
+.toast {
+  position: fixed; bottom: var(--toast-bottom, 26px); left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--burgundy); color: var(--beer-foam);
+  font-family: var(--condensed); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;
+  font-size: 0.85rem; padding: 12px 22px; border-radius: 999px; z-index: 400;
+  opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ---------- custom dropdown menus (native popups ignore the brand) ---------- */
+.csel { position: relative; display: inline-block; vertical-align: middle; }
+.csel > select { display: none !important; }
+.csel-trigger { text-align: left; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.csel-menu {
+  position: absolute; z-index: 500; top: calc(100% + 5px); left: 0; min-width: 100%;
+  background: #fff8ef; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(16,16,25,0.22);
+  padding: 5px; max-height: 300px; overflow: auto;
+}
+.csel-menu--up { top: auto; bottom: calc(100% + 5px); }
+.csel-opt {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; text-align: left; border: 0; background: transparent; cursor: pointer;
+  font-family: var(--sans); font-size: 0.85rem; color: var(--ink); white-space: nowrap;
+  padding: 8px 11px; border-radius: 6px;
+}
+.csel-opt:hover { background: rgba(62,15,35,0.07); }
+.csel-opt[aria-selected="true"] { font-weight: 500; }
+.csel-opt .csel-check { width: 14px; height: 14px; opacity: 0; flex: none; color: var(--burgundy); }
+.csel-opt[aria-selected="true"] .csel-check { opacity: 1; }
