@@ -346,23 +346,19 @@ function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); 
   const conceptBox = document.getElementById('ed-concepts');
   conceptBox.innerHTML = P.CONCEPTS.map((cn, i) => '<button class="nav-link" type="button" data-concept="' + cn.id + '" aria-pressed="' + (cn.id === card.concept) + '"><span class="num">0' + (i + 1) + '</span><span class="label">' + cn.label + '</span></button>').join('');
   function syncColorwayOptions() {
-    const ways = (card.concept === 'brandfocus' || card.concept === 'photofocus') ? P.BRAND_COLORWAYS : card.concept === 'cobrand' ? P.COBRAND_WAYS : P.COLORWAYS;
+    const ways = P.conceptById(card.concept).colorways;
     waySel.innerHTML = ways.map(w => '<option value="' + w.id + '"' + (w.id === card.colorway ? ' selected' : '') + '>' + w.name + '</option>').join('');
   }
   conceptBox.addEventListener('click', e => {
     const b = e.target.closest('[data-concept]'); if (!b || b.dataset.concept === card.concept) return;
     card.concept = b.dataset.concept;
-    card.colorway = card.concept === 'beerfeature' ? 'beer' : 'foam';
+    const cn = P.conceptById(card.concept);
+    card.colorway = cn.defaultColorway;
     conceptBox.querySelectorAll('[data-concept]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
-    const isBrand = card.concept === 'brandfocus';
-    const isCobrand = card.concept === 'cobrand';
-    const isPhoto = card.concept === 'photofocus';
-    document.getElementById('ed-beer-ctl').style.display = (isBrand || isPhoto) ? 'none' : '';
-    document.getElementById('ed-shape-ctl').style.display = (isBrand || isPhoto) ? 'none' : '';
-    document.getElementById('ed-density-ctl').style.display = card.concept === 'beerfeature' ? '' : 'none';
-    document.getElementById('ed-showp-ctl').style.display = isBrand ? '' : 'none';
-    document.getElementById('ed-partner-ctl').style.display = isCobrand ? '' : 'none';
-    document.getElementById('ed-photo-ctl').style.display = isPhoto ? '' : 'none';
+    /* each control shows only for the types that use its ingredient */
+    const show = (id, on) => { document.getElementById(id).style.display = on ? '' : 'none'; };
+    show('ed-beer-ctl', cn.uses.beer); show('ed-shape-ctl', cn.uses.shape); show('ed-density-ctl', cn.uses.density);
+    show('ed-showp-ctl', cn.uses.showP); show('ed-partner-ctl', cn.uses.partner); show('ed-photo-ctl', cn.uses.photo);
     syncColorwayOptions();
     selectedEl = null; render(); syncPanel(); syncChanges();
   });

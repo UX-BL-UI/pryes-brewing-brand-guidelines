@@ -342,10 +342,6 @@ button.nav-link { width: 100%; background: transparent; border: 0; border-left: 
     </a>
     <div id="cb-concepts" role="group" aria-label="Poster type">
       <button class="nav-link" type="button" data-concept="all" aria-pressed="true"><span class="num"></span><span class="label">All</span></button>
-      <button class="nav-link" type="button" data-concept="beerfeature" aria-pressed="false"><span class="num">01</span><span class="label">Beer feature</span></button>
-      <button class="nav-link" type="button" data-concept="brandfocus" aria-pressed="false"><span class="num">02</span><span class="label">Brand focus</span></button>
-      <button class="nav-link" type="button" data-concept="cobrand" aria-pressed="false"><span class="num">03</span><span class="label">Co-branded</span></button>
-      <button class="nav-link" type="button" data-concept="photofocus" aria-pressed="false"><span class="num">04</span><span class="label">Photo focus</span></button>
       <button class="nav-link" type="button" disabled><span class="num">05</span><span class="label">Event</span></button>
       <button class="nav-link" type="button" disabled><span class="num">06</span><span class="label">Announcement</span></button>
     </div>
@@ -487,18 +483,17 @@ function showToast(msg) {
   const BEERS = P.BEERS, SHAPE_COUNT = P.SHAPE_COUNT;
   const esc = P.esc, toPrintFonts = P.toPrintFonts;
   const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const CONCEPT_LABEL = { beerfeature: 'Beer feature', brandfocus: 'Brand focus', cobrand: 'Co-branded', photofocus: 'Photo focus' };
+  const CONCEPT_ORDER = P.CONCEPTS.map(cn => cn.id);
+  const CONCEPT_LABEL = Object.fromEntries(P.CONCEPTS.map(cn => [cn.id, cn.label]));
+  /* the rail lists the poster types the engine knows, after All */
+  document.querySelector('#cb-concepts [data-concept="all"]').insertAdjacentHTML('afterend',
+    P.CONCEPTS.map((cn, i) => '<button class="nav-link" type="button" data-concept="' + cn.id + '" aria-pressed="false"><span class="num">' + String(i + 1).padStart(2, '0') + '</span><span class="label">' + esc(cn.label) + '</span></button>').join(''));
 
   /* ---------- content + type state ---------- */
   const type = { h1Mul: 1, h1Track: 0, h2Mul: 1, h2Track: 0 };
   let beerId = P.DEFAULT_BEER;
   /* each poster type keeps its own words; the overlay edits them */
-  const contentByConcept = {
-    beerfeature: P.defaultWords('beerfeature', beerId),
-    brandfocus:  P.defaultWords('brandfocus'),
-    cobrand:     P.defaultWords('cobrand'),
-    photofocus:  P.defaultWords('photofocus')
-  };
+  const contentByConcept = Object.fromEntries(CONCEPT_ORDER.map(k => [k, P.defaultWords(k, beerId)]));
   function contentFor(card) {
     const cc = contentByConcept[card.concept];
     return { headline: (cc.headline || '').trim(), subheadline: (cc.subheadline || '').trim(), showP: cc.showP !== false,
@@ -507,42 +502,40 @@ function showToast(msg) {
   function buildPosterSVG(card, opts) { return P.buildPosterSVG(card, contentFor(card), opts || {}); }
 
   /* ---------- cards ---------- */
-  const weightedWays = P.COLORWAYS.reduce((a, f) => a.concat(Array(f.weight).fill(f.id)), []);
-  const weightedBrandWays = P.BRAND_COLORWAYS.reduce((a, w) => a.concat(Array(w.weight).fill(w.id)), []);
-  const weightedCobrandWays = P.COBRAND_WAYS.reduce((a, w) => a.concat(Array(w.weight).fill(w.id)), []);
+  /* each type's colorways, weighted for the shuffle */
+  const weightedWays = Object.fromEntries(P.CONCEPTS.map(cn => [cn.id, cn.colorways.reduce((a, w) => a.concat(Array(w.weight).fill(w.id)), [])]));
   const densityIds = P.DENSITIES.map(d => d.id);
   function rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
   function rndDiff(arr, cur) { if (arr.length < 2) return arr[0]; let v; do { v = rnd(arr); } while (v === cur); return v; }
   function rndShape(cur) { let v; do { v = 1 + Math.floor(Math.random() * SHAPE_COUNT); } while (v === cur); return v; }
 
-  /* Curated opening hands per poster type so the first paint looks intentional. */
+  /* Curated opening hands per poster type so the first paint looks
+     intentional. A card carries its type's ingredients; its lock set
+     comes from the type's reels. */
+  function mk(concept, fields) {
+    const cn = P.conceptById(concept);
+    const card = Object.assign({ concept: concept, held: false, lock: Object.fromEntries(cn.reels.map(k => [k, false])) }, fields);
+    if (cn.uses.beer) card.beer = beerId;
+    if (cn.uses.partner) card.partner = card.partner || P.PARTNERS[0].id;
+    if (cn.uses.photo) card.photo = card.photo || P.FOCUS_PHOTOS[0].id;
+    return card;
+  }
   const cardsByConcept = {
     beerfeature: [
-      { concept: 'beerfeature', beer: beerId, shape: 1,  colorway: 'beer',      density: 'medium', held: false, lock: { shape: false, colorway: false, density: false } },
-      { concept: 'beerfeature', beer: beerId, shape: 5,  colorway: 'beer',      density: 'loose',  held: false, lock: { shape: false, colorway: false, density: false } },
-      { concept: 'beerfeature', beer: beerId, shape: 9,  colorway: 'burgundy',  density: 'medium', held: false, lock: { shape: false, colorway: false, density: false } },
-      { concept: 'beerfeature', beer: beerId, shape: 13, colorway: 'foam',      density: 'tight',  held: false, lock: { shape: false, colorway: false, density: false } }
+      mk('beerfeature', { shape: 1,  colorway: 'beer',     density: 'medium' }),
+      mk('beerfeature', { shape: 5,  colorway: 'beer',     density: 'loose' }),
+      mk('beerfeature', { shape: 9,  colorway: 'burgundy', density: 'medium' }),
+      mk('beerfeature', { shape: 13, colorway: 'foam',     density: 'tight' })
     ],
-    brandfocus: [
-      { concept: 'brandfocus', colorway: 'foam',     held: false, lock: { colorway: false } },
-      { concept: 'brandfocus', colorway: 'burgundy', held: false, lock: { colorway: false } },
-      { concept: 'brandfocus', colorway: 'beige',    held: false, lock: { colorway: false } },
-      { concept: 'brandfocus', colorway: 'offblack', held: false, lock: { colorway: false } }
-    ],
+    brandfocus: ['foam', 'burgundy', 'beige', 'offblack'].map(w => mk('brandfocus', { colorway: w })),
     cobrand: [
-      { concept: 'cobrand', beer: beerId, partner: 'twins', shape: 3,  colorway: 'foam',       held: false, lock: { shape: false, colorway: false } },
-      { concept: 'cobrand', beer: beerId, partner: 'twins', shape: 5,  colorway: 'beerplaque', held: false, lock: { shape: false, colorway: false } },
-      { concept: 'cobrand', beer: beerId, partner: 'twins', shape: 11, colorway: 'beige',      held: false, lock: { shape: false, colorway: false } },
-      { concept: 'cobrand', beer: beerId, partner: 'twins', shape: 8,  colorway: 'burgundy',   held: false, lock: { shape: false, colorway: false } }
+      mk('cobrand', { partner: 'twins', shape: 3,  colorway: 'foam' }),
+      mk('cobrand', { partner: 'twins', shape: 5,  colorway: 'beerplaque' }),
+      mk('cobrand', { partner: 'twins', shape: 11, colorway: 'beige' }),
+      mk('cobrand', { partner: 'twins', shape: 8,  colorway: 'burgundy' })
     ],
-    photofocus: [
-      { concept: 'photofocus', photo: 'miraculum-cooler', colorway: 'foam',     held: false, lock: { colorway: false } },
-      { concept: 'photofocus', photo: 'miraculum-cooler', colorway: 'beige',    held: false, lock: { colorway: false } },
-      { concept: 'photofocus', photo: 'miraculum-cooler', colorway: 'burgundy', held: false, lock: { colorway: false } },
-      { concept: 'photofocus', photo: 'miraculum-cooler', colorway: 'offblack', held: false, lock: { colorway: false } }
-    ]
+    photofocus: ['foam', 'beige', 'burgundy', 'offblack'].map(w => mk('photofocus', { photo: 'miraculum-cooler', colorway: w }))
   };
-  const CONCEPT_ORDER = ['beerfeature', 'brandfocus', 'cobrand', 'photofocus'];
   let view = 'all';
   /* All = a sampler, one poster per type; a type pill shows its full hand */
   function visible() {
@@ -550,22 +543,16 @@ function showToast(msg) {
   }
   let selectedCard = null;
 
-  const REEL_KEYS = { beerfeature: ['shape', 'colorway', 'density'], brandfocus: ['colorway'], cobrand: ['shape', 'colorway'], photofocus: ['colorway'] };
+  const reelsOf = card => P.conceptById(card.concept).reels;
   function rerollReel(card, key) {
-    if (card.concept === 'brandfocus' || card.concept === 'photofocus') { card.colorway = rndDiff(weightedBrandWays, card.colorway); return; }
-    if (card.concept === 'cobrand') {
-      if (key === 'shape') card.shape = rndShape(card.shape);
-      else card.colorway = rndDiff(weightedCobrandWays, card.colorway);
-      return;
-    }
     if (key === 'shape') card.shape = rndShape(card.shape);
-    else if (key === 'colorway') card.colorway = rndDiff(weightedWays, card.colorway);
-    else card.density = rndDiff(densityIds, card.density);
+    else if (key === 'colorway') card.colorway = rndDiff(weightedWays[card.concept], card.colorway);
+    else if (key === 'density') card.density = rndDiff(densityIds, card.density);
   }
   function dealUnheld() {
     visible().forEach(card => {
       if (card.held) return;
-      REEL_KEYS[card.concept].forEach(key => { if (!card.lock[key]) rerollReel(card, key); });
+      reelsOf(card).forEach(key => { if (!card.lock[key]) rerollReel(card, key); });
     });
   }
 
@@ -578,11 +565,7 @@ function showToast(msg) {
   const REEL_LABELS = { shape: 'Shape', colorway: 'Color', density: 'Pattern' };
   function reelValueLabel(card, key) {
     if (key === 'shape') return 'Shape ' + String(card.shape).padStart(2, '0');
-    if (key === 'colorway') {
-      if (card.concept === 'brandfocus' || card.concept === 'photofocus') return P.brandColorwayById(card.colorway).name;
-      if (card.concept === 'cobrand') return P.cobrandWayById(card.colorway).name;
-      return P.colorwayById(card.colorway).name;
-    }
+    if (key === 'colorway') return P.conceptById(card.concept).wayById(card.colorway).name;
     return P.densityById(card.density).name;
   }
   function reelHTML(i, key, card) {
@@ -593,7 +576,7 @@ function showToast(msg) {
       '<span class="cb-reel-v">' + reelValueLabel(card, key) + '</span></button>';
   }
   function cardHTML(card, i) {
-    const keys = REEL_KEYS[card.concept];
+    const keys = reelsOf(card);
     return '<div class="cb-card' + (card.held ? ' is-held' : '') + '" data-i="' + i + '">' +
       '<div class="cb-poster" data-role="poster" data-i="' + i + '" title="Customize this concept">' +
         '<span class="cb-held-badge">' + ICON_PIN + ' Pinned</span>' +
@@ -634,11 +617,12 @@ function showToast(msg) {
   /* ---------- overlay ---------- */
   const overlay = document.getElementById('cb-overlay');
   function fieldVisibility(concept) {
-    document.getElementById('cb-beer-field').style.display = (concept === 'beerfeature' || concept === 'cobrand') ? '' : 'none';
-    document.getElementById('cb-partner-field').style.display = concept === 'cobrand' ? '' : 'none';
-    document.getElementById('cb-photo-field').style.display = concept === 'photofocus' ? '' : 'none';
-    document.getElementById('cb-showp-field').style.display = concept === 'brandfocus' ? '' : 'none';
-    document.getElementById('cb-subheadline-field').style.display = (concept === 'cobrand' || concept === 'photofocus') ? 'none' : '';
+    const u = P.conceptById(concept).uses;
+    document.getElementById('cb-beer-field').style.display = u.beer ? '' : 'none';
+    document.getElementById('cb-partner-field').style.display = u.partner ? '' : 'none';
+    document.getElementById('cb-photo-field').style.display = u.photo ? '' : 'none';
+    document.getElementById('cb-showp-field').style.display = u.showP ? '' : 'none';
+    document.getElementById('cb-subheadline-field').style.display = u.subheadline ? '' : 'none';
   }
   function renderOverlayPoster() {
     document.getElementById('cb-ov-poster').innerHTML = buildPosterSVG(selectedCard);
@@ -781,15 +765,15 @@ function showToast(msg) {
   async function downloadPackage() {
     const card = selectedCard || visible()[0];
     const c = contentFor(card);
-    const usesBeer = card.concept === 'beerfeature' || card.concept === 'cobrand';
-    const beer = usesBeer ? P.beerById(card.beer) : null;
+    const uses = P.conceptById(card.concept).uses;
+    const beer = uses.beer ? P.beerById(card.beer) : null;
     const slug = (c.headline || (beer ? beer.name : 'brand')).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'concept';
-    const artPath = beer ? beer.can : card.concept === 'photofocus' ? P.focusPhotoById(card.photo).file : null;
+    const artPath = beer ? beer.can : uses.photo ? P.focusPhotoById(card.photo).file : null;
     const art = artPath ? await fileData(artPath) : null;
     /* the art goes in as a placeholder so the font swap runs over a
        small string; the multi-megabyte data URL is spliced in after */
     const ART = 'pryes-art-placeholder';
-    const opts = card.concept === 'photofocus' ? { photoHref: art ? ART : null, standalone: true } : { canHref: art ? ART : null, standalone: true };
+    const opts = uses.photo ? { photoHref: art ? ART : null, standalone: true } : { canHref: art ? ART : null, standalone: true };
     let body = toPrintFonts(buildPosterSVG(card, opts));
     if (art) body = body.replace('href="' + ART + '"', 'href="' + art.dataUrl + '"');
     const svg = '<?xml version="1.0" encoding="UTF-8"?>\n' + body;
@@ -884,8 +868,7 @@ function showToast(msg) {
   beerSelect.addEventListener('change', () => {
     beerId = beerSelect.value;
     const b = P.beerById(beerId);
-    cardsByConcept.beerfeature.forEach(card => { card.beer = beerId; });
-    cardsByConcept.cobrand.forEach(card => { card.beer = beerId; });
+    P.CONCEPTS.filter(cn => cn.uses.beer).forEach(cn => cardsByConcept[cn.id].forEach(card => { card.beer = beerId; }));
     contentByConcept.beerfeature.headline = b.headline;
     contentByConcept.beerfeature.subheadline = b.subheadline;
     if (selectedCard && selectedCard.concept === 'beerfeature') {
@@ -898,14 +881,14 @@ function showToast(msg) {
   const partnerSelect = document.getElementById('cb-partner-select');
   partnerSelect.innerHTML = P.PARTNERS.map(p => '<option value="' + p.id + '">' + esc(p.name) + '</option>').join('');
   partnerSelect.addEventListener('change', () => {
-    cardsByConcept.cobrand.forEach(card => { card.partner = partnerSelect.value; });
+    P.CONCEPTS.filter(cn => cn.uses.partner).forEach(cn => cardsByConcept[cn.id].forEach(card => { card.partner = partnerSelect.value; }));
     renderBoard();
   });
 
   const photoSelect = document.getElementById('cb-photo-select');
   photoSelect.innerHTML = P.FOCUS_PHOTOS.map(p => '<option value="' + p.id + '">' + esc(p.name) + '</option>').join('');
   photoSelect.addEventListener('change', () => {
-    cardsByConcept.photofocus.forEach(card => { card.photo = photoSelect.value; });
+    P.CONCEPTS.filter(cn => cn.uses.photo).forEach(cn => cardsByConcept[cn.id].forEach(card => { card.photo = photoSelect.value; }));
     renderBoard();
   });
 

@@ -255,14 +255,6 @@ window.PryesPosterV2 = (function () {
     { id: 'laurels',     label: 'Laurel wreath' }
   ];
 
-  /* ---------- concepts ---------- */
-  const CONCEPTS = [
-    { id: 'beerfeature', label: 'Beer feature' },
-    { id: 'brandfocus',  label: 'Brand focus' },
-    { id: 'cobrand',     label: 'Co-branded' },
-    { id: 'photofocus',  label: 'Photo focus' }
-  ];
-
   /* Photo-focus library: real photography only. Add a photo by
      dropping it in assets/photos and adding a row here. */
   const FOCUS_PHOTOS = [
@@ -297,13 +289,51 @@ window.PryesPosterV2 = (function () {
      the two center marks move through the brand palette. Wreath and
      P watermark carry their own tint + opacity per colorway. */
   const BRAND_COLORWAYS = [
-    { id:'foam',      name:'Beer Foam',       weight:2, paint: { bg:BRAND.foam, ink:BRAND.burgundy, wreath:'#E2CCB8', wreathOp:1, pmark:'#E2CCB8', pmarkOp:0.55 } },
-    { id:'beige',     name:'Beige',           weight:1, paint: { bg:BRAND.beige, ink:BRAND.burgundy, wreath:BRAND.foam, wreathOp:1, pmark:BRAND.foam, pmarkOp:0.62 } },
-    { id:'burgundy',  name:'Regal Burgundy',  weight:1, paint: { bg:BRAND.burgundy, ink:BRAND.foam, wreath:BRAND.burgundyDeep, wreathOp:1, pmark:BRAND.burgundyDeep, pmarkOp:0.9 } },
-    { id:'offblack',  name:'Off-Black',       weight:1, paint: { bg:BRAND.offblack, ink:BRAND.foam, wreath:BRAND.burgundy, wreathOp:1, pmark:BRAND.burgundy, pmarkOp:0.85 } },
-    { id:'miraculum', name:'Miraculum Green', weight:1, paint: { bg:BRAND.miraculum, ink:BRAND.foam, wreath:BRAND.beige, wreathOp:0.3, pmark:BRAND.beige, pmarkOp:0.18 } }
+    { id:'foam',      name:'Beer Foam',       weight:2, paint: b => ({ bg:BRAND.foam, ink:BRAND.burgundy, wreath:'#E2CCB8', wreathOp:1, pmark:'#E2CCB8', pmarkOp:0.55 }) },
+    { id:'beige',     name:'Beige',           weight:1, paint: b => ({ bg:BRAND.beige, ink:BRAND.burgundy, wreath:BRAND.foam, wreathOp:1, pmark:BRAND.foam, pmarkOp:0.62 }) },
+    { id:'burgundy',  name:'Regal Burgundy',  weight:1, paint: b => ({ bg:BRAND.burgundy, ink:BRAND.foam, wreath:BRAND.burgundyDeep, wreathOp:1, pmark:BRAND.burgundyDeep, pmarkOp:0.9 }) },
+    { id:'offblack',  name:'Off-Black',       weight:1, paint: b => ({ bg:BRAND.offblack, ink:BRAND.foam, wreath:BRAND.burgundy, wreathOp:1, pmark:BRAND.burgundy, pmarkOp:0.85 }) },
+    { id:'miraculum', name:'Miraculum Green', weight:1, paint: b => ({ bg:BRAND.miraculum, ink:BRAND.foam, wreath:BRAND.beige, wreathOp:0.3, pmark:BRAND.beige, pmarkOp:0.18 }) }
   ];
   function brandColorwayById(id) { return BRAND_COLORWAYS.find(c => c.id === id) || BRAND_COLORWAYS[0]; }
+
+  /* ---------- poster types ----------
+     One record per poster type owns everything the tools need to know
+     about it: which ingredients it uses, which reels it shuffles, its
+     color list and opening colorway, its shipped words, and the
+     functions that resolve and render it. Adding a poster type is one
+     record here plus a layout block in layout-defaults-v2.js. */
+  const CONCEPTS = [
+    { id: 'beerfeature', label: 'Beer feature',
+      uses: { beer: true, shape: true, density: true, subheadline: true },
+      reels: ['shape', 'colorway', 'density'],
+      colorways: COLORWAYS, defaultColorway: 'beer',
+      words: beer => ({ headline: beer.headline, subheadline: beer.subheadline }),
+      resolve: (card, c) => resolveBeerFeature(card, c), build: (card, c, o) => buildBeerFeature(card, c, o) },
+    { id: 'brandfocus', label: 'Brand focus',
+      uses: { showP: true, subheadline: true },
+      reels: ['colorway'],
+      colorways: BRAND_COLORWAYS, defaultColorway: 'foam',
+      words: () => ({ headline: "It's a\nMidwest\nThing", subheadline: 'Available\nNow', showP: true }),
+      resolve: (card, c) => resolveBrand(card, c, 'brandfocus'), build: (card, c, o) => buildBrandFocus(card, c, o) },
+    { id: 'cobrand', label: 'Co-branded',
+      uses: { beer: true, partner: true, shape: true },
+      reels: ['shape', 'colorway'],
+      colorways: COBRAND_WAYS, defaultColorway: 'foam',
+      words: () => ({ headline: 'See You\nAt the Game', subheadline: '' }),
+      resolve: (card, c) => resolveCobrand(card, c), build: (card, c, o) => buildCobrand(card, c, o) },
+    { id: 'photofocus', label: 'Photo focus',
+      uses: { photo: true },
+      reels: ['colorway'],
+      colorways: BRAND_COLORWAYS, defaultColorway: 'foam',
+      words: () => ({ headline: 'Trust Your Taste', subheadline: '' }),
+      resolve: (card, c) => resolveBrand(card, c, 'photofocus'), build: (card, c, o) => buildPhotoFocus(card, c, o) }
+  ];
+  CONCEPTS.forEach(cn => {
+    cn.uses = Object.assign({ beer: false, partner: false, photo: false, shape: false, density: false, showP: false, subheadline: false }, cn.uses);
+    cn.wayById = id => cn.colorways.find(w => w.id === id) || cn.colorways[0];
+  });
+  function conceptById(id) { return CONCEPTS.find(cn => cn.id === id) || CONCEPTS[0]; }
   const SHAPE_COUNT = 15;
   const shapeUrl = n => 'assets/shapes/svg/BEERFOAM/BEER FOAM SHAPE ' + String(n).padStart(2, '0') + '.svg';
 
@@ -595,7 +625,7 @@ window.PryesPosterV2 = (function () {
     const way = brandColorwayById(card.colorway);
     const auto = concept === 'brandfocus' ? headlineSize(longestLine(c.headline)) : 1;
     const out = {
-      concept: concept, E: E, way: way, paint: way.paint,
+      concept: concept, E: E, way: way, paint: way.paint(),
       headlinePx: Math.round(E.headline.size * auto * (c.h1Mul || 1)),
       headlineTrack: trackOf(E.headline, c.h1Track)
     };
@@ -603,29 +633,18 @@ window.PryesPosterV2 = (function () {
     if (E.subheadline) out.subheadlinePx = Math.round(E.subheadline.size * (c.h2Mul || 1));
     return out;
   }
-  function describe(card, c) {
-    const k = card.concept || 'beerfeature';
-    if (k === 'cobrand') return resolveCobrand(card, c);
-    if (k === 'brandfocus' || k === 'photofocus') return resolveBrand(card, c, k);
-    return resolveBeerFeature(card, c);
-  }
+  function describe(card, c) { return conceptById(card.concept).resolve(card, c); }
 
   /* the shipped words per poster type; beer feature words follow the beer */
-  function defaultWords(concept, beerId) {
-    if (concept === 'brandfocus') return { headline: "It's a\nMidwest\nThing", subheadline: 'Available\nNow', showP: true };
-    if (concept === 'cobrand') return { headline: 'See You\nAt the Game', subheadline: '' };
-    if (concept === 'photofocus') return { headline: 'Trust Your Taste', subheadline: '' };
-    const b = beerById(beerId);
-    return { headline: b.headline, subheadline: b.subheadline };
-  }
+  function defaultWords(concept, beerId) { return conceptById(concept).words(beerById(beerId)); }
 
   /* Brand-focus poster: flat brand field, stacked wordmark, laurel
      wreath + P watermark behind the headline, serif line at the
      foot. card = { concept:'brandfocus', colorway } */
   function buildBrandFocus(card, c, opts) {
     opts = opts || {};
-    const E = SPEC.brandfocus.elements;
-    const paint = brandColorwayById(card.colorway).paint;
+    const R = resolveBrand(card, c, 'brandfocus');
+    const E = R.E, paint = R.paint;
     const tag = !!opts.tag;
 
     let s = '<rect width="' + W + '" height="' + H + '" fill="' + paint.bg + '"/>';
@@ -678,9 +697,8 @@ window.PryesPosterV2 = (function () {
   let PF_UID = 0;
   function buildPhotoFocus(card, c, opts) {
     opts = opts || {};
-    const E = SPEC.photofocus.elements;
-    const paint = brandColorwayById(card.colorway).paint;
-    const photo = focusPhotoById(card.photo);
+    const R = resolveBrand(card, c, 'photofocus');
+    const E = R.E, paint = R.paint, photo = R.photo;
     const tag = !!opts.tag;
 
     let s = '<rect width="' + W + '" height="' + H + '" fill="' + paint.bg + '"/>';
@@ -702,11 +720,13 @@ window.PryesPosterV2 = (function () {
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + SIZE.inW + '" height="' + SIZE.inH + '">' + s + '</svg>';
   }
 
-  function buildPosterSVG(card, c, opts) {
+  function buildPosterSVG(card, c, opts) { return conceptById(card.concept).build(card, c, opts || {}); }
+
+  /* Beer feature poster: giant wordmark over the beer's patterned
+     field, the can fronting a brand-shape divider into the band.
+     card = { beer, colorway, shape (1-based), density } */
+  function buildBeerFeature(card, c, opts) {
     opts = opts || {};
-    if ((card.concept || 'beerfeature') === 'brandfocus') return buildBrandFocus(card, c, opts);
-    if ((card.concept || 'beerfeature') === 'cobrand') return buildCobrand(card, c, opts);
-    if ((card.concept || 'beerfeature') === 'photofocus') return buildPhotoFocus(card, c, opts);
     const R = resolveBeerFeature(card, c);
     const E = R.E, beer = R.beer, paint = R.paint, density = R.density, shape = R.shape;
     const tag = !!opts.tag;
@@ -783,7 +803,7 @@ window.PryesPosterV2 = (function () {
 
   return {
     SIZES: SIZES, BEERS: BEERS, DEFAULT_BEER: DEFAULT_BEER, COLORWAYS: COLORWAYS, DENSITIES: DENSITIES, SHAPE_COUNT: SHAPE_COUNT, ASSET_OPTIONS: ASSET_OPTIONS,
-    CONCEPTS: CONCEPTS, BRAND_COLORWAYS: BRAND_COLORWAYS, brandColorwayById: brandColorwayById,
+    CONCEPTS: CONCEPTS, conceptById: conceptById, BRAND_COLORWAYS: BRAND_COLORWAYS, brandColorwayById: brandColorwayById,
     PARTNERS: PARTNERS, partnerById: partnerById, COBRAND_WAYS: COBRAND_WAYS, cobrandWayById: cobrandWayById,
     FOCUS_PHOTOS: FOCUS_PHOTOS, focusPhotoById: focusPhotoById,
     resolveShapeFor: resolveShapeFor, shapeFallbackFor: shapeFallbackFor,
