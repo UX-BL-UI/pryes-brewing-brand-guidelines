@@ -16,16 +16,16 @@ repo root and verified to exist.
 - **Positioning:** the beer-for-everyone brewery · for Minnesotans, by Minnesotans (the New Glarus of MN) · enjoy-it-anywhere, never a gamble.
 
 ## Colors
-Core (name · hex · rgb · cmyk · role):
+Core (name · hex · rgb · cmyk · pms · role):
 
-| Name | HEX | RGB | CMYK | Role |
-|---|---|---|---|---|
-| Beer Foam | `#FFF1E4` | 255,241,228 | 0,5,9,0 | primary light bg / reversed text · PMS 9224 C |
-| Beige | `#EBCFB8` | 235,207,184 | 7,18,26,0 | tonal layering · PMS 9224C/9184U |
-| Regal Burgundy | `#3E0F23` | 62,15,35 | 53,89,58,67 | primary dark bg / text · PMS 4975 C |
-| Miraculum Green | `#213B1E` | 33,59,30 | 77,49,89,60 | secondary |
-| Miraculum Off-Black | `#121A12` | 18,26,18 | 74,62,71,80 | tonal / packaging shade |
-| Burgundy Off-Black | `#101019` | 16,16,25 | 79,73,59,80 | tonal / text on dark |
+| Name | HEX | RGB | CMYK | PMS | Role |
+|---|---|---|---|---|---|
+| Beer Foam | `#FFF1E4` | 255,241,228 | 0,5,9,0 | 9224 C, 6431 U | primary light bg / reversed text |
+| Beige | `#EBCFB8` | 235,207,184 | 7,18,26,0 | 2309 C / 4043 C / 4685 C, 482 U | tonal layering |
+| Regal Burgundy | `#3E0F23` | 62,15,35 | 53,89,58,67 | 7645 C / 4103 C, 7421 U | primary dark bg / text |
+| Miraculum Green | `#213B1E` | 33,59,30 | 77,49,89,60 | 2266 C, 2411 U | secondary |
+| Miraculum Off-Black | `#121A12` | 18,26,18 | 74,62,71,80 | 5605 C / Black 3 C | tonal / packaging shade |
+| Burgundy Off-Black | `#101019` | 16,16,25 | 79,73,59,80 | Black C | tonal / text on dark |
 
 Packaging accents (full · shade): Haze-steria Orange `#E3884D`/`#BE442A` · Pragmatic Blue `#328ACA`/`#024060` · Citrus Yellow `#E8BC20`/`#82632B`.
 

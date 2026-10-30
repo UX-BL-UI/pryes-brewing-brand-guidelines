@@ -34,7 +34,14 @@
           9,
           0
         ],
-        "pms": "9224 C",
+        "pms": {
+          "coated": [
+            "9224 C"
+          ],
+          "uncoated": [
+            "6431 U"
+          ]
+        },
         "role": "primary light bg / reversed text"
       },
       {
@@ -51,7 +58,16 @@
           26,
           0
         ],
-        "pms": "9224 C / 9184 U",
+        "pms": {
+          "coated": [
+            "2309 C",
+            "4043 C",
+            "4685 C"
+          ],
+          "uncoated": [
+            "482 U"
+          ]
+        },
         "role": "tonal layering"
       },
       {
@@ -68,7 +84,15 @@
           58,
           67
         ],
-        "pms": "4975 C",
+        "pms": {
+          "coated": [
+            "7645 C",
+            "4103 C"
+          ],
+          "uncoated": [
+            "7421 U"
+          ]
+        },
         "role": "primary dark bg / text"
       },
       {
@@ -85,7 +109,14 @@
           89,
           60
         ],
-        "pms": null,
+        "pms": {
+          "coated": [
+            "2266 C"
+          ],
+          "uncoated": [
+            "2411 U"
+          ]
+        },
         "role": "secondary"
       },
       {
@@ -102,7 +133,13 @@
           71,
           80
         ],
-        "pms": null,
+        "pms": {
+          "coated": [
+            "5605 C",
+            "Black 3 C"
+          ],
+          "uncoated": []
+        },
         "role": "tonal / packaging shade"
       },
       {
@@ -119,7 +156,12 @@
           59,
           80
         ],
-        "pms": null,
+        "pms": {
+          "coated": [
+            "Black C"
+          ],
+          "uncoated": []
+        },
         "role": "tonal / text on dark"
       }
     ],
